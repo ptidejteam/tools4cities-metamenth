@@ -6,7 +6,7 @@ from datatypes import BinaryMeasure
 class AbstractSpace(ABC):
     """An abstract class representing building and related spaces"""
 
-    def __init__(self, area: BinaryMeasure, location: str):
+    def __init__(self, area: BinaryMeasure, location: str = None):
         """
         Initializes an AbstractSpace instance.
 

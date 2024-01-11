@@ -9,7 +9,7 @@ class BinaryMeasure:
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, value: int, measurement_unit: MeasurementUnit):
+    def __init__(self, value: int = 0.0, measurement_unit: MeasurementUnit = None):
         """
         Parameters:
         - value (int): The numerical value of the binary measure.
@@ -19,10 +19,4 @@ class BinaryMeasure:
         self.measurement_unit = measurement_unit
 
     def __str__(self):
-        """
-        Returns a string representation of BinaryMeasure.
-
-        Returns:
-        str: A string representing the value and measurement unit.
-        """
         return f"Value: {self.value}, Measurement Unit: {self.measurement_unit.value}"
