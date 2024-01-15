@@ -1,10 +1,9 @@
-from interfaces import AbstractSpace
 from interfaces import AbstractFloorSpace
 from datatypes import BinaryMeasure
 from enumerations import OpenSpaceType
 
 
-class OpenSpace(AbstractSpace, AbstractFloorSpace):
+class OpenSpace(AbstractFloorSpace):
     """
     Defines an open space on a floor of a building
 
@@ -12,14 +11,11 @@ class OpenSpace(AbstractSpace, AbstractFloorSpace):
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, area: BinaryMeasure, location: str, space_type: OpenSpaceType):
+    def __init__(self, area: BinaryMeasure, space_type: OpenSpaceType, location: str = None):
         """
-        Initializes an OpenSpace instance.
-
-        Parameters:
-        - area (BinaryMeasure): The area of the open space.
-        - location (str): The location of the open space (three words terminated with a period).
-        - space_type (OpenSpaceType): The type of open space (enum).
+        :param area: The area of the open space.
+        :param location: The location of the open space (three words delimited with a period).
+        :param space_type: The type of open space (enum).
         """
         super().__init__(area, location)
         self.space_type = space_type

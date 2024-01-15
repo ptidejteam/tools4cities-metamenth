@@ -1,35 +1,28 @@
 from abc import ABC
+from abc import abstractmethod
 import uuid
 from datatypes import BinaryMeasure
+from misc import Validate
+from typing import List
+from datatypes import Zone
 
 
 class AbstractSpace(ABC):
-    """An abstract class representing building and related spaces"""
+    """
+    An abstract class for spaces in a building
+    """
 
     def __init__(self, area: BinaryMeasure, location: str = None):
         """
-        Initializes an AbstractSpace instance.
-
-        Parameters:
-        - area (BinaryMeasure): The area of the space.
-        - location (str): The location of the space (three words delimited with two periods).
+        :param area: The area of the space.
+        :param location: The location of the space (three words delimited with two periods).
         """
         self.UID = uuid.uuid4()
         self.area = area
-        self.location = self._validate_location(location)
+        self.location = Validate.validate_what3word(location)
+        self.zones: List['Zone'] = []
 
-    def _validate_location(self, location: str) -> str:
-        """
-        Validates and ensures location is in what3word format: word.word.word.
+    @abstractmethod
+    def add_zone(self, zone: Zone):
+        self.zones.append(zone)
 
-        Parameters:
-        - location (str): The raw location string.
-
-        Returns:
-        str: The validated and formatted location string.
-        """
-        words = location.strip().split()
-        if len(words) == 3 and all(word.endswith('.') for word in words):
-            return location.strip()
-        else:
-            raise ValueError("Location should be a string of three words delimited with two periods.")
