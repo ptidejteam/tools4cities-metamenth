@@ -14,4 +14,5 @@ class OpenSpaceType(Enum):
     HALL = "Hall"
     CORRIDOR = "Corridor"
     STAIR_AREA = "StairArea"
+    DINNING_AREA = "DinningArea"
     OTHER = "Other"

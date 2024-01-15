@@ -4,3 +4,6 @@ from .floor_type import FloorType
 from .meter_type import MeterType
 from .zone_type import ZoneType
 from .open_space_type import OpenSpaceType
+from .room_type import RoomType
+from .weather_value_type import WeatherValueType
+from .hvac_type import HVACType
