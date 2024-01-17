@@ -15,8 +15,16 @@ class Floor(AbstractSpace):
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, area: BinaryMeasure, number: int, floor_type: FloorType, description: str = None,
-                 open_spaces: [OpenSpace] = None, rooms: [Room] = None,  location: str = None):
+    def __init__(
+        self,
+        area: BinaryMeasure,
+        number: int,
+        floor_type: FloorType,
+        description: str = None,
+        open_spaces: [OpenSpace] = None,
+        rooms: [Room] = None,
+        location: str = None
+    ):
         """
         :param area (BinaryMeasure): The area of the floor.
         :param location: The location of the floor (three words terminated with a period).

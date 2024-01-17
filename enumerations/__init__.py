@@ -7,3 +7,5 @@ from .open_space_type import OpenSpaceType
 from .room_type import RoomType
 from .weather_value_type import WeatherValueType
 from .hvac_type import HVACType
+from .material_type import MaterialType
+from .cover_type import CoverType

@@ -9,7 +9,14 @@ class Room(AbstractFloorSpace):
     Defines rooms on a floor of a building
     """
 
-    def __init__(self, area: BinaryMeasure, name: str, room_type: RoomType, meter: Meter = None, location: str = None):
+    def __init__(
+        self,
+        area: BinaryMeasure,
+        name: str,
+        room_type: RoomType,
+        meter: Meter = None,
+        location: str = None
+    ):
         """
         :param area: The area of the room.
         :param location: The location of the room (three words terminated with a period).
