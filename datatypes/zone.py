@@ -3,11 +3,18 @@ from enumerations import HVACType
 from uuid import uuid4
 from typing import List
 from interfaces import AbstractSpace
+from typing import Type
 
 
 class Zone:
-    def __init__(self, name: str, zone_type: ZoneType, hvac_type: HVACType = HVACType.NONE, description: str = None):
+    def __init__(self,
+                 name: str,
+                 zone_type: Type[ZoneType],
+                 hvac_type: Type[HVACType] = HVACType.NONE,
+                 description: str = None
+                 ):
         """
+        :param name: The name of the zone
         :param description: The description of the zone.
         :param zone_type: The type of the zone.
         :param hvac_type: The HVAC type of the zone. Defaults to HVACType.NONE if zone_type is not HVAC.

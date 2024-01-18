@@ -1,22 +1,21 @@
 from typing import Type
-from .abstract_measure import AbstractMeasure
+from .abstract_range_measure import AbstractRangeMeasure
 from .measure import Measure
 
 
-class BinaryMeasure(AbstractMeasure):
+class ContinuousMeasure(AbstractRangeMeasure):
     """
-    Represents a binary measure with a value and a measurement unit.
+    Continuous measurement
 
     Author: Peter Yefi
     Email: peteryefi@gmail.com
     """
+
     def __init__(self, measure: Type[Measure]):
         super().__init__(measure)
-        self.value = measure.minimum
 
     def __str__(self):
         return (
-            f"BinaryMeasure("
-            f"Value: {self.value}, "
+            f"ContinuousMeasure("
             f"{super().__str__()})"
         )

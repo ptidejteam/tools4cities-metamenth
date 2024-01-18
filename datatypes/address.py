@@ -1,4 +1,4 @@
-from datatypes import Point
+from .point import Point
 from datatypes import BinaryMeasure
 from misc import Validate
 

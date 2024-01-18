@@ -13,3 +13,4 @@ class Point:
     longitude: float
 
 
+c = Point(0.0, 0.0)
