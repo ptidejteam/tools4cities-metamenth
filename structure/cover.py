@@ -2,6 +2,7 @@ import uuid
 from enumerations import CoverType
 from structure import Layer
 from typing import List
+from typing import Type
 
 
 class Cover:
@@ -11,7 +12,7 @@ class Cover:
        Author: Peter Yefi
        Email: peteryefi@gmail.com
        """
-    def __init__(self, cover_type: CoverType):
+    def __init__(self, cover_type: Type[CoverType]):
         """
         :param cover_type: the type of building cover
         """
@@ -19,7 +20,7 @@ class Cover:
         self.cover_type = cover_type
         self.layers: List['Layer'] = [] # the various layers in this building cover
 
-    def add_layer(self, layer: Layer):
+    def add_layer(self, layer: Type[Layer]):
         """
         Add a layer (e.g., external wall) to the building cover e.g., wall
         :param layer: the layer to be added

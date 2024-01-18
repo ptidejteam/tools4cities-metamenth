@@ -4,6 +4,7 @@ from enumerations import FloorType
 from structure import OpenSpace
 from structure import Room
 from typing import List
+from typing import Type
 from measure_instruments import Meter
 
 
@@ -17,9 +18,9 @@ class Floor(AbstractSpace):
 
     def __init__(
         self,
-        area: BinaryMeasure,
+        area: Type[BinaryMeasure],
         number: int,
-        floor_type: FloorType,
+        floor_type: Type[FloorType],
         description: str = None,
         open_spaces: [OpenSpace] = None,
         rooms: [Room] = None,
@@ -35,6 +36,7 @@ class Floor(AbstractSpace):
         :param rooms: Initial room(s) on floor.
         """
         super().__init__(area, location)
+        self.area = area
         self.description = description
         self.number = number
         self.floor_type = floor_type
@@ -43,10 +45,10 @@ class Floor(AbstractSpace):
         self.meters: List['Meter'] = []
 
         if open_spaces:
-            self.open_spaces.append(open_spaces)
+            self.open_spaces.extend(open_spaces)
 
         if rooms:
-            self.rooms.append(rooms)
+            self.rooms.extend(rooms)
 
         # A floor should have at least one open space or one room
         if not self.open_spaces and not self.rooms:
