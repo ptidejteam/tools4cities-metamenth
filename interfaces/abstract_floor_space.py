@@ -1,7 +1,8 @@
 from typing import List
-from interfaces import AbstractSpace
+from .abstract_space import AbstractSpace
 from datatypes import BinaryMeasure
 from abc import abstractmethod
+from typing import Type
 
 
 class AbstractFloorSpace(AbstractSpace):
@@ -12,7 +13,7 @@ class AbstractFloorSpace(AbstractSpace):
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, area: BinaryMeasure, location: str = None):
+    def __init__(self, area: Type[BinaryMeasure], location: str = None):
         super().__init__(area, location)
         self.adjacent_spaces: List[AbstractFloorSpace] = []
 
