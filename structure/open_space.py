@@ -1,6 +1,7 @@
 from interfaces import AbstractFloorSpace
 from datatypes import BinaryMeasure
 from enumerations import OpenSpaceType
+from typing import Type
 
 
 class OpenSpace(AbstractFloorSpace):
@@ -11,7 +12,7 @@ class OpenSpace(AbstractFloorSpace):
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, area: BinaryMeasure, space_type: OpenSpaceType, location: str = None):
+    def __init__(self, area: Type[BinaryMeasure], space_type: OpenSpaceType, location: str = None):
         """
         :param area: The area of the open space.
         :param location: The location of the open space (three words delimited with a period).

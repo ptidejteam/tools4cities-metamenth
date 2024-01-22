@@ -1,17 +1,20 @@
+from abc import ABC
+
 from datatypes import BinaryMeasure
 from interfaces import AbstractFloorSpace
 from enumerations import RoomType
 from measure_instruments import Meter
+from typing import Type
 
 
-class Room(AbstractFloorSpace):
+class Room(AbstractFloorSpace, ABC):
     """
     Defines rooms on a floor of a building
     """
 
     def __init__(
         self,
-        area: BinaryMeasure,
+        area: Type[BinaryMeasure],
         name: str,
         room_type: RoomType,
         meter: Meter = None,

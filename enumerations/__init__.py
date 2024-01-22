@@ -9,3 +9,7 @@ from .weather_value_type import WeatherValueType
 from .hvac_type import HVACType
 from .material_type import MaterialType
 from .cover_type import CoverType
+from .building_entity import BuildingEntity
+from .trigger_type import TriggerType
+from .measure_type import MeasureType
+from .sensor_measure import SensorMeasure

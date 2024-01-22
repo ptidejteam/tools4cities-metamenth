@@ -1,3 +1,5 @@
+from abc import ABC
+
 from interfaces import AbstractSpace
 from datatypes import BinaryMeasure
 from enumerations import FloorType
@@ -6,9 +8,10 @@ from structure import Room
 from typing import List
 from typing import Type
 from measure_instruments import Meter
+from visitors import EntityRemover
 
 
-class Floor(AbstractSpace):
+class Floor(AbstractSpace, ABC):
     """
     A floor on a building
 
@@ -74,6 +77,9 @@ class Floor(AbstractSpace):
         :param meters: The open spaces to add to the floor.
         """
         self.meters.extend(meters)
+
+    def remove_entity(self, visitor: EntityRemover, entity: str, UID: str):
+        visitor.remove_floor_entity(self, entity, UID)
 
     def __str__(self):
         floor_details = (f"Floor {self.number} ({self.floor_type.value}): {self.description}, "
