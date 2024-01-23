@@ -1,10 +1,11 @@
 from typing import List
 from .abstract_space import AbstractSpace
-from datatypes import BinaryMeasure
+from datatypes.binary_measure import BinaryMeasure
 from abc import abstractmethod
 from typing import Type
-from transducer import AbstractTransducer
+from transducer.interfaces import AbstractTransducer
 from visitors import EntityRemover
+from visitors import EntityInsert
 from enumerations import BuildingEntity
 
 
@@ -37,13 +38,7 @@ class AbstractFloorSpace(AbstractSpace):
         :param new_transducer: a transducer to be added to this space
         :return:
         """
-        existing_transducer = next(
-            (transducer for transducer in self.transducers if transducer.name == new_transducer.name),
-            None
-        )
-
-        if existing_transducer is None:
-            self.transducers.append(new_transducer)
+        EntityInsert.insert_space_entity(self, new_transducer, BuildingEntity.TRANSDUCER.value)
 
     @abstractmethod
     def remove_transducer(self, name: str):

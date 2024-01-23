@@ -2,11 +2,17 @@ from enumerations import ZoneType
 from enumerations import HVACType
 from uuid import uuid4
 from typing import List
-from interfaces import AbstractSpace
+from structure.interfaces import AbstractSpace
 from typing import Type
 
 
 class Zone:
+    """
+    A zone in a building e.g. HVAC (thermal) zone
+
+    Author: Peter Yefi
+    Email: peteryefi@gmail.com
+    """
     def __init__(self,
                  name: str,
                  zone_type: Type[ZoneType],

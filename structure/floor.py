@@ -1,10 +1,10 @@
 from abc import ABC
 
-from interfaces import AbstractSpace
-from datatypes import BinaryMeasure
+from structure.interfaces import AbstractSpace
+from datatypes.binary_measure import BinaryMeasure
 from enumerations import FloorType
-from structure import OpenSpace
-from structure import Room
+from structure.open_space import OpenSpace
+from structure.room import Room
 from typing import List
 from typing import Type
 from measure_instruments import Meter

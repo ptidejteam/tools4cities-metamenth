@@ -13,3 +13,4 @@ from .building_entity import BuildingEntity
 from .trigger_type import TriggerType
 from .measure_type import MeasureType
 from .sensor_measure import SensorMeasure
+from .recording_types import RecordingType

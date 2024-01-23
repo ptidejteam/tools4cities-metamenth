@@ -1,5 +1,5 @@
-from interfaces import AbstractFloorSpace
-from datatypes import BinaryMeasure
+from structure.interfaces import AbstractFloorSpace
+from datatypes.binary_measure import BinaryMeasure
 from enumerations import OpenSpaceType
 from typing import Type
 

@@ -1,7 +1,7 @@
 from abc import ABC
 
-from datatypes import BinaryMeasure
-from interfaces import AbstractFloorSpace
+from datatypes.binary_measure import BinaryMeasure
+from structure.interfaces import AbstractFloorSpace
 from enumerations import RoomType
 from measure_instruments import Meter
 from typing import Type
@@ -10,6 +10,9 @@ from typing import Type
 class Room(AbstractFloorSpace, ABC):
     """
     Defines rooms on a floor of a building
+
+    Author: Peter Yefi
+    Email: peteryefi@gmail.com
     """
 
     def __init__(

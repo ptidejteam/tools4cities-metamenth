@@ -1,5 +1,5 @@
 import uuid
-from structure import Cover
+from structure.cover import Cover
 from typing import List
 
 

@@ -1,9 +1,16 @@
 import uuid
-from datatypes import BinaryMeasure
-from structure import Material
+from datatypes.binary_measure import BinaryMeasure
+from structure.material import Material
+from misc import Validate
 
 
 class Layer:
+    """
+    A layer in the envelope of a building
+
+    Author: Peter Yefi
+    Email: peteryefi@gmail.com
+    """
     def __init__(
         self,
         thermal_resistance: BinaryMeasure,
@@ -21,16 +28,10 @@ class Layer:
         self.height = height
         self.length = length
         self.thickness = thickness
-        self.solar_heat_gain_coefficient = self.validate_solar_heat_gain_coefficient(solar_heat_gain_coefficient)
+        self.solar_heat_gain_coefficient = Validate.validate_solar_heat_gain_coefficient(solar_heat_gain_coefficient)
         self.has_vapour_barrier = has_vapour_barrier
         self.has_air_barrier = has_air_barrier
         self.material = material
-
-    def validate_solar_heat_gain_coefficient(self, value):
-        if 0 <= value <= 1:
-            return value
-        else:
-            raise ValueError("Solar Heat Gain Coefficient must be a float between 0 and 1.")
 
     def __str__(self):
         material_str = f"Material: {str(self.material)}" if self.material else "Material: None"

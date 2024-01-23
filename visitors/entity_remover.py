@@ -3,7 +3,10 @@ from enumerations import BuildingEntity
 
 class EntityRemover:
     """
-    A visitor that remove entities from objects
+    A visitor that inserts entities into other entities
+
+    Author: Peter Yefi
+    Email: peteryefi@gmail.com
     """
 
     def __init__(self):
@@ -52,5 +55,5 @@ class EntityRemover:
         :param name: the unique name of the entity to be removed
         :return:
         """
-        if entity == BuildingEntity.TRANSDUCER:
+        if entity == BuildingEntity.TRANSDUCER.value:
             space.transducers = [transducer for transducer in space.transducers if transducer.name != name]

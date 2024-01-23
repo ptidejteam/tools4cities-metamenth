@@ -13,6 +13,12 @@ from visitors import EntityRemover
 
 
 class Building:
+    """
+    A representation of a building
+
+    Author: Peter Yefi
+    Email: peteryefi@gmail.com
+    """
     def __init__(
         self,
         construction_year: int,

@@ -1,6 +1,5 @@
-from typing import Type
 from abc import ABC
-from .measure import Measure
+from datatypes.measure import Measure
 
 
 class AbstractMeasure(ABC):
@@ -10,7 +9,7 @@ class AbstractMeasure(ABC):
     Author: Peter Yefi
     Email: peteryefi@gmail.com
     """
-    def __init__(self, measure: Type[Measure]):
+    def __init__(self, measure: Measure):
         self.measurement_unit = measure.unit
 
     def __str__(self):

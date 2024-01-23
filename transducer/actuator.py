@@ -1,12 +1,18 @@
 from abc import ABC
-from .abstract_transducer import AbstractTransducer
+from transducer.interfaces import AbstractTransducer
 from measure_instruments import TriggerHistory
 from typing import List
 from .sensor import Sensor
-from datatypes import AbstractMeasure
+from datatypes.interfaces import AbstractMeasure
 
 
 class Actuator(AbstractTransducer, ABC):
+    """
+    A representation of an actuator in a building
+
+    Author: Peter Yefi
+    Email: peteryefi@gmail.com
+    """
 
     def __init__(self, name: str,  set_point: AbstractMeasure, trigger_output: object, trigger_input: Sensor,
                  trigger_value: int = None):

@@ -1,5 +1,4 @@
-from typing import Type
-from .abstract_measure import AbstractMeasure
+from datatypes.interfaces import AbstractMeasure
 from .measure import Measure
 
 
@@ -10,7 +9,7 @@ class BinaryMeasure(AbstractMeasure):
     Author: Peter Yefi
     Email: peteryefi@gmail.com
     """
-    def __init__(self, measure: Type[Measure]):
+    def __init__(self, measure: Measure):
         super().__init__(measure)
         self.value = measure.minimum
 

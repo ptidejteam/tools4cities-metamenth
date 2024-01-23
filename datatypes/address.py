@@ -1,9 +1,15 @@
 from .point import Point
-from datatypes import BinaryMeasure
+from datatypes.binary_measure import BinaryMeasure
 from misc import Validate
 
 
 class Address:
+    """
+    Address of a building
+
+    Author: Peter Yefi
+    Email: peteryefi@gmail.com
+    """
     def __init__(self, city: str, street: str, state: str, zip_code: str, country: str,
                  geocoordinate: Point = None,  what3word: str = None, north_orientation: BinaryMeasure = None):
         """

@@ -1,6 +1,6 @@
 import uuid
 from enumerations import CoverType
-from structure import Layer
+from structure.layer import Layer
 from typing import List
 from typing import Type
 

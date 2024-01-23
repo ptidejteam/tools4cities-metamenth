@@ -1,5 +1,4 @@
-from .abstract_range_measure import AbstractRangeMeasure
-from typing import Type
+from datatypes.interfaces import AbstractRangeMeasure
 from .measure import Measure
 
 
@@ -10,7 +9,7 @@ class ExponentialMeasure(AbstractRangeMeasure):
     Author: Peter Yefi
     Email: peteryefi@gmail.com
     """
-    def __init__(self, measure: Type[Measure]):
+    def __init__(self, measure: Measure):
         super().__init__(measure)
         self.exponent = measure.exponent
         self.mantissa: measure.mantissa

@@ -1,6 +1,5 @@
-from .abstract_range_measure import AbstractRangeMeasure
+from datatypes.interfaces import AbstractRangeMeasure
 from .measure import Measure
-from typing import Type
 
 
 class LinearMeasure(AbstractRangeMeasure):
@@ -10,7 +9,7 @@ class LinearMeasure(AbstractRangeMeasure):
     Author: Peter Yefi
     Email: peteryefi@gmail.com
     """
-    def __init__(self, measure: Type[Measure]):
+    def __init__(self, measure: Measure):
         """
         :param measure: the measurement object
         """

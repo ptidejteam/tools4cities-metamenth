@@ -1,4 +1,4 @@
-from datatypes import BinaryMeasure
+from datatypes.binary_measure import BinaryMeasure
 from enumerations import WeatherValueType
 from datetime import datetime
 from uuid import uuid4

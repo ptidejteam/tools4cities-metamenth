@@ -1,6 +1,5 @@
-from typing import Type
 from .abstract_measure import AbstractMeasure
-from .measure import Measure
+from datatypes.measure import Measure
 
 
 class AbstractRangeMeasure(AbstractMeasure):
@@ -11,7 +10,7 @@ class AbstractRangeMeasure(AbstractMeasure):
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, measure: Type[Measure]):
+    def __init__(self, measure: Measure):
         super().__init__(measure)
         self.minimum = measure.minimum
         self.maximum = measure.maximum

@@ -1,5 +1,5 @@
 from abc import ABC
-from .abstract_transducer import AbstractTransducer
+from transducer.interfaces import AbstractTransducer
 from typing import Optional
 from enumerations import SensorMeasure
 from enumerations import MeasurementUnit
