@@ -29,10 +29,11 @@ class Validate:
 
     @staticmethod
     def validate_solar_heat_gain_coefficient(value: float) -> float:
-        if 0 <= value <= 1:
-            return value
-        else:
-            raise ValueError("Solar Heat Gain Coefficient must be a float between 0 and 1.")
+        if value is not None:
+            if 0 <= value <= 1:
+                return value
+            else:
+                raise ValueError("Solar Heat Gain Coefficient must be a float between 0 and 1.")
 
     @staticmethod
     def validate_none(attributes: Dict):

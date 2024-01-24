@@ -19,19 +19,89 @@ class Material:
         heat_capacity: AbstractMeasure,
         thermal_transmittance: AbstractMeasure,
         thermal_resistance: AbstractMeasure,
+        solar_heat_gain_coefficient: float = None,
     ):
-        # validate material
-        Validate.validate_none({'description': description, 'material_type': material_type,
-                                'density': density, 'heat_capacity': heat_capacity,
-                                'thermal_resistance': thermal_resistance,
-                                'thermal_transmittance': thermal_transmittance})
-        self.UID = str(uuid.uuid4())
-        self.description = description
-        self.material_type = material_type
-        self.density = density
-        self.heat_capacity = heat_capacity
-        self.thermal_transmittance = thermal_transmittance
-        self.thermal_resistance = thermal_resistance
+
+        self._UID = str(uuid.uuid4())
+        self._description = description
+        self._material_type = material_type
+        self._density = density
+        self._heat_capacity = heat_capacity
+        self._thermal_transmittance = thermal_transmittance
+        self._thermal_resistance = thermal_resistance
+        self._solar_heat_gain_coefficient = Validate.validate_solar_heat_gain_coefficient(solar_heat_gain_coefficient)
+
+    @property
+    def UID(self):
+        return self._UID
+
+    @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    def description(self, value):
+        if value is None:
+            raise ValueError("description must be a string")
+        self._description = value
+
+    @property
+    def material_type(self):
+        return self._material_type
+
+    @material_type.setter
+    def material_type(self, value):
+        if value is None:
+            raise ValueError("material_type must be of type MaterialType")
+        self._material_type = value
+
+    @property
+    def density(self):
+        return self._density
+
+    @density.setter
+    def density(self, value):
+        if value is None:
+            raise ValueError("density must be of type BinaryMeasure")
+        self._density = value
+
+    @property
+    def heat_capacity(self):
+        return self._heat_capacity
+
+    @heat_capacity.setter
+    def heat_capacity(self, value):
+        if value is None:
+            raise ValueError("heat_capacity must be of type BinaryMeasure")
+        self._heat_capacity = value
+
+    @property
+    def thermal_transmittance(self):
+        return self._thermal_transmittance
+
+    @thermal_transmittance.setter
+    def thermal_transmittance(self, value):
+        if value is None:
+            raise ValueError("thermal_transmittance must be of type BinaryMeasure")
+        self._thermal_transmittance = value
+
+    @property
+    def thermal_resistance(self):
+        return self._thermal_resistance
+
+    @thermal_resistance.setter
+    def thermal_resistance(self, value):
+        if value is None:
+            raise ValueError("thermal_resistance must be of type BinaryMeasure")
+        self._thermal_resistance = value
+
+    @property
+    def solar_heat_gain_coefficient(self):
+        return self._solar_heat_gain_coefficient
+
+    @solar_heat_gain_coefficient.setter
+    def solar_heat_gain_coefficient(self, value):
+        self._solar_heat_gain_coefficient = Validate.validate_solar_heat_gain_coefficient(value)
 
     def __str__(self):
         return (
@@ -42,5 +112,6 @@ class Material:
             f"Density: {self.density.value} {self.density.measurement_unit.value}, "
             f"Heat Capacity: {self.heat_capacity.value} {self.heat_capacity.measurement_unit.value}, "
             f"Thermal Transmittance: {self.thermal_transmittance.value} {self.thermal_transmittance.measurement_unit.value}, "
-            f"Thermal Resistance: {self.thermal_resistance.value} {self.thermal_resistance.measurement_unit.value})"
+            f"Thermal Resistance: {self.thermal_resistance.value} {self.thermal_resistance.measurement_unit.value}"
+            f"Solar Heat Gain Coefficient: {self.solar_heat_gain_coefficient}"
         )

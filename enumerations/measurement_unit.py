@@ -40,6 +40,8 @@ class MeasurementUnit(Enum):
     JOULES_PER_KELVIN = "JoulesPerKelvin (J/K)"
     WATTS_PER_SQUARE_METER_KELVIN = "WattsPerSquareMeterKelvin (W/(m2.K))"
     SQUARE_METERS_KELVIN_PER_WATTS = "SquareMetersKelvinPerWatts (m2.K/W)"
+    METERS = "Meter (m)"
+    CENTIMETERS = "Centimeter (cm)"
 
 
 
