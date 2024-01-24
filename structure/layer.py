@@ -21,7 +21,7 @@ class Layer:
         has_air_barrier: bool = False,
 
     ):
-
+        Validate.validate_none({"height": height, "length": length, "thickness": thickness, "material": material})
         self._UID = str(uuid.uuid4())  # Generate a unique identifier
         self._height = height
         self._length = length
@@ -31,63 +31,63 @@ class Layer:
         self._material = material
 
     @property
-    def UID(self):
+    def UID(self) -> str:
         return self._UID
 
     @property
-    def height(self):
+    def height(self) -> AbstractMeasure:
         return self._height
 
     @height.setter
-    def height(self, value):
+    def height(self, value: AbstractMeasure):
         if value is None:
             raise ValueError("height should be of type BinaryMeasure")
         self._height = value
 
     @property
-    def length(self):
+    def length(self) -> AbstractMeasure:
         return self._length
 
     @length.setter
-    def length(self, value):
+    def length(self, value: AbstractMeasure):
         if value is None:
             raise ValueError("length should be of type BinaryMeasure")
         self._length = value
 
     @property
-    def thickness(self):
+    def thickness(self) -> AbstractMeasure:
         return self._thickness
 
     @thickness.setter
-    def thickness(self, value):
+    def thickness(self, value: AbstractMeasure):
         if value is None:
             raise ValueError("thickness should be of type BinaryMeasure")
         self._thickness = value
 
     @property
-    def material(self):
+    def material(self) -> Material:
         return self._material
 
     @material.setter
-    def material(self, value):
+    def material(self, value: Material):
         if value is None:
             raise ValueError("material cannot be None")
         self._material = value
 
     @property
-    def has_vapour_barrier(self):
+    def has_vapour_barrier(self) -> bool:
         return self._has_vapour_barrier
 
     @has_vapour_barrier.setter
-    def has_vapour_barrier(self, value):
+    def has_vapour_barrier(self, value: bool):
         self._has_vapour_barrier = value
 
     @property
-    def has_air_barrier(self):
+    def has_air_barrier(self) -> bool:
         return self._has_air_barrier
 
     @has_air_barrier.setter
-    def has_air_barrier(self, value):
+    def has_air_barrier(self, value: bool):
         self._has_air_barrier = value
 
     def __str__(self):

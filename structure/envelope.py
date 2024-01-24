@@ -11,8 +11,12 @@ class Envelope:
     Email: peteryefi@gmail.com
     """
     def __init__(self):
-        self.UID = str(uuid.uuid4())
-        self.covers: List['Cover'] = []
+        self._UID = str(uuid.uuid4())
+        self._covers: List['Cover'] = []
+
+    @property
+    def UID(self) -> str:
+        return self._UID
 
     def add_cover(self, cover: Cover):
         """
@@ -20,7 +24,13 @@ class Envelope:
         :param cover: the building cover e.g., wall, roof
         :return:
         """
-        self.covers.append(cover)
+        if cover is None:
+            raise ValueError("cover must be of type Cover")
+        self._covers.append(cover)
+
+    @property
+    def covers(self) -> List['Cover']:
+        return self._covers
 
     def __str__(self):
         cover_details = "\n".join(str(cover) for cover in self.covers)
