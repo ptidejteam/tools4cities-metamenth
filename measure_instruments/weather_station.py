@@ -9,9 +9,25 @@ class WeatherStation:
         """
         :param location: The location of the weather station.
         """
-        self.UID = str(uuid4())
-        self.location = Validate.validate_what3word(location)
-        self.weather_data: List[WeatherData] = []
+        self._UID = str(uuid4())
+        self._location = Validate.validate_what3word(location)
+        self._weather_data: List[WeatherData] = []
+
+    @property
+    def UID(self) -> str:
+        return self._UID
+
+    @property
+    def location(self) -> str:
+        return self._location
+
+    @location.setter
+    def location(self, value: str):
+        self._location = Validate.validate_what3word(value)
+
+    @property
+    def weather_data(self) -> List[WeatherData]:
+        return self._weather_data
 
     def add_weather_data(self, weather_data: [WeatherData]):
         """

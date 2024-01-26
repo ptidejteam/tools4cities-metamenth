@@ -2,18 +2,35 @@ from datatypes.binary_measure import BinaryMeasure
 from enumerations import WeatherValueType
 from datetime import datetime
 from uuid import uuid4
+from misc import Validate
+from datatypes.interfaces import AbstractMeasure
 
 
 class WeatherData:
-    def __init__(self, value: BinaryMeasure, value_type: WeatherValueType):
+    def __init__(self, data: AbstractMeasure):
         """
-        :param value: The binary measure (value and unit) of the weather data.
-        :param value_type: The type of weather data e.g., humidity.
+        :param data: The binary measure (value and unit) of the weather data.
         """
-        self.UID = str(uuid4())  # Generating a unique identifier
-        self.timestamp = datetime.now()
-        self.value = value
-        self.value_type = value_type
+        Validate.validate_none({"Data": data})
+        self._UID = str(uuid4())  # Generating a unique identifier
+        self._timestamp = datetime.now()
+        self._data = data
+
+    @property
+    def UID(self) -> str:
+        return self._UID
+
+    @property
+    def data(self) -> AbstractMeasure:
+        return self._data
+
+    @data.setter
+    def data(self, value: AbstractMeasure):
+        self._data = value
+
+    @property
+    def timestamp(self) -> datetime:
+        return self._timestamp
 
     def __str__(self):
         """
@@ -25,6 +42,5 @@ class WeatherData:
             f"BuildingWeatherData("
             f"UID: {self.UID}, "
             f"Timestamp: {self.timestamp}, "
-            f"Value: {self.value.value}, "
-            f"ValueType: {self.value_type.value})"
+            f"Data: {self.data})"
         )
