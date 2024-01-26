@@ -16,9 +16,31 @@ class MeterMeasure:
         :param value: The numerical value measured by the meter
 
         """
-        self.UID = uuid.uuid4()  # Automatically generated unique identifier
-        self.timestamp = datetime.now()
+        self._UID = uuid.uuid4()
+        self._timestamp = datetime.now()
+        self._value = None
+
+        # Apply validation
         self.value = value
+
+    @property
+    def UID(self):
+        return self._UID
+
+    @property
+    def value(self) -> float:
+        return self._value
+
+    @value.setter
+    def value(self, value: float):
+        if value is not None:
+            self._value = value
+        else:
+            raise ValueError("Value must be a float")
+
+    @property
+    def timestamp(self) -> datetime:
+        return self._timestamp
 
     def __str__(self):
         """
