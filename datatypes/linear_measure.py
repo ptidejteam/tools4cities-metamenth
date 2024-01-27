@@ -1,4 +1,4 @@
-from datatypes.interfaces import AbstractRangeMeasure
+from datatypes.interfaces.abstract_range_measure import AbstractRangeMeasure
 from .measure import Measure
 
 

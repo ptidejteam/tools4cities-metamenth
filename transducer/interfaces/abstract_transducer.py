@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any
-from datatypes import ContinuousMeasure
+from datatypes.continuous_measure import ContinuousMeasure
 from uuid import uuid4
 
 

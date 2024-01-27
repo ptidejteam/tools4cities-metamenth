@@ -11,6 +11,3 @@ class Point:
     """
     latitude: float
     longitude: float
-
-
-c = Point(0.0, 0.0)

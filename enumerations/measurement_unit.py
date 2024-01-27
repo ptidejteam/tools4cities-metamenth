@@ -42,6 +42,7 @@ class MeasurementUnit(Enum):
     SQUARE_METERS_KELVIN_PER_WATTS = "SquareMetersKelvinPerWatts (m2.K/W)"
     METERS = "Meter (m)"
     CENTIMETERS = "Centimeter (cm)"
+    SQUARE_METER = "SquareMeter (m2)"
 
 
 

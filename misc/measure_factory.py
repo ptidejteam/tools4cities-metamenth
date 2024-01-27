@@ -2,7 +2,7 @@ from datatypes.binary_measure import BinaryMeasure
 from datatypes.linear_measure import LinearMeasure
 from datatypes.continuous_measure import ContinuousMeasure
 from datatypes.exponential_measure import ExponentialMeasure
-from datatypes.interfaces import AbstractMeasure
+from datatypes.interfaces.abstract_measure import AbstractMeasure
 from datatypes.measure import Measure
 
 

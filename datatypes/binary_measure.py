@@ -1,4 +1,4 @@
-from datatypes.interfaces import AbstractMeasure
+from datatypes.interfaces.abstract_measure import AbstractMeasure
 from .measure import Measure
 
 

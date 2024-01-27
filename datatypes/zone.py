@@ -2,7 +2,7 @@ from enumerations import ZoneType
 from enumerations import HVACType
 from uuid import uuid4
 from typing import List
-from structure.interfaces import AbstractSpace
+from structure.interfaces.abstract_space import AbstractSpace
 from typing import Type
 
 
@@ -15,8 +15,8 @@ class Zone:
     """
     def __init__(self,
                  name: str,
-                 zone_type: Type[ZoneType],
-                 hvac_type: Type[HVACType] = HVACType.NONE,
+                 zone_type: ZoneType,
+                 hvac_type: HVACType = HVACType.NONE,
                  description: str = None
                  ):
         """
@@ -25,14 +25,73 @@ class Zone:
         :param zone_type: The type of the zone.
         :param hvac_type: The HVAC type of the zone. Defaults to HVACType.NONE if zone_type is not HVAC.
         """
-        self.UID = str(uuid4())
-        self.description = description
+        self._UID = str(uuid4())
+        self._description = description
+        self._name = None
+        self._zone_type = None
+        self._hvac_type = None
+        self._adjacent_zones: List['Zone'] = []
+        self._overlapping_zones: List['Zone'] = []
+        self._spaces: List['AbstractSpace'] = []
+
+        # Apply validation
         self.name = name
         self.zone_type = zone_type
-        self.hvac_type = hvac_type if zone_type == ZoneType.HVAC else HVACType.NONE
-        self.adjacent_zones: List['Zone'] = []
-        self.overlapping_zones: List['Zone'] = []
-        self.spaces: List['AbstractSpace'] = []
+        self.hvac_type = hvac_type
+
+    @property
+    def UID(self) -> str:
+        return self._UID
+
+    @property
+    def description(self) -> str:
+        return self._description
+
+    @description.setter
+    def description(self, value: str):
+        self._description = value
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @name.setter
+    def name(self, value: str):
+        if value is None:
+            raise ValueError('name must be a string')
+        self._name = value
+
+    @property
+    def zone_type(self) -> ZoneType:
+        return self._zone_type
+
+    @zone_type.setter
+    def zone_type(self, value: ZoneType):
+        if value is None:
+            raise ValueError('zone_type must be of type ZoneType')
+        self._zone_type = value
+
+    @property
+    def hvac_type(self) -> HVACType:
+        return self._hvac_type
+
+    @hvac_type.setter
+    def hvac_type(self, value: ZoneType):
+        if self.zone_type != ZoneType.HVAC:
+            raise ValueError("HVAC type is only applicable for zones with ZoneType.HVAC.")
+        self._hvac_type = value
+
+    @property
+    def adjacent_zones(self) -> List['Zone']:
+        return self._adjacent_zones
+
+    @property
+    def overlapping_zones(self) -> List['Zone']:
+        return self._overlapping_zones
+
+    @property
+    def spaces(self) -> List['AbstractSpace']:
+        return self._spaces
 
     def add_adjacent_zones(self, adjacent_zones: List['Zone']):
         """
@@ -78,8 +137,8 @@ class Zone:
             f"Description: {self.description}, "
             f"ZoneType: {self.zone_type.value}, "
             f"HVACType: {self.hvac_type.value}, "
-            f"Adjacent Zones: {len(self.adjacent_zones)}, "
-            f"Overlapping Zones: {len(self.overlapping_zones)})"
+            f"Adjacent Zones Count: {len(self.adjacent_zones)}, "
+            f"Overlapping Zones Count: {len(self.overlapping_zones)})"
         )
 
         overlapping_zones = "\n".join(str(zone) for zone in self.overlapping_zones)
