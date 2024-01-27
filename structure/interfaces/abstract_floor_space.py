@@ -1,8 +1,6 @@
 from typing import List
 from .abstract_space import AbstractSpace
-from datatypes.binary_measure import BinaryMeasure
-from abc import abstractmethod
-from typing import Type
+from datatypes.interfaces.abstract_measure import AbstractMeasure
 from transducer.interfaces import AbstractTransducer
 from visitors import EntityRemover
 from visitors import EntityInsert
@@ -17,12 +15,19 @@ class AbstractFloorSpace(AbstractSpace):
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, area: Type[BinaryMeasure], location: str = None):
+    def __init__(self, area: AbstractMeasure, location: str = None):
         super().__init__(area, location)
-        self.adjacent_spaces: List[AbstractFloorSpace] = []
-        self.transducers: List[AbstractTransducer] = []
+        self._adjacent_spaces: List[AbstractFloorSpace] = []
+        self._transducers: List[AbstractTransducer] = []
 
-    @abstractmethod
+    @property
+    def adjacent_spaces(self) -> List['AbstractFloorSpace']:
+        return self._adjacent_spaces
+
+    @property
+    def transducers(self) -> List[AbstractTransducer]:
+        return self._transducers
+
     def add_adjacent_space(self, space: 'AbstractFloorSpace'):
         """
         specifies (adds) which spaces (room and open spaces) are adjacent to other spaces
@@ -31,7 +36,6 @@ class AbstractFloorSpace(AbstractSpace):
         """
         self.adjacent_spaces.append(space)
 
-    @abstractmethod
     def add_transducer(self, new_transducer: AbstractTransducer):
         """
         Adds sensors and/or actuators to entities (rooms, open spaces, equipment, etc.)
@@ -40,6 +44,12 @@ class AbstractFloorSpace(AbstractSpace):
         """
         EntityInsert.insert_space_entity(self, new_transducer, BuildingEntity.TRANSDUCER.value)
 
-    @abstractmethod
     def remove_transducer(self, name: str):
         EntityRemover.remove_space_entity(self, BuildingEntity.TRANSDUCER.value, name)
+
+    def __str__(self) -> str:
+        return (
+            f"{super().__str__()}"
+            f"Adjacent Spaces: {self.adjacent_spaces}, "
+            f"Transducers: {self.transducers}, "
+        )

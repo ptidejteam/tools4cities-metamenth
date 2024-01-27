@@ -1,6 +1,6 @@
 from abc import ABC
 
-from structure.interfaces import AbstractSpace
+from structure.interfaces.abstract_space import AbstractSpace
 from datatypes.binary_measure import BinaryMeasure
 from enumerations import FloorType
 from structure.open_space import OpenSpace

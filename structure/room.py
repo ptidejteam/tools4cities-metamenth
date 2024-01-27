@@ -1,7 +1,7 @@
 from abc import ABC
 
 from datatypes.binary_measure import BinaryMeasure
-from structure.interfaces import AbstractFloorSpace
+from structure.interfaces.abstract_floor_space import AbstractFloorSpace
 from enumerations import RoomType
 from measure_instruments import Meter
 from typing import Type

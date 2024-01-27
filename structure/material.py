@@ -1,5 +1,5 @@
 from enumerations import MaterialType
-from datatypes.interfaces import AbstractMeasure
+from datatypes.interfaces.abstract_measure import AbstractMeasure
 import uuid
 from misc import Validate
 
