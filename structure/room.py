@@ -1,10 +1,8 @@
 from abc import ABC
-
-from datatypes.binary_measure import BinaryMeasure
+from datatypes.interfaces.abstract_measure import AbstractMeasure
 from structure.interfaces.abstract_floor_space import AbstractFloorSpace
 from enumerations import RoomType
 from measure_instruments import Meter
-from typing import Type
 
 
 class Room(AbstractFloorSpace, ABC):
@@ -17,7 +15,7 @@ class Room(AbstractFloorSpace, ABC):
 
     def __init__(
         self,
-        area: Type[BinaryMeasure],
+        area: AbstractMeasure,
         name: str,
         room_type: RoomType,
         meter: Meter = None,
@@ -31,13 +29,50 @@ class Room(AbstractFloorSpace, ABC):
         :param meter: if the room has any meter (optional)
         """
         super().__init__(area, location)
+        self._name = None
+        self._room_type = None
+        self._meter = meter
+
+        # call setters to apply validation
         self.name = name
         self.room_type = room_type
-        self.meter = meter
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @name.setter
+    def name(self, value: str):
+        if value is not None:
+            self._name = value
+        else:
+            raise ValueError("name must be a string")
+
+    @property
+    def room_type(self) -> RoomType:
+        return self._room_type
+
+    @room_type.setter
+    def room_type(self, value: RoomType):
+        if value is not None:
+            self._room_type = value
+        else:
+            raise ValueError("room_type must be of type RoomType")
+
+    @property
+    def meter(self) -> Meter:
+        return self._meter
+
+    @meter.setter
+    def meter(self, value: Meter):
+        if value:
+            if value.meter_location != self.location:
+                raise ValueError("what3words location of meter should be the same as room")
+        self._meter = value
 
     def __str__(self):
         room_details = (
-            f"Room (UID: {self.UID}, Area: {self.area}, Location: {self.location}, "
+            f"Room ({super().__str__()} Room, "
             f"Name: {self.name}, Room Type: {self.room_type})"
         )
 

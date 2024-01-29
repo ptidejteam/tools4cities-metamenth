@@ -1,9 +1,7 @@
-from datatypes.binary_measure import BinaryMeasure
-from enumerations import WeatherValueType
 from datetime import datetime
 from uuid import uuid4
 from misc import Validate
-from datatypes.interfaces import AbstractMeasure
+from datatypes.interfaces.abstract_measure import AbstractMeasure
 
 
 class WeatherData:

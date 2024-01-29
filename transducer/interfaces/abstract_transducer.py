@@ -33,7 +33,6 @@ class AbstractTransducer(ABC):
         self.change_of_value = change_of_value
         self.meta_data: Dict[str, Any] = {}
 
-    @abstractmethod
     def add_meta_data(self, key, value):
         """
         Adds meta data to transducer

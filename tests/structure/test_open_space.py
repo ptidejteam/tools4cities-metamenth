@@ -47,7 +47,7 @@ class TestOpenSpace(TestCase):
 
     def test_open_space_with_no_space_type(self):
         try:
-            space = OpenSpace(self.area, None)
+            OpenSpace(self.area, None)
         except ValueError as err:
             self.assertEqual(err.__str__(), "space_type must be of type OpenSpaceType")
 
