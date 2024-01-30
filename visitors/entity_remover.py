@@ -55,3 +55,19 @@ class EntityRemover:
         """
         if entity == BuildingEntity.TRANSDUCER.value:
             space.transducers = [transducer for transducer in space.transducers if transducer.name != name]
+
+    @staticmethod
+    def remove_zonal_entity(zone, entity, UID):
+        """
+        Removes a zonal entity
+        :param entity: a string representing the floor entity to remove
+        :param UID: the unique ID of the floor entity
+        :param zone: the zone whose entity is being removed
+        :return:
+        """
+        if entity == BuildingEntity.SPACE.value:
+            zone.spaces = [space for space in zone.spaces if space.UID != UID]
+        elif entity == BuildingEntity.ADJACENT_ZONE.value:
+            zone.adjacent_zones = [ad_zone for ad_zone in zone.adjacent_zones if ad_zone.UID != UID]
+        elif entity == BuildingEntity.OVERLAPPING_ZONE.value:
+            zone.overlapping_zones = [over_zone for over_zone in zone.overlapping_zones if over_zone.UID != UID]

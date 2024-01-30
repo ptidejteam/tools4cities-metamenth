@@ -3,7 +3,7 @@ from enumerations import HVACType
 from uuid import uuid4
 from typing import List
 from structure.interfaces.abstract_space import AbstractSpace
-from typing import Type
+from visitors import EntityRemover
 
 
 class Zone:
@@ -13,6 +13,7 @@ class Zone:
     Author: Peter Yefi
     Email: peteryefi@gmail.com
     """
+
     def __init__(self,
                  name: str,
                  zone_type: ZoneType,
@@ -37,7 +38,8 @@ class Zone:
         # Apply validation
         self.name = name
         self.zone_type = zone_type
-        self.hvac_type = hvac_type
+        if zone_type == ZoneType.HVAC:
+            self.hvac_type = hvac_type
 
     @property
     def UID(self) -> str:
@@ -93,18 +95,52 @@ class Zone:
     def spaces(self) -> List['AbstractSpace']:
         return self._spaces
 
+    @spaces.setter
+    def spaces(self, spaces: [AbstractSpace]):
+        if spaces is not None:
+            self._spaces = spaces
+        else:
+            raise ValueError('spaces must be of type [AbstractSpace]')
+
+    @adjacent_zones.setter
+    def adjacent_zones(self, adjacent_zones: ['Zone']):
+        if adjacent_zones is not None:
+            self._adjacent_zones = adjacent_zones
+        else:
+            raise ValueError('adjacent_zones must be of type [Zone]')
+
+    @overlapping_zones.setter
+    def overlapping_zones(self, overlapping_zones: ['Zone']):
+        if overlapping_zones is not None:
+            self._overlapping_zones = overlapping_zones
+        else:
+            raise ValueError('adjacent_zones must be of type [Zone]')
+
     def add_adjacent_zones(self, adjacent_zones: List['Zone']):
         """
         adds zones that are adjacent with the current zone.
         :param adjacent_zones: A list of zones that are adjacent to the current zone.
         """
+
         for new_adjacent_zone in adjacent_zones:
+            # you can not add the same zone as an adjacent zone
+            if self.name == new_adjacent_zone.name:
+                continue
             # Search for the zone with the same name in the adjacent_zones list
             existing_adjacent_zone = next((zone for zone in self.adjacent_zones if zone.name == new_adjacent_zone.name),
                                           None)
             if existing_adjacent_zone is None:
                 # If not found, add the new adjacent zone to the adjacent_zones list
-                self.overlapping_zones.append(new_adjacent_zone)
+                self.adjacent_zones.append(new_adjacent_zone)
+
+    def remove_zonal_entity(self, entity, UID):
+        """
+        Removes a zonal entity: adjacent_zone, overlapping_zone and spaces
+        :param entity:
+        :param UID:
+        :return:
+        """
+        EntityRemover.remove_zonal_entity(self, entity, UID)
 
     def add_spaces(self, spaces: List['AbstractSpace']):
         """
@@ -119,6 +155,9 @@ class Zone:
         :param overlapping_zones: A list of zones that are overlapping with the current zone.
         """
         for new_overlapping_zone in overlapping_zones:
+            # you can not add the same zone as an overlapping zone
+            if self.name == new_overlapping_zone.name:
+                continue
             # Search for the zone with the same name in the overlapping_zones list
             existing_overlapping_zone = next(
                 (zone for zone in self.overlapping_zones if zone.name == new_overlapping_zone.name),
@@ -134,9 +173,10 @@ class Zone:
         zone_details = (
             f"Zone("
             f"UID: {self.UID}, "
+            f"Name: {self.name}, "
             f"Description: {self.description}, "
             f"ZoneType: {self.zone_type.value}, "
-            f"HVACType: {self.hvac_type.value}, "
+            f"HVACType: {self.hvac_type.value if self.hvac_type is not None else HVACType.NONE}, "
             f"Adjacent Zones Count: {len(self.adjacent_zones)}, "
             f"Overlapping Zones Count: {len(self.overlapping_zones)})"
         )
@@ -148,4 +188,3 @@ class Zone:
             f"{zone_details}\nOverlapping Zones:\n{overlapping_zones}\n"
             f"Adjacent Zones:\n {adjacent_zones}\nSpaces: \n {spaces}"
         )
-
