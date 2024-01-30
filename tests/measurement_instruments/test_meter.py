@@ -1,5 +1,4 @@
 from unittest import TestCase
-from datetime import datetime
 from measure_instruments import Meter
 from measure_instruments import MeterMeasure
 from enumerations import MeasurementUnit
@@ -35,7 +34,6 @@ class TestMeter(TestCase):
         self.assertEqual(len(self.meter.meter_measures), 4)
         self.assertEqual(self.meter.meter_measures[0].value, 2.5)
         self.assertIsNotNone(self.meter.meter_measures[0].UID)
-        self.assertEqual(self.meter.meter_measures[3].timestamp, datetime.now())
 
 
 

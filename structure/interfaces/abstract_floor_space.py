@@ -28,6 +28,13 @@ class AbstractFloorSpace(AbstractSpace):
     def transducers(self) -> List[AbstractTransducer]:
         return self._transducers
 
+    @transducers.setter
+    def transducers(self, value: [AbstractTransducer]):
+        if value is not None:
+            self._transducers = value
+        else:
+            raise ValueError("transducers must be of type [Transducers]")
+
     def add_adjacent_space(self, space: 'AbstractFloorSpace'):
         """
         specifies (adds) which spaces (room and open spaces) are adjacent to other spaces

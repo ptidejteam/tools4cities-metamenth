@@ -1,13 +1,11 @@
 from abc import ABC
 
 from structure.interfaces.abstract_space import AbstractSpace
-from datatypes.binary_measure import BinaryMeasure
+from datatypes.interfaces.abstract_measure import AbstractMeasure
 from enumerations import FloorType
 from structure.open_space import OpenSpace
 from structure.room import Room
 from typing import List
-from typing import Type
-from measure_instruments import Meter
 from visitors import EntityRemover
 
 
@@ -21,9 +19,9 @@ class Floor(AbstractSpace, ABC):
 
     def __init__(
         self,
-        area: Type[BinaryMeasure],
+        area: AbstractMeasure,
         number: int,
-        floor_type: Type[FloorType],
+        floor_type: FloorType,
         description: str = None,
         open_spaces: [OpenSpace] = None,
         rooms: [Room] = None,
@@ -39,13 +37,15 @@ class Floor(AbstractSpace, ABC):
         :param rooms: Initial room(s) on floor.
         """
         super().__init__(area, location)
-        self.area = area
-        self.description = description
+        self._description = description
+        self._number = None
+        self._floor_type = None
+        self._open_spaces: List['OpenSpace'] = []
+        self._rooms: List['Room'] = []
+
+        # apply validation
         self.number = number
         self.floor_type = floor_type
-        self.open_spaces: List['OpenSpace'] = []
-        self.rooms: List['Room'] = []
-        self.meters: List['Meter'] = []
 
         if open_spaces:
             self.open_spaces.extend(open_spaces)
@@ -57,38 +57,81 @@ class Floor(AbstractSpace, ABC):
         if not self.open_spaces and not self.rooms:
             raise ValueError("A floor must have at least one room or one open space.")
 
+    @property
+    def description(self) -> str:
+        return self._description
+
+    @description.setter
+    def description(self, value: str):
+        self._description = value
+
+    @property
+    def number(self) -> int:
+        return self._number
+
+    @number.setter
+    def number(self, value: int):
+        if value is not None:
+            self._number = value
+        else:
+            raise ValueError("number must be an int")
+
+    @property
+    def floor_type(self) -> FloorType:
+        return self._floor_type
+
+    @floor_type.setter
+    def floor_type(self, value: FloorType):
+        if value is not None:
+            self._floor_type = value
+        else:
+            raise ValueError("floor_type must be of type FloorType")
+
+    @property
+    def open_spaces(self) -> List[OpenSpace]:
+        return self._open_spaces
+
+    @open_spaces.setter
+    def open_spaces(self, value: [OpenSpace]):
+        if value is not None:
+            self._open_spaces = value
+        else:
+            raise ValueError("open_spaces must be of type [OpenSpace]")
+
+    @property
+    def rooms(self) -> List[Room]:
+        return self._rooms
+
+    @rooms.setter
+    def rooms(self, value: [Room]):
+        if value is not None:
+            self._rooms = value
+        else:
+            raise ValueError("rooms must be of type [Room]")
+
     def add_open_spaces(self, open_spaces: List['OpenSpace']):
         """
         Add one or multiple OpenSpaces to the floor.
         :param open_spaces: The open spaces to add to the floor.
         """
-        self.open_spaces.extend(open_spaces)
+        self._open_spaces.extend(open_spaces)
 
     def add_rooms(self, rooms: List['Room']):
         """
         Add one or multiple rooms to the floor.
         :param rooms: The open spaces to add to the floor.
         """
-        self.rooms.extend(rooms)
+        self._rooms.extend(rooms)
 
-    def add_meters(self, meters: List['Meter']):
-        """
-        Add one or multiple meters to the floor.
-        :param meters: The open spaces to add to the floor.
-        """
-        self.meters.extend(meters)
-
-    def remove_entity(self, visitor: EntityRemover, entity: str, UID: str):
-        visitor.remove_floor_entity(self, entity, UID)
+    def remove_entity(self, entity: str, UID: str):
+        EntityRemover.remove_floor_entity(self, entity, UID)
 
     def __str__(self):
-        floor_details = (f"Floor {self.number} ({self.floor_type.value}): {self.description}, "
+        floor_details = (f"Floor {super().__str__()} {self.number} ({self.floor_type.value}): {self.description}, "
                          f"Area: {self.area}, Location: {self.location}, UID: {self.UID}, "
-                         f"Rooms Count: {len(self.rooms)}, Open Spaces Count: {len(self.open_spaces)}, "
-                         f"Meters Count: {len(self.meters)})")
+                         f"Rooms Count: {len(self.rooms)}, Open Spaces Count: {len(self.open_spaces)})")
 
         rooms = "\n".join(str(room) for room in self.rooms)
         open_spaces = "\n".join(str(space) for space in self.open_spaces)
-        meters = "\n".join(str(meter) for meter in self.meters)
 
-        return f"{floor_details}\nRooms:\n{rooms}\nOpen Space:\n {open_spaces}\nMeters:\n {meters}"
+        return f"{floor_details}\nRooms:\n{rooms}\nOpen Space:\n {open_spaces})"

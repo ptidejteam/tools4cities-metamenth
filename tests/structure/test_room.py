@@ -71,6 +71,34 @@ class TestRoom(TestCase):
         self.assertEqual(self.room.transducers[1].measure, SensorMeasure.TEMPERATURE)
         self.assertEqual(self.room.transducers[0].data_frequency, self.room.transducers[1].data_frequency)
 
+    def test_add_exising_sensor_with_the_same_name(self):
+        co2_sensor = Sensor("Co2_Sensor", SensorMeasure.CARBON_DIOXIDE,
+                            MeasurementUnit.PARTS_PER_MILLION, MeasureType.PT_100, 5)
+        temp_sensor = Sensor("Co2_Sensor", SensorMeasure.TEMPERATURE,
+                             MeasurementUnit.DEGREE_CELSIUS, MeasureType.PT_100, 8)
+        self.room.add_transducer(co2_sensor)
+        self.room.add_transducer(temp_sensor)
+
+        self.assertEqual(len(self.room.transducers), 1)
+        self.assertEqual(self.room.transducers[0].data_frequency, 5)
+
+    def test_remove_transducer_from_room(self):
+        co2_sensor = Sensor("Co2_Sensor", SensorMeasure.CARBON_DIOXIDE,
+                            MeasurementUnit.PARTS_PER_MILLION, MeasureType.PT_100, 5)
+        temp_sensor = Sensor("Temp_Sensor", SensorMeasure.TEMPERATURE,
+                             MeasurementUnit.DEGREE_CELSIUS, MeasureType.PT_100, 5)
+        self.room.add_transducer(co2_sensor)
+        self.room.add_transducer(temp_sensor)
+        self.assertEqual(len(self.room.transducers), 2)
+
+        self.room.remove_transducer("Co2_Sensor")
+
+        self.assertEqual(len(self.room.transducers), 1)
+        self.assertEqual(self.room.transducers[0], temp_sensor)
+
+        self.room.remove_transducer("Temp_Sensor")
+        self.assertEqual(len(self.room.transducers), 0)
+
     def test_classroom_and_hall_in_the_same_hvac_zone(self):
         hvac_zone = Zone('HVAC ZONE', ZoneType.HVAC)
         hall = OpenSpace(self.area, OpenSpaceType.HALL)

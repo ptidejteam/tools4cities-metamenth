@@ -3,7 +3,7 @@ from enumerations import BuildingEntity
 
 class EntityRemover:
     """
-    A visitor that inserts entities into other entities
+    A visitor that removes entities into other entities
 
     Author: Peter Yefi
     Email: peteryefi@gmail.com
@@ -43,8 +43,6 @@ class EntityRemover:
             floor.rooms = [room for room in floor.rooms if room.UID != UID]
         elif entity == BuildingEntity.OPEN_SPACE.value:
             floor.open_spaces = [space for space in floor.open_spaces if space.UID != UID]
-        elif entity == BuildingEntity.METER.value:
-            floor.meters = [meter for meter in floor.meters if meter.UID != UID]
 
     @staticmethod
     def remove_space_entity(space, entity, name):
