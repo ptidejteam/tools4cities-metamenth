@@ -4,6 +4,8 @@ from uuid import uuid4
 from typing import List
 from structure.interfaces.abstract_space import AbstractSpace
 from visitors import EntityRemover
+from enumerations import BuildingEntity
+from visitors import EntityInsert
 
 
 class Zone:
@@ -121,17 +123,7 @@ class Zone:
         adds zones that are adjacent with the current zone.
         :param adjacent_zones: A list of zones that are adjacent to the current zone.
         """
-
-        for new_adjacent_zone in adjacent_zones:
-            # you can not add the same zone as an adjacent zone
-            if self.name == new_adjacent_zone.name:
-                continue
-            # Search for the zone with the same name in the adjacent_zones list
-            existing_adjacent_zone = next((zone for zone in self.adjacent_zones if zone.name == new_adjacent_zone.name),
-                                          None)
-            if existing_adjacent_zone is None:
-                # If not found, add the new adjacent zone to the adjacent_zones list
-                self.adjacent_zones.append(new_adjacent_zone)
+        EntityInsert.insert_zonal_entity(self, adjacent_zones, BuildingEntity.ADJACENT_ZONE.value)
 
     def remove_zonal_entity(self, entity, UID):
         """
@@ -141,6 +133,30 @@ class Zone:
         :return:
         """
         EntityRemover.remove_zonal_entity(self, entity, UID)
+
+    def remove_overlapping_zone(self, UID):
+        """
+        Removes overlapping zones
+        :param UID: the unique ID of the zone
+        :return:
+        """
+        EntityRemover.remove_zonal_entity(self, BuildingEntity.OVERLAPPING_ZONE.value, UID)
+
+    def remove_adjacent_zone(self, UID):
+        """
+        Removes adjacent zones
+        :param UID: the unique ID of the zone
+        :return:
+        """
+        EntityRemover.remove_zonal_entity(self, BuildingEntity.ADJACENT_ZONE.value, UID)
+
+    def remove_space(self, UID):
+        """
+        Removes a space: floor, room, open space from a zone
+        :param UID: the unique ID of the space entity
+        :return:
+        """
+        EntityRemover.remove_zonal_entity(self, BuildingEntity.SPACE.value, UID)
 
     def add_spaces(self, spaces: List['AbstractSpace']):
         """
@@ -154,19 +170,14 @@ class Zone:
         adds zones that overlap with the current zone.
         :param overlapping_zones: A list of zones that are overlapping with the current zone.
         """
-        for new_overlapping_zone in overlapping_zones:
-            # you can not add the same zone as an overlapping zone
-            if self.name == new_overlapping_zone.name:
-                continue
-            # Search for the zone with the same name in the overlapping_zones list
-            existing_overlapping_zone = next(
-                (zone for zone in self.overlapping_zones if zone.name == new_overlapping_zone.name),
-                None
-            )
+        EntityInsert.insert_zonal_entity(self, overlapping_zones, BuildingEntity.OVERLAPPING_ZONE.value)
 
-            if existing_overlapping_zone is None:
-                # If not found, add the new zone to the overlapping_zones list
-                self.overlapping_zones.append(new_overlapping_zone)
+    def __eq__(self, other):
+        # zones are equal if they share the same name
+        if isinstance(other, Zone):
+            # Check for equality based on the 'name' attribute
+            return self.name == other.name
+        return False
 
     def __str__(self):
 
