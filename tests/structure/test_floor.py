@@ -9,7 +9,11 @@ from enumerations import RoomType
 from structure.room import Room
 from structure.floor import Floor
 from enumerations import FloorType
-from enumerations import BuildingEntity
+from datatypes.operational_schedule import OperationalSchedule
+from datatypes.zone import Zone
+from enumerations import ZoneType
+from datetime import datetime
+from datetime import timedelta
 
 
 class TestFloor(TestCase):
@@ -18,7 +22,7 @@ class TestFloor(TestCase):
         self.area = MeasureFactory.create_measure(RecordingType.BINARY.value,
                                                   Measure(MeasurementUnit.SQUARE_METER, 45))
         self.room = Room(self.area, "Room 145", RoomType.BEDROOM)
-        self.hall = OpenSpace(self.area, OpenSpaceType.HALL)
+        self.hall = OpenSpace("LECTURE_HALL_1", self.area, OpenSpaceType.HALL)
 
     def test_floor_with_no_room_and_open_space(self):
         try:
@@ -45,7 +49,7 @@ class TestFloor(TestCase):
         self.assertEqual(floor.rooms[0], self.room)
         self.assertEqual(len(floor.rooms), 1)
         # Remove rooms
-        floor.remove_entity(BuildingEntity.ROOM.value, self.room.UID)
+        floor.remove_room(self.room.UID)
         # Assert no rooms
         self.assertEqual(floor.rooms, [])
 
@@ -53,9 +57,44 @@ class TestFloor(TestCase):
         floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, open_spaces=[self.hall])
         self.assertEqual(floor.open_spaces[0], self.hall)
         # Remove open space
-        floor.remove_entity(BuildingEntity.OPEN_SPACE.value, self.hall.UID)
+        floor.remove_open_space(self.hall.UID)
         # Assert no open space
         self.assertEqual(floor.open_spaces, [])
+
+    def test_add_zone_to_floor(self):
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, open_spaces=[self.hall])
+        hvac_zone = Zone('HVAC ZONE', ZoneType.HVAC)
+        # Remove open space
+        floor.add_zone(hvac_zone)
+        # Assert no open space
+        self.assertEqual(floor.zones, [hvac_zone])
+        self.assertEqual(floor.zones[0].spaces, [floor])
+
+    def test_add_floor_recurring_operational_schedule(self):
+        schedule = OperationalSchedule("WEEKDAYS", datetime.now(), datetime.now() + timedelta(days=5))
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, open_spaces=[self.hall])
+        floor.add_operational_schedule(schedule)
+        self.assertEqual(floor.operational_schedule, [schedule])
+        self.assertEqual(floor.operational_schedule[0].recurring, True)
+
+    def test_add_floor_non_recurring_operational_schedule(self):
+        schedule = OperationalSchedule("WEEKENDS", datetime.now(), datetime.now() + timedelta(days=2), recurring=False)
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, open_spaces=[self.hall])
+        floor.add_operational_schedule(schedule)
+        self.assertEqual(floor.operational_schedule, [schedule])
+        self.assertEqual(floor.operational_schedule[0].recurring, False)
+
+    def test_add_existing_schedule_to_floor(self):
+        schedule = OperationalSchedule("WEEKENDS", datetime.now(), datetime.now() + timedelta(days=2), recurring=False)
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, open_spaces=[self.hall])
+        floor.add_operational_schedule(schedule)
+        floor.add_operational_schedule(schedule)
+        self.assertEqual(floor.operational_schedule, [schedule])
+        self.assertEqual(len(floor.operational_schedule), 1)
+
+
+
+
 
 
 

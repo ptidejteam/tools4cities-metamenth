@@ -16,7 +16,7 @@ class TestOpenSpace(TestCase):
     def setUp(self) -> None:
         self.area = MeasureFactory.create_measure(RecordingType.BINARY.value,
                                                   Measure(MeasurementUnit.SQUARE_METER, 30))
-        self.hall = OpenSpace(self.area, OpenSpaceType.HALL)
+        self.hall = OpenSpace("HALL_1", self.area, OpenSpaceType.HALL)
 
     def test_open_space_with_no_adjacent_spaces_and_zones(self):
         self.assertEqual(self.hall.adjacent_spaces, [])
@@ -47,7 +47,7 @@ class TestOpenSpace(TestCase):
 
     def test_open_space_with_no_space_type(self):
         try:
-            OpenSpace(self.area, None)
+            OpenSpace("HALL_2", self.area, None)
         except ValueError as err:
             self.assertEqual(err.__str__(), "space_type must be of type OpenSpaceType")
 

@@ -46,18 +46,34 @@ class TestRoom(TestCase):
         self.assertEqual(self.room.location, power_meter.meter_location)
 
     def test_classroom_with_adjacent_hall(self):
-        hall = OpenSpace(self.area, OpenSpaceType.HALL)
+        hall = OpenSpace("LECTURE_HALL_2", self.area, OpenSpaceType.HALL)
         self.room.add_adjacent_space(hall)
         self.assertEqual(len(self.room.adjacent_spaces), 1)
         self.assertEqual(self.room.adjacent_spaces[0], hall)
         self.assertEqual(self.room.adjacent_spaces[0].space_type, OpenSpaceType.HALL)
 
     def test_classroom_as_adjacent_room_to_hall(self):
-        self.hall = OpenSpace(self.area, OpenSpaceType.HALL)
+        self.hall = OpenSpace("LECTURE_HALL_3", self.area, OpenSpaceType.HALL)
         self.room.add_adjacent_space(self.hall)
         self.hall.add_adjacent_space(self.room)
         self.assertEqual(self.hall.adjacent_spaces[0], self.room)
         self.assertEqual(self.hall.adjacent_spaces[0].room_type, RoomType.CLASSROOM)
+
+    def test_remove_adjacent_space(self):
+        self.hall = OpenSpace("LECTURE_HALL_4", self.area, OpenSpaceType.HALL)
+        self.room.add_adjacent_space(self.hall)
+        self.assertEqual(self.room.adjacent_spaces[0], self.hall)
+
+        self.room.remove_adjacent_space(self.hall.name)
+        self.assertEqual(self.room.adjacent_spaces, [])
+
+    def test_add_existing_adjacent_space(self):
+        self.hall = OpenSpace("LECTURE_HALL_5", self.area, OpenSpaceType.HALL)
+        self.room.add_adjacent_space(self.hall)
+        self.room.add_adjacent_space(self.hall)
+        # should not add an adjacent space that already exists
+        self.assertEqual(len(self.room.adjacent_spaces), 1)
+        self.assertEqual(self.room.adjacent_spaces, [self.hall])
 
     def test_classroom_with_co2_and_temp_sensors(self):
         co2_sensor = Sensor("Co2_Sensor", SensorMeasure.CARBON_DIOXIDE,
@@ -101,7 +117,7 @@ class TestRoom(TestCase):
 
     def test_classroom_and_hall_in_the_same_hvac_zone(self):
         hvac_zone = Zone('HVAC ZONE', ZoneType.HVAC)
-        hall = OpenSpace(self.area, OpenSpaceType.HALL)
+        hall = OpenSpace("LECTURE_HALL_1", self.area, OpenSpaceType.HALL)
         hall.add_zone(hvac_zone)
         self.room.add_zone(hvac_zone)
         self.assertEqual(self.room.zones[0].zone_type, ZoneType.HVAC)

@@ -12,7 +12,6 @@ from enumerations import ZoneType
 from enumerations import HVACType
 from structure.floor import Floor
 from enumerations import FloorType
-from enumerations import BuildingEntity
 
 
 class TestZone(TestCase):
@@ -88,7 +87,7 @@ class TestZone(TestCase):
     def test_zone_with_room_and_open_space(self):
         zone = Zone("COLD_ZONE", ZoneType.HVAC)
         room = Room(self.area, "Room 145", RoomType.CLASSROOM)
-        corridor = OpenSpace(self.area, OpenSpaceType.CORRIDOR)
+        corridor = OpenSpace("CORRIDOR_3", self.area, OpenSpaceType.CORRIDOR)
         zone.add_spaces([room, corridor])
         self.assertEqual(len(zone.spaces), 2)
         self.assertEqual(zone.spaces[0], room)
@@ -97,7 +96,7 @@ class TestZone(TestCase):
     def test_zone_with_floor_and_spaces(self):
         zone = Zone("COLD_ZONE", ZoneType.HVAC)
         room = Room(self.area, "Room 145", RoomType.CLASSROOM)
-        corridor = OpenSpace(self.area, OpenSpaceType.CORRIDOR)
+        corridor = OpenSpace("CORRIDOR_2", self.area, OpenSpaceType.CORRIDOR)
         floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, rooms=[room], open_spaces=[corridor])
         zone.add_spaces([floor])
         self.assertEqual(len(zone.spaces), 1)
@@ -110,7 +109,7 @@ class TestZone(TestCase):
         zone.add_adjacent_zones([adjacent_zone])
 
         self.assertEqual(len(zone.adjacent_zones), 1)
-        zone.remove_zonal_entity(BuildingEntity.ADJACENT_ZONE.value, adjacent_zone.UID)
+        zone.remove_adjacent_zone(adjacent_zone.UID)
         self.assertEqual(len(zone.adjacent_zones), 0)
         self.assertEqual(zone.adjacent_zones, [])
 
@@ -120,9 +119,21 @@ class TestZone(TestCase):
         zone.add_overlapping_zones([over_zone])
 
         self.assertEqual(len(zone.overlapping_zones), 1)
-        zone.remove_zonal_entity(BuildingEntity.OVERLAPPING_ZONE.value, over_zone.UID)
+        zone.remove_overlapping_zone(over_zone.UID)
         self.assertEqual(len(zone.overlapping_zones), 0)
         self.assertEqual(zone.overlapping_zones, [])
+
+    def test_remove_space_from_zone(self):
+        zone = Zone("COLD_ZONE", ZoneType.HVAC)
+        room = Room(self.area, "Room 145", RoomType.CLASSROOM)
+        corridor = OpenSpace("CORRIDOR_1", self.area, OpenSpaceType.CORRIDOR)
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, rooms=[room], open_spaces=[corridor])
+        zone.add_spaces([floor, corridor])
+
+        self.assertEqual(len(zone.spaces), 2)
+        zone.remove_space(floor.UID)
+        self.assertEqual(zone.spaces, [corridor])
+        self.assertEqual(len(zone.spaces), 1)
 
 
 
