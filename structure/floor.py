@@ -7,6 +7,9 @@ from structure.open_space import OpenSpace
 from structure.room import Room
 from typing import List
 from visitors import EntityRemover
+from enumerations import BuildingEntity
+from visitors import EntityInsert
+from typing import Union
 
 
 class Floor(AbstractSpace, ABC):
@@ -48,10 +51,10 @@ class Floor(AbstractSpace, ABC):
         self.floor_type = floor_type
 
         if open_spaces:
-            self.open_spaces.extend(open_spaces)
+            self.open_spaces = open_spaces
 
         if rooms:
-            self.rooms.extend(rooms)
+            self.rooms = rooms
 
         # A floor should have at least one open space or one room
         if not self.open_spaces and not self.rooms:
@@ -92,9 +95,12 @@ class Floor(AbstractSpace, ABC):
         return self._open_spaces
 
     @open_spaces.setter
-    def open_spaces(self, value: [OpenSpace]):
+    def open_spaces(self, value: Union[OpenSpace, List[OpenSpace]]):
         if value is not None:
-            self._open_spaces = value
+            if isinstance(value, list):
+                self._open_spaces = value
+            else:
+                self._open_spaces.append(value)
         else:
             raise ValueError("open_spaces must be of type [OpenSpace]")
 
@@ -103,9 +109,12 @@ class Floor(AbstractSpace, ABC):
         return self._rooms
 
     @rooms.setter
-    def rooms(self, value: [Room]):
+    def rooms(self, value: Union[Room, List[Room]]):
         if value is not None:
-            self._rooms = value
+            if isinstance(value, list):
+                self._rooms = value
+            else:
+                self._rooms.append(value)
         else:
             raise ValueError("rooms must be of type [Room]")
 
@@ -114,17 +123,30 @@ class Floor(AbstractSpace, ABC):
         Add one or multiple OpenSpaces to the floor.
         :param open_spaces: The open spaces to add to the floor.
         """
-        self._open_spaces.extend(open_spaces)
+        EntityInsert.insert_floor_space(self, open_spaces, BuildingEntity.OPEN_SPACE.value)
 
     def add_rooms(self, rooms: List['Room']):
         """
         Add one or multiple rooms to the floor.
         :param rooms: The open spaces to add to the floor.
         """
-        self._rooms.extend(rooms)
+        EntityInsert.insert_floor_space(self, rooms, BuildingEntity.ROOM.value)
 
-    def remove_entity(self, entity: str, UID: str):
-        EntityRemover.remove_floor_entity(self, entity, UID)
+    def remove_open_space(self, UID: str):
+        """
+        Removes open space from a floor
+        :param UID: the unique ID of the open space
+        :return:
+        """
+        EntityRemover.remove_floor_entity(self, BuildingEntity.OPEN_SPACE.value, UID)
+
+    def remove_room(self, UID: str):
+        """
+        Removes room from a floor
+        :param UID: the unique ID of the room
+        :return:
+        """
+        EntityRemover.remove_floor_entity(self, BuildingEntity.ROOM.value, UID)
 
     def __str__(self):
         floor_details = (f"Floor {super().__str__()} {self.number} ({self.floor_type.value}): {self.description}, "

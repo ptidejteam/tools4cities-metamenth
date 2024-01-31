@@ -15,14 +15,36 @@ class AbstractFloorSpace(AbstractSpace):
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, area: AbstractMeasure, location: str = None):
+    def __init__(self, area: AbstractMeasure, name: str, location: str = None):
         super().__init__(area, location)
+        self._name = None
         self._adjacent_spaces: List[AbstractFloorSpace] = []
         self._transducers: List[AbstractTransducer] = []
+
+        # apply validation through setters
+        self.name = name
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @name.setter
+    def name(self, value: str):
+        if value is not None:
+            self._name = value
+        else:
+            raise ValueError("name must be a string")
 
     @property
     def adjacent_spaces(self) -> List['AbstractFloorSpace']:
         return self._adjacent_spaces
+
+    @adjacent_spaces.setter
+    def adjacent_spaces(self, value: ['AbstractFloorSpace']):
+        if value is not None:
+            self._adjacent_spaces = value
+        else:
+            raise ValueError("adjacent_spaces must be of type [AbstractFloorSpace]")
 
     @property
     def transducers(self) -> List[AbstractTransducer]:
@@ -41,7 +63,15 @@ class AbstractFloorSpace(AbstractSpace):
         :param space:
         :return:
         """
-        self.adjacent_spaces.append(space)
+        EntityInsert.insert_space_entity(self, space, BuildingEntity.ADJACENT_SPACE.value)
+
+    def remove_adjacent_space(self, name: str):
+        """
+        Removes adjacent space from a space (room and open space)
+        :param name: the name of the adjacent space
+        :return:
+        """
+        EntityRemover.remove_space_entity(self, BuildingEntity.ADJACENT_SPACE.value, name)
 
     def add_transducer(self, new_transducer: AbstractTransducer):
         """
@@ -52,11 +82,24 @@ class AbstractFloorSpace(AbstractSpace):
         EntityInsert.insert_space_entity(self, new_transducer, BuildingEntity.TRANSDUCER.value)
 
     def remove_transducer(self, name: str):
+        """
+        Removes a transducer from a room or open space
+        :param name: the name of the transducer
+        :return:
+        """
         EntityRemover.remove_space_entity(self, BuildingEntity.TRANSDUCER.value, name)
+
+    def __eq__(self, other):
+        # spaces on a floor are equal if they share the same name
+        if isinstance(other, AbstractFloorSpace):
+            # Check for equality based on the 'name' attribute
+            return self.name == other.name
+        return False
 
     def __str__(self) -> str:
         return (
             f"{super().__str__()}"
+            f"Name: {self.name}"
             f"Adjacent Spaces: {self.adjacent_spaces}, "
             f"Transducers: {self.transducers}, "
         )

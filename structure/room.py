@@ -28,7 +28,7 @@ class Room(AbstractFloorSpace, ABC):
         :param room_type: The type of the room.
         :param meter: if the room has any meter (optional)
         """
-        super().__init__(area, location)
+        super().__init__(area, name, location)
         self._name = None
         self._room_type = None
         self._meter = meter
@@ -36,17 +36,6 @@ class Room(AbstractFloorSpace, ABC):
         # call setters to apply validation
         self.name = name
         self.room_type = room_type
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @name.setter
-    def name(self, value: str):
-        if value is not None:
-            self._name = value
-        else:
-            raise ValueError("name must be a string")
 
     @property
     def room_type(self) -> RoomType:
@@ -73,7 +62,7 @@ class Room(AbstractFloorSpace, ABC):
     def __str__(self):
         room_details = (
             f"Room ({super().__str__()} Room, "
-            f"Name: {self.name}, Room Type: {self.room_type})"
+            f"Room Type: {self.room_type})"
         )
 
         if self.meter:
