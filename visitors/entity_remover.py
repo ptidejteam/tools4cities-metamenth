@@ -55,6 +55,12 @@ class EntityRemover:
         """
         if entity == BuildingEntity.TRANSDUCER.value:
             space.transducers = [transducer for transducer in space.transducers if transducer.name != name]
+        elif entity == BuildingEntity.SCHEDULE.value:
+            space.operational_schedule = [schedule for schedule in space.operational_schedule if schedule.name != name]
+        elif entity == BuildingEntity.ZONE.value:
+            space.zones = [zone for zone in space.zones if zone.name != name]
+        elif entity == BuildingEntity.ADJACENT_SPACE.value:
+            space.adjacent_spaces = [space for space in space.adjacent_spaces if space.name != name]
 
     @staticmethod
     def remove_zonal_entity(zone, entity, UID):
