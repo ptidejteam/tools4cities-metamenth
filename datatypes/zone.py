@@ -125,38 +125,29 @@ class Zone:
         """
         EntityInsert.insert_zonal_entity(self, adjacent_zones, BuildingEntity.ADJACENT_ZONE.value)
 
-    def remove_zonal_entity(self, entity, UID):
-        """
-        Removes a zonal entity: adjacent_zone, overlapping_zone and spaces
-        :param entity:
-        :param UID:
-        :return:
-        """
-        EntityRemover.remove_zonal_entity(self, entity, UID)
-
-    def remove_overlapping_zone(self, UID):
+    def remove_overlapping_zone(self, overlapping_zone: 'Zone'):
         """
         Removes overlapping zones
-        :param UID: the unique ID of the zone
+        :param overlapping_zone: the overlapping zone to remove
         :return:
         """
-        EntityRemover.remove_zonal_entity(self, BuildingEntity.OVERLAPPING_ZONE.value, UID)
+        EntityRemover.remove_zonal_entity(self, BuildingEntity.OVERLAPPING_ZONE.value, overlapping_zone)
 
-    def remove_adjacent_zone(self, UID):
+    def remove_adjacent_zone(self, adjacent_zone: 'Zone'):
         """
         Removes adjacent zones
-        :param UID: the unique ID of the zone
+        :param adjacent_zone: the adjacent zone to remove
         :return:
         """
-        EntityRemover.remove_zonal_entity(self, BuildingEntity.ADJACENT_ZONE.value, UID)
+        EntityRemover.remove_zonal_entity(self, BuildingEntity.ADJACENT_ZONE.value, adjacent_zone)
 
-    def remove_space(self, UID):
+    def remove_space(self, space: AbstractSpace):
         """
         Removes a space: floor, room, open space from a zone
-        :param UID: the unique ID of the space entity
+        :param space: the space to remove
         :return:
         """
-        EntityRemover.remove_zonal_entity(self, BuildingEntity.SPACE.value, UID)
+        EntityRemover.remove_zonal_entity(self, BuildingEntity.SPACE.value, space)
 
     def add_spaces(self, spaces: List['AbstractSpace']):
         """

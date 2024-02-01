@@ -36,6 +36,13 @@ class WeatherStation:
         """
         self.weather_data.extend(weather_data)
 
+    def __eq__(self, other):
+        # Weather stations are equal if they share the same UID
+        if isinstance(other, WeatherStation):
+            # Check for equality based on the 'UID' attribute
+            return self.UID == other.UID
+        return False
+
     def __str__(self):
         weather_station_details = (
             f"WeatherStation("

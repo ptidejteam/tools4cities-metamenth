@@ -64,7 +64,7 @@ class TestRoom(TestCase):
         self.room.add_adjacent_space(self.hall)
         self.assertEqual(self.room.adjacent_spaces[0], self.hall)
 
-        self.room.remove_adjacent_space(self.hall.name)
+        self.room.remove_adjacent_space(self.hall)
         self.assertEqual(self.room.adjacent_spaces, [])
 
     def test_add_existing_adjacent_space(self):
@@ -107,12 +107,12 @@ class TestRoom(TestCase):
         self.room.add_transducer(temp_sensor)
         self.assertEqual(len(self.room.transducers), 2)
 
-        self.room.remove_transducer("Co2_Sensor")
+        self.room.remove_transducer(co2_sensor)
 
         self.assertEqual(len(self.room.transducers), 1)
         self.assertEqual(self.room.transducers[0], temp_sensor)
 
-        self.room.remove_transducer("Temp_Sensor")
+        self.room.remove_transducer(temp_sensor)
         self.assertEqual(len(self.room.transducers), 0)
 
     def test_classroom_and_hall_in_the_same_hvac_zone(self):

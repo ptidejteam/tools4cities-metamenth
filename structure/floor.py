@@ -132,21 +132,28 @@ class Floor(AbstractSpace, ABC):
         """
         EntityInsert.insert_floor_space(self, rooms, BuildingEntity.ROOM.value)
 
-    def remove_open_space(self, UID: str):
+    def remove_open_space(self, open_space: OpenSpace):
         """
         Removes open space from a floor
-        :param UID: the unique ID of the open space
+        :param open_space: the open space entity to remove
         :return:
         """
-        EntityRemover.remove_floor_entity(self, BuildingEntity.OPEN_SPACE.value, UID)
+        EntityRemover.remove_floor_entity(self, BuildingEntity.OPEN_SPACE.value, open_space)
 
-    def remove_room(self, UID: str):
+    def remove_room(self, room: Room):
         """
         Removes room from a floor
-        :param UID: the unique ID of the room
+        :param room: the room to remove
         :return:
         """
-        EntityRemover.remove_floor_entity(self, BuildingEntity.ROOM.value, UID)
+        EntityRemover.remove_floor_entity(self, BuildingEntity.ROOM.value, room)
+
+    def __eq__(self, other):
+        # floors are equal if they share the same number
+        if isinstance(other, Floor):
+            # Check for equality based on the 'number' attribute
+            return self.number == other.number
+        return False
 
     def __str__(self):
         floor_details = (f"Floor {super().__str__()} {self.number} ({self.floor_type.value}): {self.description}, "

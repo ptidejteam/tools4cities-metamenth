@@ -109,7 +109,7 @@ class TestZone(TestCase):
         zone.add_adjacent_zones([adjacent_zone])
 
         self.assertEqual(len(zone.adjacent_zones), 1)
-        zone.remove_adjacent_zone(adjacent_zone.UID)
+        zone.remove_adjacent_zone(adjacent_zone)
         self.assertEqual(len(zone.adjacent_zones), 0)
         self.assertEqual(zone.adjacent_zones, [])
 
@@ -119,7 +119,7 @@ class TestZone(TestCase):
         zone.add_overlapping_zones([over_zone])
 
         self.assertEqual(len(zone.overlapping_zones), 1)
-        zone.remove_overlapping_zone(over_zone.UID)
+        zone.remove_overlapping_zone(over_zone)
         self.assertEqual(len(zone.overlapping_zones), 0)
         self.assertEqual(zone.overlapping_zones, [])
 
@@ -131,7 +131,7 @@ class TestZone(TestCase):
         zone.add_spaces([floor, corridor])
 
         self.assertEqual(len(zone.spaces), 2)
-        zone.remove_space(floor.UID)
+        zone.remove_space(floor)
         self.assertEqual(zone.spaces, [corridor])
         self.assertEqual(len(zone.spaces), 1)
 

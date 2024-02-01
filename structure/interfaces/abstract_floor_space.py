@@ -65,13 +65,13 @@ class AbstractFloorSpace(AbstractSpace):
         """
         EntityInsert.insert_space_entity(self, space, BuildingEntity.ADJACENT_SPACE.value)
 
-    def remove_adjacent_space(self, name: str):
+    def remove_adjacent_space(self, adjacent_space: 'AbstractFloorSpace'):
         """
         Removes adjacent space from a space (room and open space)
-        :param name: the name of the adjacent space
+        :param adjacent_space: the adjacent space to remove
         :return:
         """
-        EntityRemover.remove_space_entity(self, BuildingEntity.ADJACENT_SPACE.value, name)
+        EntityRemover.remove_space_entity(self, BuildingEntity.ADJACENT_SPACE.value, adjacent_space)
 
     def add_transducer(self, new_transducer: AbstractTransducer):
         """
@@ -81,13 +81,13 @@ class AbstractFloorSpace(AbstractSpace):
         """
         EntityInsert.insert_space_entity(self, new_transducer, BuildingEntity.TRANSDUCER.value)
 
-    def remove_transducer(self, name: str):
+    def remove_transducer(self, transducer: AbstractTransducer):
         """
         Removes a transducer from a room or open space
-        :param name: the name of the transducer
+        :param transducer: the transducer to remove
         :return:
         """
-        EntityRemover.remove_space_entity(self, BuildingEntity.TRANSDUCER.value, name)
+        EntityRemover.remove_space_entity(self, BuildingEntity.TRANSDUCER.value, transducer)
 
     def __eq__(self, other):
         # spaces on a floor are equal if they share the same name

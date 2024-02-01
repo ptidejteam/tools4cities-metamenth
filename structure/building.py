@@ -10,6 +10,9 @@ from typing import Optional
 from measure_instruments import WeatherStation
 from measure_instruments import Meter
 from visitors import EntityRemover
+from visitors import EntityInsert
+from enumerations import BuildingEntity
+from datatypes.interfaces.abstract_measure import AbstractMeasure
 
 
 class Building:
@@ -22,37 +25,161 @@ class Building:
     def __init__(
         self,
         construction_year: int,
-        height: BinaryMeasure,
-        floorArea: BinaryMeasure,
-        internal_mass: BinaryMeasure,
+        height: AbstractMeasure,
+        floor_area: AbstractMeasure,
+        internal_mass: AbstractMeasure,
         address: Address,
         building_type: BuildingType,
-        floors: List[Floor],
-        meters: List[Meter]
+        floors: List[Floor]
     ):
         """
         :param construction_year: The construction year of the building
         :param height: The height of the building
-        :param floorArea: The floor area of the building
+        :param floor_area: The floor area of the building
         :param internal_mass: The internal mass of the building
         :param address: The address of the building
         :param building_type: The type of building
-        :param meters: the meter(s) at the building level measure different phenomena
         """
-        self.UID = uuid4()
+        self._UID = str(uuid4())
+        self._construction_year = None
+        self._height = None
+        self._floor_area = None
+        self._internal_mass = None
+        self._address = None
+        self._building_type = None
+        self._schedules: List[OperationalSchedule] = []
+        self._envelope: Envelope = Optional[None]
+        self._floors = None
+        self._meters: [Meter] = []
+        self._weather_stations: List[WeatherStation] = []
+
+        # apply validation
         self.construction_year = construction_year
         self.height = height
-        self.floorArea = floorArea
+        self.floor_area = floor_area
         self.internal_mass = internal_mass
         self.address = address
         self.building_type = building_type
-        self.schedules: List[OperationalSchedule] = []
-        self.envelope: Envelope = Optional[None]
         self.floors = floors
-        self.meters = meters
-        self.weather_stations: List[WeatherStation] = []
-        if not self.floors:
-            raise ValueError("A building must have at least one floor")
+
+
+    @property
+    def UID(self) -> str:
+        return self._UID
+
+    @property
+    def construction_year(self) -> int:
+        return self._construction_year
+
+    @construction_year.setter
+    def construction_year(self, value):
+        if value is not None:
+            self._construction_year = value
+        else:
+            raise ValueError("construction_year must be a number")
+
+    @property
+    def height(self) -> AbstractMeasure:
+        return self._height
+
+    @height.setter
+    def height(self, value: AbstractMeasure):
+        if value is not None:
+            self._height = value
+        else:
+            raise ValueError("height must be of type AbstractMeasure")
+
+    @property
+    def floor_area(self) -> AbstractMeasure:
+        return self._floor_area
+
+    @floor_area.setter
+    def floor_area(self, value: AbstractMeasure):
+        if value is not None:
+            self._floor_area = value
+        else:
+            raise ValueError("floor_area must be of type AbstractMeasure")
+
+    @property
+    def internal_mass(self) -> AbstractMeasure:
+        return self._internal_mass
+
+    @internal_mass.setter
+    def internal_mass(self, value: AbstractMeasure):
+        if value is not None:
+            self._internal_mass = value
+        else:
+            raise ValueError("internal_mass must be of type AbstractMeasure")
+
+    @property
+    def address(self) -> Address:
+        return self._address
+
+    @address.setter
+    def address(self, value: Address):
+        if value is not None:
+            self._address = value
+        else:
+            raise ValueError("address must be of type Address")
+
+    @property
+    def building_type(self) -> BuildingType:
+        return self._building_type
+
+    @building_type.setter
+    def building_type(self, value: BuildingType):
+        if value is not None:
+            self._building_type = value
+        else:
+            raise ValueError("building_type must be of type BuildingType")
+
+    @property
+    def floors(self) -> List[Floor]:
+        return self._floors
+
+    @floors.setter
+    def floors(self, value: List[Floor]):
+        if value is not None and len(value) > 0:
+            self._floors = value
+        else:
+            raise ValueError("floors must be of type [Floor] and must not be empty")
+
+    @property
+    def weather_stations(self) -> List[WeatherStation]:
+        return self._weather_stations
+
+    @weather_stations.setter
+    def weather_stations(self, value: List[WeatherStation]):
+        if value is not None:
+            self._weather_stations = value
+        else:
+            raise ValueError("weather_stations must be of type [WeatherStation]")
+
+    @property
+    def meters(self) -> List[Meter]:
+        return self._meters
+
+    @meters.setter
+    def meters(self, value: List[Meter]):
+        if value is not None:
+            self._meters = value
+        else:
+            raise ValueError("meters must be of type [WeatherStation]")
+
+    @property
+    def envelope(self) -> Envelope:
+        return self._envelope
+
+    @envelope.setter
+    def envelope(self, value: Envelope):
+        if value is not None:
+            self._envelope = value
+        else:
+            raise ValueError("envelope must be of type Envelope")
+
+    @property
+    def schedules(self) -> List[OperationalSchedule]:
+        return self._schedules
 
     def add_weather_station(self, weather_station: WeatherStation):
         """
@@ -62,6 +189,14 @@ class Building:
         """
         self.weather_stations.append(weather_station)
 
+    def remove_weather_station(self, weather_station: WeatherStation):
+        """
+        Adds a weather station to a building
+        :param weather_station: a station to measure various weather elements
+        :return:
+        """
+        EntityRemover.remove_building_entity(self, BuildingEntity.WEATHER_STATION.value, weather_station)
+
     def add_meter(self, meter: Meter):
         """
         Adds a meter to a building
@@ -70,21 +205,29 @@ class Building:
         """
         self.meters.append(meter)
 
+    def remove_meter(self, meter: Meter):
+        """
+        Adds a meter to a building
+        :param meter: a meter to measure some phenomena e.g. energy consumption
+        :return:
+        """
+        EntityRemover.remove_building_entity(self, BuildingEntity.METER.value, meter)
+
     def add_schedule(self, schedule: OperationalSchedule):
         """
         Adds an operational schedule to this building
         :param schedule: the schedule
         :return:
         """
-        self.schedules.append(schedule)
+        EntityInsert.insert_space_entity(self, schedule, BuildingEntity.SCHEDULE.value)
 
-    def add_envelope(self, envelope: Envelope):
+    def remove_schedule(self, schedule: OperationalSchedule):
         """
-        Adds and envelop to this building
-        :param envelope: the building envelop
+        Removes an operational schedule from this building
+        :param schedule: the schedule
         :return:
         """
-        self.envelope = envelope
+        EntityRemover.remove_space_entity(self, BuildingEntity.SCHEDULE.value, schedule)
 
     def add_floors(self, floors: List[Floor]):
         """
@@ -97,8 +240,13 @@ class Building:
             if existing_floor is None:
                 self.floors.append(new_floor)
 
-    def remove_entity(self, visitor: EntityRemover, entity: str, UID: str):
-       visitor.remove_building_entity(self, entity, UID)
+    def remove_floor(self, floor: Floor):
+        """
+        Removes floor from a building
+        :param floor: the floor to remove
+        :return:
+        """
+        EntityRemover.remove_building_entity(self, BuildingEntity.FLOOR.value, floor)
 
     def __str__(self):
         floors_info = "\n".join([f"  - Floor {floor.number}: {floor}" for floor in self.floors])
@@ -110,7 +258,7 @@ class Building:
                 f"Building UID: {self.UID}, "
                 f"Construction Year: {self.construction_year}, "
                 f"Height: {self.height}, "
-                f"Floor Area: {self.floorArea}, "
+                f"Floor Area: {self.floor_area}, "
                 f"Internal Mass: {self.internal_mass}, "
                 f"Address: {self.address}, "
                 f"Building Type: {self.building_type}, "

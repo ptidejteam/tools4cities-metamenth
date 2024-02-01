@@ -106,6 +106,13 @@ class Meter:
         meter_measure = MeterMeasure(value)
         self._meter_measures.append(meter_measure)
 
+    def __eq__(self, other):
+        # Meters are equal if they share the same UID
+        if isinstance(other, Meter):
+            # Check for equality based on the 'UID' attribute
+            return self.UID == other.UID
+        return False
+
     def __str__(self):
         """
         :return: A formatted string representing the meter.

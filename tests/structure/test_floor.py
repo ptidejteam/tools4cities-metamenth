@@ -49,7 +49,7 @@ class TestFloor(TestCase):
         self.assertEqual(floor.rooms[0], self.room)
         self.assertEqual(len(floor.rooms), 1)
         # Remove rooms
-        floor.remove_room(self.room.UID)
+        floor.remove_room(self.room)
         # Assert no rooms
         self.assertEqual(floor.rooms, [])
 
@@ -57,7 +57,7 @@ class TestFloor(TestCase):
         floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, open_spaces=[self.hall])
         self.assertEqual(floor.open_spaces[0], self.hall)
         # Remove open space
-        floor.remove_open_space(self.hall.UID)
+        floor.remove_open_space(self.hall)
         # Assert no open space
         self.assertEqual(floor.open_spaces, [])
 
