@@ -1,4 +1,3 @@
-from datatypes.binary_measure import BinaryMeasure
 from uuid import uuid4
 from enumerations import BuildingType
 from datatypes.address import Address
@@ -13,6 +12,7 @@ from visitors import EntityRemover
 from visitors import EntityInsert
 from enumerations import BuildingEntity
 from datatypes.interfaces.abstract_measure import AbstractMeasure
+from datatypes.zone import Zone
 
 
 class Building:
@@ -52,6 +52,7 @@ class Building:
         self._floors = None
         self._meters: [Meter] = []
         self._weather_stations: List[WeatherStation] = []
+        self._zones: List[Zone] = []
 
         # apply validation
         self.construction_year = construction_year
@@ -61,7 +62,6 @@ class Building:
         self.address = address
         self.building_type = building_type
         self.floors = floors
-
 
     @property
     def UID(self) -> str:
@@ -181,6 +181,17 @@ class Building:
     def schedules(self) -> List[OperationalSchedule]:
         return self._schedules
 
+    @property
+    def zones(self):
+        return self._zones
+
+    @zones.setter
+    def zones(self, value):
+        if value is not None:
+            self._zones = value
+        else:
+            raise ValueError('zones must be of type [Zone]')
+
     def add_weather_station(self, weather_station: WeatherStation):
         """
         Adds a weather station to a building
@@ -254,8 +265,8 @@ class Building:
         schedules_info = "\n".join([f"  - {schedule}" for schedule in self.schedules])
         meter_info = "\n".join([f"  - {meter}" for meter in self.meters])
 
-        return (f"Layer("
-                f"Building UID: {self.UID}, "
+        return (f"Building("
+                f"UID: {self.UID}, "
                 f"Construction Year: {self.construction_year}, "
                 f"Height: {self.height}, "
                 f"Floor Area: {self.floor_area}, "

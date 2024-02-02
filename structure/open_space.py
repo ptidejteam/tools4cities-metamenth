@@ -1,5 +1,3 @@
-from abc import ABC
-
 from structure.interfaces.abstract_floor_space import AbstractFloorSpace
 from datatypes.interfaces.abstract_measure import AbstractMeasure
 from enumerations import OpenSpaceType

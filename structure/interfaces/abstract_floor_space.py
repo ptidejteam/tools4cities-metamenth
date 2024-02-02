@@ -1,7 +1,7 @@
 from typing import List
 from .abstract_space import AbstractSpace
 from datatypes.interfaces.abstract_measure import AbstractMeasure
-from transducer.interfaces import AbstractTransducer
+from transducers.interfaces.abstract_transducer import AbstractTransducer
 from visitors import EntityRemover
 from visitors import EntityInsert
 from enumerations import BuildingEntity
@@ -76,15 +76,15 @@ class AbstractFloorSpace(AbstractSpace):
     def add_transducer(self, new_transducer: AbstractTransducer):
         """
         Adds sensors and/or actuators to entities (rooms, open spaces, equipment, etc.)
-        :param new_transducer: a transducer to be added to this space
+        :param new_transducer: a transducers to be added to this space
         :return:
         """
         EntityInsert.insert_space_entity(self, new_transducer, BuildingEntity.TRANSDUCER.value)
 
     def remove_transducer(self, transducer: AbstractTransducer):
         """
-        Removes a transducer from a room or open space
-        :param transducer: the transducer to remove
+        Removes a transducers from a room or open space
+        :param transducer: the transducers to remove
         :return:
         """
         EntityRemover.remove_space_entity(self, BuildingEntity.TRANSDUCER.value, transducer)

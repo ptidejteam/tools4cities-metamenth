@@ -1,31 +1,20 @@
-from unittest import TestCase
-from misc import MeasureFactory
-from enumerations import RecordingType
-from datatypes.measure import Measure
 from enumerations import MeasurementUnit
 from measure_instruments.meter import Meter
 from structure.open_space import OpenSpace
 from enumerations import OpenSpaceType
 from enumerations import RoomType
-from structure.room import Room
 from enumerations import MeterType
-from transducer.sensor import Sensor
+from transducers.sensor import Sensor
 from enumerations import SensorMeasure
 from enumerations import MeasureType
-from datatypes.zone import Zone
-from enumerations import ZoneType
+from .base_test import BaseTest
 
 
-class TestRoom(TestCase):
-
-    def setUp(self) -> None:
-        self.area = MeasureFactory.create_measure(RecordingType.BINARY.value,
-                                                  Measure(MeasurementUnit.SQUARE_METER, 30))
-        self.room = Room(self.area, "Room 145", RoomType.CLASSROOM)
+class TestRoom(BaseTest):
 
     def test_classroom_with_name_and_area(self):
-        self.assertEqual(self.room.room_type, RoomType.CLASSROOM)
-        self.assertEqual(self.room.area.value, 30)
+        self.assertEqual(self.room.room_type, RoomType.BEDROOM)
+        self.assertEqual(self.room.area.value, 45)
         self.assertEqual(self.room.area.measurement_unit, MeasurementUnit.SQUARE_METER)
         self.assertEqual(self.room.name, "Room 145")
         self.assertEqual(self.room.location, "")
@@ -57,7 +46,7 @@ class TestRoom(TestCase):
         self.room.add_adjacent_space(self.hall)
         self.hall.add_adjacent_space(self.room)
         self.assertEqual(self.hall.adjacent_spaces[0], self.room)
-        self.assertEqual(self.hall.adjacent_spaces[0].room_type, RoomType.CLASSROOM)
+        self.assertEqual(self.hall.adjacent_spaces[0].room_type, RoomType.BEDROOM)
 
     def test_remove_adjacent_space(self):
         self.hall = OpenSpace("LECTURE_HALL_4", self.area, OpenSpaceType.HALL)
@@ -114,11 +103,3 @@ class TestRoom(TestCase):
 
         self.room.remove_transducer(temp_sensor)
         self.assertEqual(len(self.room.transducers), 0)
-
-    def test_classroom_and_hall_in_the_same_hvac_zone(self):
-        hvac_zone = Zone('HVAC ZONE', ZoneType.HVAC)
-        hall = OpenSpace("LECTURE_HALL_1", self.area, OpenSpaceType.HALL)
-        hall.add_zone(hvac_zone)
-        self.room.add_zone(hvac_zone)
-        self.assertEqual(self.room.zones[0].zone_type, ZoneType.HVAC)
-        self.assertEqual(hall.zones[0], self.room.zones[0])

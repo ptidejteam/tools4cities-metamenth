@@ -1,4 +1,6 @@
 from typing import Dict
+from enumerations import SensorMeasure
+from enumerations import MeasurementUnit
 
 
 class Validate:
@@ -45,4 +47,60 @@ class Validate:
 
         if none_variables:
             raise ValueError("{0} is/are mandatory".format(none_variables.rstrip()))
+
+    @staticmethod
+    def validate_sensor_type(sensor_measure: str, unit: str) -> bool:
+        """
+        Validates the unit of measurement and the type of sensor
+        e.g., a temperature sensor should have degree celsius as the measurement unit
+        :param sensor_measure: the type of sensor e.g., temperature sensor
+        :param unit: the unit of measurement for the type of sensor
+        :return: true if the correct unit is used for a specific sensor else false
+        Always returns true if sensor measure is other
+        """
+        if sensor_measure == SensorMeasure.TEMPERATURE.value:
+            if unit == MeasurementUnit.DEGREE_CELSIUS.value:
+                return True
+        elif sensor_measure == SensorMeasure.PRESSURE.value:
+            if unit == MeasurementUnit.PASCAL.value:
+                return True
+        elif sensor_measure == SensorMeasure.CARBON_DIOXIDE.value:
+            if unit == MeasurementUnit.PARTS_PER_MILLION.value:
+                return True
+        elif sensor_measure == SensorMeasure.AIR_VOLUME.value:
+            if unit in [MeasurementUnit.LITER.value, MeasurementUnit.CUBIC_FEET.value,
+                        MeasurementUnit.CUBIC_CENTIMETER.value, MeasurementUnit.CUBIC_METER.value]:
+                return True
+        elif sensor_measure in [SensorMeasure.GAS_VELOCITY.value, SensorMeasure.LIQUID_VELOCITY.value]:
+            if unit in [MeasurementUnit.METERS_PER_SECOND.value, MeasurementUnit.FEET_PER_SECOND.value]:
+                return True
+        elif sensor_measure == SensorMeasure.DAYLIGHT.value:
+            if unit == MeasurementUnit.LUX.value:
+                return True
+        elif sensor_measure in [SensorMeasure.DIRECT_RADIATION.value, SensorMeasure.GLOBAL_RADIATION.value]:
+            if unit == MeasurementUnit.WATTS_PER_METER_SQUARE.value:
+                return True
+        elif sensor_measure == SensorMeasure.LUMINANCE.value:
+            if unit in [MeasurementUnit.CANDELA_PER_SQUARE_METER.value or MeasurementUnit.NITS.value]:
+                return True
+        elif sensor_measure == SensorMeasure.NOISE.value:
+            if unit == MeasurementUnit.DECIBELS.value:
+                return True
+        elif sensor_measure == SensorMeasure.OCCUPANCY.value:
+            if unit == MeasurementUnit.PRESENCE.value:
+                return True
+        elif sensor_measure == SensorMeasure.SMOKE.value:
+            if unit == MeasurementUnit.MICROGRAM_PER_CUBIC_METER.value:
+                return True
+        elif sensor_measure == SensorMeasure.CURRENT.value:
+            if unit == MeasurementUnit.AMPERE.value:
+                return True
+        elif sensor_measure == SensorMeasure.VOLTAGE.value:
+            if unit == MeasurementUnit.VOLT.value:
+                return True
+        elif sensor_measure == SensorMeasure.OTHER.value:
+            return True
+        return False
+
+
 

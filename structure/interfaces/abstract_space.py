@@ -23,7 +23,7 @@ class AbstractSpace(ABC):
         self._area = None
         self._location = None
         self._zones = []
-        self._operational_schedule: List[OperationalSchedule] = []
+        self._schedules: List[OperationalSchedule] = []
 
         # Apply validation
         self.area = area
@@ -62,26 +62,27 @@ class AbstractSpace(ABC):
         else:
             raise ValueError('zones must be of type [Zone]')
 
-    def add_zone(self, zone):
+    def add_zone(self, zone, building):
         """
         Adds a zone to this floor
-        :param zone:
+        :param zone: the zone
+        :param building, the building which spaces requires a zone
         :return:
         """
-        EntityInsert.insert_space_entity(self, zone, BuildingEntity.ZONE.value)
+        EntityInsert.insert_zone(self, zone, building)
 
     @property
-    def operational_schedule(self) -> List[OperationalSchedule]:
-        return self._operational_schedule
+    def schedules(self) -> List[OperationalSchedule]:
+        return self._schedules
 
-    @operational_schedule.setter
-    def operational_schedule(self, value: List[OperationalSchedule]):
+    @schedules.setter
+    def schedules(self, value: List[OperationalSchedule]):
         if value is not None:
-            self._operational_schedule = value
+            self._schedules = value
         else:
-            raise ValueError('operational_schedule must be of type [OperationalSchedule]')
+            raise ValueError('schedule must be of type [OperationalSchedule]')
 
-    def add_operational_schedule(self, schedule: OperationalSchedule):
+    def add_schedule(self, schedule: OperationalSchedule):
         """
         Adds a schedule to a space: floor, room or open space
         :param schedule:
@@ -97,13 +98,13 @@ class AbstractSpace(ABC):
         """
         EntityRemover.remove_space_entity(self, BuildingEntity.SCHEDULE.value, name)
 
-    def remove_zone(self, name):
+    def remove_zone(self, zone):
         """
         Removes a zone from a space: floor, room, open space
-        :param name:
+        :param zone: the zone to be removed
         :return:
         """
-        EntityRemover.remove_space_entity(self, BuildingEntity.ZONE.value, name)
+        EntityRemover.remove_space_entity(self, BuildingEntity.ZONE.value, zone)
 
     def __str__(self):
         return (
@@ -111,5 +112,5 @@ class AbstractSpace(ABC):
             f"Area: {self.area}, "
             f"Location: {self.location}, "
             f"Zones: {self.zones}, "
-            f"Operational Schedule: {self.operational_schedule}, "
+            f"Operational Schedule: {self.schedules}, "
         )

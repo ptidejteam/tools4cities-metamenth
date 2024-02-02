@@ -107,7 +107,6 @@ class TestZone(TestCase):
         zone = Zone(name="DIM_ZONE", zone_type=ZoneType.LIGHTING, description="Relaxation zone")
         adjacent_zone = Zone(name="COLD_ZONE", zone_type=ZoneType.HVAC, description="Data center area")
         zone.add_adjacent_zones([adjacent_zone])
-
         self.assertEqual(len(zone.adjacent_zones), 1)
         zone.remove_adjacent_zone(adjacent_zone)
         self.assertEqual(len(zone.adjacent_zones), 0)

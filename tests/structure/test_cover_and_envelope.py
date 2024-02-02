@@ -1,42 +1,12 @@
-from unittest import TestCase
-from enumerations import MaterialType
-from structure.material import Material
 from structure.layer import Layer
 from structure.cover import Cover
 from structure.envelope import Envelope
 from enumerations import CoverType
-from misc import MeasureFactory
-from enumerations import RecordingType
-from datatypes.measure import Measure
-from enumerations import MeasurementUnit
 import copy
+from .base_test import BaseTest
 
 
-class TestLayerAndEnvelop(TestCase):
-
-    def setUp(self) -> None:
-        density_measure = MeasureFactory.create_measure(RecordingType.BINARY.value,
-                                                        Measure(MeasurementUnit.KILOGRAM_PER_CUBIC_METER, 0.5))
-        self.hc_measure = MeasureFactory.create_measure(RecordingType.BINARY.value,
-                                                        Measure(MeasurementUnit.JOULES_PER_KELVIN, 4.5))
-        tt_measure = MeasureFactory.create_measure(RecordingType.BINARY.value,
-                                                   Measure(MeasurementUnit.WATTS_PER_SQUARE_METER_KELVIN, 2.5))
-        tr_measure = MeasureFactory.create_measure(RecordingType.BINARY.value,
-                                                   Measure(MeasurementUnit.SQUARE_METERS_KELVIN_PER_WATTS,
-                                                           2.3))
-        self.ex_material = Material(
-            description="Material for the external wall of a building",
-            material_type=MaterialType.ROOF_STEEL,
-            density=density_measure,
-            heat_capacity=self.hc_measure,
-            thermal_transmittance=tt_measure,
-            thermal_resistance=tr_measure
-        )
-
-        height = MeasureFactory.create_measure(RecordingType.BINARY.value, Measure(MeasurementUnit.METERS, 20))
-        length = MeasureFactory.create_measure(RecordingType.BINARY.value, Measure(MeasurementUnit.METERS, 15))
-        width = MeasureFactory.create_measure(RecordingType.BINARY.value, Measure(MeasurementUnit.METERS, 3))
-        self.layer = Layer(height, length, width, self.ex_material)
+class TestLayerAndEnvelop(BaseTest):
 
     def test_floor_cover_without_layers(self):
         cover = Cover(CoverType.FLOOR)
