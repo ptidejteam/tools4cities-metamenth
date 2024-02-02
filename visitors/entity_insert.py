@@ -10,11 +10,21 @@ class EntityInsert:
         pass
 
     @staticmethod
+    def insert_zone(space, zone, building):
+        # all unique zones are registered with the building
+        if zone not in building.zones:
+            building.zones.append(zone)
+        if zone not in space.zones:
+            # add the space to the zone
+            space.zones.append(zone)
+            zone.add_spaces([space])
+
+    @staticmethod
     def insert_space_entity(space, entity, entity_type):
         """
         Adds am entity to a space
         :param space: the space entity (room or open space) of type AbstractFloorEntity
-        :param entity: the entity (e.g. transducer, appliance, equipment, etc)
+        :param entity: the entity (e.g. transducers, appliance, equipment, etc)
         :param entity_type: the type of entity
         :return:
         """
@@ -30,8 +40,8 @@ class EntityInsert:
                 space.transducers.append(entity)
 
         elif entity_type == BuildingEntity.SCHEDULE.value:
-            if entity not in space.operational_schedule:
-                space.operational_schedule.append(entity)
+            if entity not in space.schedules:
+                space.schedules.append(entity)
 
         elif entity_type == BuildingEntity.ZONE.value:
             if entity not in space.zones:

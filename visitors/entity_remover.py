@@ -49,15 +49,18 @@ class EntityRemover:
         """
         Removes am entity from a space (room and open spaces)
         :param space: the space (room or open space)
-        :param entity: the entity (e.g. transducer, appliance, equipment, etc)
+        :param entity: the entity (e.g. transducers, appliance, equipment, etc)
         :param entity_type: the type of entity
         :return:
         """
         if entity_type == BuildingEntity.TRANSDUCER.value:
             space.transducers.remove(entity)
         elif entity_type == BuildingEntity.SCHEDULE.value:
-            space.operational_schedule.remove(entity)
+            space.schedules.remove(entity)
         elif entity_type == BuildingEntity.ZONE.value:
+            # remove the space from the zone
+            entity.remove_space(space)
+            # then remove the zone from the list of zones for the space
             space.zones.remove(entity)
         elif entity_type == BuildingEntity.ADJACENT_SPACE.value:
             space.adjacent_spaces.remove(entity)
