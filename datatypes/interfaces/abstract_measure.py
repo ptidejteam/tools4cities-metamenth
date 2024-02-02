@@ -16,4 +16,4 @@ class AbstractMeasure(ABC):
 
     def __str__(self):
         return f"Unit: {self.measurement_unit.value}, " \
-               f"Measure Type: {self.measure_type.value if self.measure_type is not None else self.measure_type} "
+               f"Measure Type: {self.measure_type.value if self.measure_type is not None else self.measure_type}"

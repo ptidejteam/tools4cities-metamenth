@@ -19,5 +19,5 @@ class AbstractRangeMeasure(AbstractMeasure):
         return (
             f"Minimum: {self.minimum}, "
             f"Maximum: {self.maximum}, "
-            f"Unit: {super().__str__()}"
+            f"{super().__str__()}"
         )
