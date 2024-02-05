@@ -12,5 +12,6 @@ class TriggerType(Enum):
     OFF = "Off"
     OPEN = "Open"
     CLOSE = "Close"
+    OPEN_CLOSE = "OpenClose"
 
 
