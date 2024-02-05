@@ -101,7 +101,17 @@ class Sensor(AbstractTransducer, ABC):
         :param data: the sensor data to be added
         :return:
         """
-        self.data.extend(data)
+        if data is None:
+            raise ValueError('data should be a list of SensorData')
+        self._data.extend(data)
+
+    def remove_data(self, data: SensorData):
+        """
+        removes data from sensor
+        :param data: the data to remove
+        :return:
+        """
+        self._data.remove(data)
 
     def __str__(self):
         sensor_data = "\n".join(str(data) for data in self.data)

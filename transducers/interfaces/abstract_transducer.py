@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Dict, Any
 from datatypes.continuous_measure import ContinuousMeasure
 from uuid import uuid4
@@ -32,6 +32,15 @@ class AbstractTransducer(ABC):
         self.output_voltage_range = output_voltage_range
         self.change_of_value = change_of_value
         self.meta_data: Dict[str, Any] = {}
+        self._data = []
+
+    @abstractmethod
+    def add_data(self, data):
+        pass
+
+    @abstractmethod
+    def remove_data(self, data):
+        pass
 
     def add_meta_data(self, key, value):
         """

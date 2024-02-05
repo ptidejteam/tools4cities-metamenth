@@ -14,8 +14,8 @@ class Actuator(AbstractTransducer, ABC):
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, name: str,  set_point: AbstractMeasure, trigger_output: object, trigger_input: Sensor,
-                 trigger_value: int = None):
+    def __init__(self, name: str, trigger_output: object, set_point: AbstractMeasure = None,
+                 trigger_input: Sensor = None, trigger_value: float = None):
         """
         :param name: the unique name of a transducers
         :param trigger_input: the sensor whose data is associated with this trigger
@@ -24,19 +24,77 @@ class Actuator(AbstractTransducer, ABC):
         :param set_point: the setpoint value of the actuator
         """
         super().__init__(name)
+        self._set_point = None
+        self._trigger_output = trigger_output
+        self._trigger_input = None
+        self._trigger_value = trigger_value
+
         self.set_point = set_point
-        self.trigger_output = trigger_output
         self.trigger_input = trigger_input
-        self.trigger_value = trigger_value
-        self.data: [TriggerHistory] = []
+
+    @property
+    def data(self) -> List[TriggerHistory]:
+        return self._data
+
+    @property
+    def trigger_output(self) -> object:
+        return self._trigger_output
+
+    @trigger_output.setter
+    def trigger_output(self, value: object):
+        if value is None:
+            raise ValueError('trigger_output must be of type object')
+        self._trigger_output = value
+
+    @property
+    def set_point(self) -> AbstractMeasure:
+        return self._set_point
+
+    @set_point.setter
+    def set_point(self, value: AbstractMeasure):
+        if value is not None and self._trigger_input is not None:
+            if value.measurement_unit != self._trigger_input.unit:
+                raise ValueError('Input sensor measure: {} not matching set point measure: {}'
+                                 .format(value.measurement_unit, self._trigger_input.unit))
+        self._set_point = value
+
+    @property
+    def trigger_value(self) -> float:
+        return self._trigger_value
+
+    @trigger_value.setter
+    def trigger_value(self, value: float):
+        self._trigger_value = value
+
+    @property
+    def trigger_input(self) -> Sensor:
+        return self._trigger_input
+
+    @trigger_input.setter
+    def trigger_input(self, value: Sensor):
+        if self._set_point is not None and value is not None:
+            if self._set_point.measurement_unit != value.unit:
+                raise ValueError('Input sensor measure: {} not matching set point measure: {}'
+                                 .format(value.unit, self._set_point.measurement_unit))
+        self._trigger_input = value
 
     def add_data(self, data: List[TriggerHistory]):
         """
-        Adds data (record of trigger to an actuator
-        :param data: the actuator trigger data to be added
+        Adds data to a actuator
+        :param data: the actuator data to be added
         :return:
         """
-        self.data.extend(data)
+        if data is None:
+            raise ValueError('data should be a list of TriggerHistory')
+        self._data.extend(data)
+
+    def remove_data(self, data: TriggerHistory):
+        """
+        removes data from actuator
+        :param data: the data to remove
+        :return:
+        """
+        self._data.remove(data)
 
     def __str__(self):
         trigger_data = "\n".join(str(data) for data in self.data)
