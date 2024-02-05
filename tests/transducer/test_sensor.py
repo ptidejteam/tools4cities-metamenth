@@ -19,7 +19,7 @@ class TestSensor(TestCase):
                                                         Measure(MeasurementUnit.WATTS_PER_SQUARE_METER_KELVIN, 2.5))
         self.material = None
 
-    def test_temparature_sensor_with_no_measure_frequency(self):
+    def test_temperature_sensor_with_no_measure_frequency(self):
         try:
             Sensor("TEMP.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
                    MeasureType.THERMO_COUPLE_TYPE_A, None)
