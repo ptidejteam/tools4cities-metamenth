@@ -42,7 +42,7 @@ class Envelope:
         """
         return StructureSearch.search_by_id(self.covers, uid)
 
-    def get_layers(self, search_term: Dict) -> List[Cover]:
+    def get_covers(self, search_term: Dict) -> List[Cover]:
         """
         Retrieves covers given the attributes and their values
         :param search_term: the uid of the floor

@@ -18,10 +18,11 @@ class Cover:
         """
         :param cover_type: the type of building cover
         """
-        Validate.validate_none({"cover_type": cover_type})
         self._UID = str(uuid.uuid4())
-        self._cover_type = cover_type
+        self._cover_type = None
         self._layers: List['Layer'] = [] # the various layers in this building cover
+        # validate cover type
+        self.cover_type = cover_type
 
     @property
     def UID(self) -> str:
