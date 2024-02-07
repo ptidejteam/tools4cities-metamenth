@@ -13,6 +13,8 @@ from visitors import EntityInsert
 from enumerations import BuildingEntity
 from datatypes.interfaces.abstract_measure import AbstractMeasure
 from datatypes.zone import Zone
+from visitors import StructureSearch
+from typing import Dict
 
 
 class Building:
@@ -258,6 +260,22 @@ class Building:
         :return:
         """
         EntityRemover.remove_building_entity(self, BuildingEntity.FLOOR.value, floor)
+
+    def get_floor_by_uid(self, uid: str) -> Floor:
+        """
+        Retrieves a floor given the uid
+        :param uid: the uid of the floor
+        :return:
+        """
+        return StructureSearch.search_by_id(self.floors, uid)
+
+    def get_floors(self, search_term: Dict) -> List[Floor]:
+        """
+        Retrieves floors given the attributes and their values
+        :param search_term: the uid of the floor
+        :return:
+        """
+        return StructureSearch.search(self.floors, search_term)
 
     def __str__(self):
         floors_info = "\n".join([f"  - Floor {floor.number}: {floor}" for floor in self.floors])

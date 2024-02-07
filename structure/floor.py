@@ -10,7 +10,9 @@ from visitors import EntityRemover
 from enumerations import BuildingEntity
 from visitors import EntityInsert
 from typing import Union
-
+from visitors import StructureSearch
+from typing import Dict
+from typing import List
 
 class Floor(AbstractSpace, ABC):
     """
@@ -147,6 +149,54 @@ class Floor(AbstractSpace, ABC):
         :return:
         """
         EntityRemover.remove_floor_entity(self, BuildingEntity.ROOM.value, room)
+
+    def get_open_space_by_uid(self, uid: str) -> OpenSpace:
+        """
+        Retrieves an open space given the uid
+        :param uid: the uid of the open space
+        :return:
+        """
+        return StructureSearch.search_by_id(self.open_spaces, uid)
+
+    def get_room_by_uid(self, uid: str) -> Room:
+        """
+        Retrieves a room given the uid
+        :param uid: the uid of the room
+        :return:
+        """
+        return StructureSearch.search_by_id(self.rooms, uid)
+
+    def get_open_space_by_name(self, name: str) -> OpenSpace:
+        """
+        Retrieves an open space given the name
+        :param name: the name of the open space
+        :return:
+        """
+        return StructureSearch.search_by_name(self.open_spaces, name)
+
+    def get_room_by_name(self, name: str) -> Room:
+        """
+        Retrieves a room given the name
+        :param name: the name of the room
+        :return:
+        """
+        return StructureSearch.search_by_name(self.rooms, name)
+
+    def get_rooms(self, search_term: Dict) -> List[Room]:
+        """
+        Retrieves rooms that match attributes and their values
+        :param search_term: attributes and their values
+        :return:
+        """
+        return StructureSearch.search(self.rooms, search_term)
+
+    def get_open_spaces(self, search_term: Dict) -> List[OpenSpace]:
+        """
+        Retrieves open spaces that match attributes and their values
+        :param search_term: attributes and their values
+        :return:
+        """
+        return StructureSearch.search(self.open_spaces, search_term)
 
     def __eq__(self, other):
         # floors are equal if they share the same number

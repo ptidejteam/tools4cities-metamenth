@@ -3,6 +3,8 @@ from enumerations import CoverType
 from structure.layer import Layer
 from typing import List
 from misc import Validate
+from visitors import StructureSearch
+from typing import Dict
 
 
 class Cover:
@@ -49,6 +51,22 @@ class Cover:
             self._layers.append(layer)
         else:
             raise ValueError("The layer you're trying to add has a different material from the cover.")
+
+    def get_layer_by_uid(self, uid: str) -> Layer:
+        """
+        Retrieves a layer given the uid
+        :param uid: the uid of the layer
+        :return:
+        """
+        return StructureSearch.search_by_id(self.layers, uid)
+
+    def get_layers(self, search_term: Dict) -> List[Layer]:
+        """
+        Retrieves layers given the attributes and their values
+        :param search_term: the uid of the floor
+        :return:
+        """
+        return StructureSearch.search(self.layers, search_term)
 
     def __str__(self):
         layer_str = "\n".join(str(layer) for layer in self.layers)
