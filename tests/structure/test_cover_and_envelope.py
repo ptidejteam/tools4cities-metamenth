@@ -71,6 +71,51 @@ class TestLayerAndEnvelop(BaseTest):
         self.assertEqual(envelope.covers[0].cover_type, CoverType.ROOF)
         self.assertEqual(len(envelope.covers[0].layers), 2)
 
+    def test_get_layer_by_uid(self):
+        cover = Cover(CoverType.ROOF)
+        cover.add_layer(self.layer)
+        new_layer = Layer(self.height, self.length, self.width, self.ex_material)
+        new_layer.has_vapour_barrier = True
+        cover.add_layer(new_layer)
+        layer = cover.get_layer_by_uid(new_layer.UID)
+        self.assertEqual(layer, new_layer)
+
+    def test_get_layer_with_wrong_uid(self):
+        cover = Cover(CoverType.ROOF)
+        cover.add_layer(self.layer)
+        new_layer = Layer(self.height, self.length, self.width, self.ex_material)
+        new_layer.has_vapour_barrier = True
+        cover.add_layer(new_layer)
+        layer = cover.get_layer_by_uid(cover.UID)
+        self.assertEqual(layer, None)
+
+    def test_search_layers_with_wrong_values(self):
+        cover = Cover(CoverType.ROOF)
+        cover.add_layer(self.layer)
+        new_layer = Layer(self.height, self.length, self.width, self.ex_material)
+        new_layer.has_vapour_barrier = True
+        cover.add_layer(new_layer)
+        layers = cover.get_layers({'height': self.width, 'thickness': self.length})
+        self.assertEqual(layers, [])
+
+    def test_search_layers_with_wrong_attributes(self):
+        cover = Cover(CoverType.ROOF)
+        cover.add_layer(self.layer)
+        new_layer = Layer(self.height, self.length, self.width, self.ex_material)
+        new_layer.has_vapour_barrier = True
+        cover.add_layer(new_layer)
+        layers = cover.get_layers({'width': self.width, 'area': self.length})
+        self.assertEqual(layers, [])
+
+    def test_search_layers(self):
+        cover = Cover(CoverType.ROOF)
+        cover.add_layer(self.layer)
+        new_layer = Layer(self.height, self.length, self.width, self.ex_material)
+        new_layer.has_vapour_barrier = True
+        cover.add_layer(new_layer)
+        layers = cover.get_layers({'height': self.height, 'thickness': self.width})
+        self.assertEqual(layers, [self.layer, new_layer])
+
 
 
 

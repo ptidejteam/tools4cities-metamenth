@@ -6,6 +6,7 @@ from enumerations import MeasurementUnit
 from transducers.sensor import Sensor
 from enumerations import SensorMeasure
 from enumerations import MeasureType
+from measure_instruments.sensor_data import SensorData
 
 
 class TestSensor(TestCase):
@@ -24,7 +25,6 @@ class TestSensor(TestCase):
             Sensor("TEMP.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
                    MeasureType.THERMO_COUPLE_TYPE_A, None)
         except ValueError as err:
-            print(err)
             self.assertEqual(err.__str__(), "data_frequency must be float")
 
     def test_co2_sensor_with_temperature_measurement(self):
@@ -46,7 +46,6 @@ class TestSensor(TestCase):
             Sensor("AIR.VOLUME.SENSOR", SensorMeasure.AIR_VOLUME, MeasurementUnit.CANDELA_PER_SQUARE_METER,
                    MeasureType.THERMO_COUPLE_TYPE_A, 5)
         except ValueError as err:
-            print(err)
             self.assertEqual(err.__str__(),
                              "AirVolume sensor can not have CandelaPerSquareMeter (cd/m2) measurement unit")
 
@@ -111,3 +110,29 @@ class TestSensor(TestCase):
         self.assertEqual(daylight_sensor.input_current_range, None)
         self.assertEqual(daylight_sensor.input_voltage_range, None)
         self.assertEqual(daylight_sensor.output_voltage_range, None)
+
+    def test_add_data_to_sensor(self):
+        co2_sensor = Sensor("CO2.SENSOR", SensorMeasure.CARBON_DIOXIDE,
+                            MeasurementUnit.PARTS_PER_MILLION,
+                            MeasureType.THERMO_COUPLE_TYPE_C, 70)
+        data_point_one = SensorData(180)
+        data_point_two = SensorData(187)
+        data_point_three = SensorData(204)
+        co2_sensor.add_data([data_point_one, data_point_two, data_point_three])
+        self.assertEqual(len(co2_sensor.data), 3)
+        self.assertEqual(co2_sensor.data[0], data_point_one)
+        self.assertEqual(co2_sensor.data[1].value, data_point_two.value)
+
+    def test_remove_data_to_sensor(self):
+        co2_sensor = Sensor("CO2.SENSOR", SensorMeasure.CARBON_DIOXIDE,
+                            MeasurementUnit.PARTS_PER_MILLION,
+                            MeasureType.THERMO_COUPLE_TYPE_C, 70)
+        data_point_one = SensorData(180)
+        data_point_two = SensorData(187)
+        data_point_three = SensorData(204)
+        co2_sensor.add_data([data_point_one, data_point_two, data_point_three])
+
+        co2_sensor.remove_data(data_point_two)
+        self.assertEqual(len(co2_sensor.data), 2)
+        self.assertEqual(co2_sensor.data, [data_point_one, data_point_three])
+

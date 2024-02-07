@@ -5,6 +5,9 @@ from datatypes.operational_schedule import OperationalSchedule
 from datetime import datetime
 from datetime import timedelta
 from .base_test import BaseTest
+from structure.open_space import OpenSpace
+from structure.room import Room
+from enumerations import RoomType
 
 
 class TestFloor(BaseTest):
@@ -66,3 +69,77 @@ class TestFloor(BaseTest):
         floor.add_schedule(schedule)
         self.assertEqual(floor.schedules, [schedule])
         self.assertEqual(len(floor.schedules), 1)
+
+    def test_get_room_by_uid(self):
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, rooms=[self.room])
+        room = floor.get_room_by_uid(self.room.UID)
+        self.assertEqual(room, self.room)
+
+    def test_get_room_with_wrong_uid(self):
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, rooms=[self.room])
+        room = floor.get_room_by_uid(self.hall.UID)
+        self.assertEqual(room, None)
+
+    def test_get_room_by_name(self):
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, rooms=[self.room])
+        room = floor.get_room_by_name(self.room.name)
+        self.assertEqual(room, self.room)
+
+    def test_get_room_with_wrong_name(self):
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, rooms=[self.room])
+        room = floor.get_room_by_name(self.hall.name)
+        self.assertEqual(room, None)
+
+    def test_get_open_space_by_uid(self):
+        corridor = OpenSpace("CORRIDOR", self.area, OpenSpaceType.CORRIDOR)
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, open_spaces=[self.hall, corridor])
+        open_space = floor.get_open_space_by_uid(corridor.UID)
+        self.assertEqual(open_space, corridor)
+
+    def test_get_open_space_with_wrong_uid(self):
+        corridor = OpenSpace("CORRIDOR", self.area, OpenSpaceType.CORRIDOR)
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, rooms=[self.hall, corridor])
+        room = floor.get_open_space_by_uid(self.room.UID)
+        self.assertEqual(room, None)
+
+    def test_get_open_space_by_name(self):
+        corridor = OpenSpace("CORRIDOR", self.area, OpenSpaceType.CORRIDOR)
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, open_spaces=[self.hall, corridor])
+        open_space = floor.get_open_space_by_name(corridor.name)
+        self.assertEqual(open_space, corridor)
+
+    def test_get_open_space_with_wrong_name(self):
+        corridor = OpenSpace("CORRIDOR", self.area, OpenSpaceType.CORRIDOR)
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, open_spaces=[self.hall, corridor])
+        open_space = floor.get_open_space_by_uid(self.room.name)
+        self.assertEqual(open_space, None)
+
+    def test_search_rooms_with_wrong_search_terms(self):
+        lavatory = Room(self.area, "Lav 002", RoomType.LAVATORY)
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, rooms=[lavatory, self.room])
+        try:
+            floor.get_rooms({'name': 'Lav 002', 'space_type': 'large'})
+        except AttributeError as err:
+            self.assertEqual(err.__str__(), "'Room' object has no attribute 'space_type'")
+
+    def test_search_rooms(self):
+        room = Room(self.area, "Room 444", RoomType.BEDROOM)
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, rooms=[room, self.room])
+        rooms = floor.get_rooms({'room_type': RoomType.BEDROOM})
+        self.assertEqual(rooms, [room, self.room])
+
+    def test_search_open_spaces_with_wrong_search_terms(self):
+        corridor = OpenSpace("CORRIDOR", self.area, OpenSpaceType.CORRIDOR)
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, open_spaces=[corridor, self.hall])
+        try:
+            floor.get_open_spaces({'name': 'CORRIDOR', 'size': 'large'})
+        except AttributeError as err:
+            self.assertEqual(err.__str__(), "'OpenSpace' object has no attribute 'size'")
+
+    def test_search_open_spaces(self):
+        hall = OpenSpace("HALL_ONE", self.area, OpenSpaceType.HALL)
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, open_spaces=[hall, self.hall])
+        open_spaces = floor.get_open_spaces({'space_type': OpenSpaceType.HALL})
+        self.assertEqual(open_spaces, [hall, self.hall])
+
+
