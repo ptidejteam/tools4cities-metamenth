@@ -4,6 +4,7 @@ from structure.envelope import Envelope
 from enumerations import CoverType
 import copy
 from .base_test import BaseTest
+from enumerations import MaterialType
 
 
 class TestLayerAndEnvelop(BaseTest):
@@ -21,7 +22,7 @@ class TestLayerAndEnvelop(BaseTest):
             self.assertEqual(cover.cover_type, None)
             self.assertIsNotNone(cover.UID)
         except ValueError as err:
-            self.assertEqual(err.__str__(), "cover_type is/are mandatory")
+            self.assertEqual(err.__str__(), "cover_type must be of type CoverType")
 
     def test_floor_cover_with_roof_layer(self):
         try:
@@ -116,6 +117,69 @@ class TestLayerAndEnvelop(BaseTest):
         layers = cover.get_layers({'height': self.height, 'thickness': self.width})
         self.assertEqual(layers, [self.layer, new_layer])
 
+    def test_get_cover_by_uid(self):
+        first_cover = Cover(CoverType.ROOF)
+        first_cover.add_layer(self.layer)
+
+        second_cover = Cover(CoverType.WINDOW)
+        material = copy.deepcopy(self.ex_material)
+
+        material.material_type = MaterialType.WIN_DOOR_WOOD
+        new_layer = Layer(self.height, self.length, self.width, material)
+        second_cover.add_layer(new_layer)
+
+        envelope = Envelope()
+        envelope.add_cover(first_cover)
+        envelope.add_cover(second_cover)
+
+        self.assertEqual(envelope.get_covers_by_uid(first_cover.UID), first_cover)
+        self.assertEqual(envelope.get_covers_by_uid(second_cover.UID), second_cover)
+
+    def test_get_cover_with_wrong_uid(self):
+        cover = Cover(CoverType.ROOF)
+        cover.add_layer(self.layer)
+
+        envelope = Envelope()
+        envelope.add_cover(cover)
+
+        self.assertIsNone(envelope.get_covers_by_uid(self.layer.UID))
+        self.assertNotEqual(envelope.get_covers_by_uid(self.layer.UID), cover)
+
+    def test_search_covers_with_wrong_attributes(self):
+        first_cover = Cover(CoverType.ROOF)
+        first_cover.add_layer(self.layer)
+
+        second_cover = Cover(CoverType.WINDOW)
+        material = copy.deepcopy(self.ex_material)
+
+        material.material_type = MaterialType.WIN_DOOR_WOOD
+        new_layer = Layer(self.height, self.length, self.width, material)
+        second_cover.add_layer(new_layer)
+
+        envelope = Envelope()
+        envelope.add_cover(first_cover)
+        envelope.add_cover(second_cover)
+
+        covers = envelope.get_covers({'name': 'RoofCover'})
+        self.assertEqual(covers, [])
+
+    def test_search_covers(self):
+        first_cover = Cover(CoverType.ROOF)
+        first_cover.add_layer(self.layer)
+
+        second_cover = Cover(CoverType.WINDOW)
+        material = copy.deepcopy(self.ex_material)
+
+        material.material_type = MaterialType.WIN_DOOR_WOOD
+        new_layer = Layer(self.height, self.length, self.width, material)
+        second_cover.add_layer(new_layer)
+
+        envelope = Envelope()
+        envelope.add_cover(first_cover)
+        envelope.add_cover(second_cover)
+
+        covers = envelope.get_covers({'cover_type': CoverType.WINDOW})
+        self.assertEqual(covers, [second_cover])
 
 
 
