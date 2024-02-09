@@ -1,4 +1,4 @@
-from measure_instruments.interface.abstract_data_measure import AbstractDataMeasure
+from measure_instruments.interfaces.abstract_data_measure import AbstractDataMeasure
 
 
 class MeterMeasure(AbstractDataMeasure):
