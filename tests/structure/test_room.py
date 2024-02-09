@@ -8,6 +8,7 @@ from transducers.sensor import Sensor
 from enumerations import SensorMeasure
 from enumerations import MeasureType
 from .base_test import BaseTest
+from measure_instruments import MeterMeasure
 
 
 class TestRoom(BaseTest):
@@ -30,8 +31,11 @@ class TestRoom(BaseTest):
     def test_classroom_with_power_meter_and_same_location(self):
         self.room.location = "huz.cab.err"
         power_meter = Meter("huz.cab.err", "Honeywell", 5, MeasurementUnit.KILOWATTS, MeterType.POWER)
+        power_meter.add_meter_measure(2)
+        power_meter.add_meter_measure(5)
         self.room.meter = power_meter
         self.assertEqual(self.room.meter.meter_type, power_meter.meter_type)
+        self.assertEqual(len(self.room.meter.meter_measures), 2)
         self.assertEqual(self.room.location, power_meter.meter_location)
 
     def test_classroom_with_adjacent_hall(self):

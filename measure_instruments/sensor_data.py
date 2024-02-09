@@ -1,15 +1,8 @@
-from dataclasses import dataclass, field
-from uuid import uuid4
-from datetime import datetime
+from measure_instruments.interface.abstract_data_measure import AbstractDataMeasure
 
 
-@dataclass
-class SensorData:
-    value: float
-    UID: str = field(default_factory=lambda: str(uuid4()))
-    timestamp: datetime = datetime.now()
+class SensorData(AbstractDataMeasure):
 
-    def __eq__(self, other):
-        if isinstance(other, SensorData):
-            return self.UID == other.UID
-        return False
+    def __init__(self, value: float):
+        super().__init__(value)
+
