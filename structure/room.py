@@ -18,7 +18,6 @@ class Room(AbstractFloorSpace, ABC):
         area: AbstractMeasure,
         name: str,
         room_type: RoomType,
-        meter: Meter = None,
         location: str = None
     ):
         """
@@ -26,12 +25,10 @@ class Room(AbstractFloorSpace, ABC):
         :param location: The location of the room (three words terminated with a period).
         :param name: The name of the room.
         :param room_type: The type of the room.
-        :param meter: if the room has any meter (optional)
         """
         super().__init__(area, name, location)
         self._name = None
         self._room_type = None
-        self._meter = meter
 
         # call setters to apply validation
         self.name = name
@@ -48,23 +45,10 @@ class Room(AbstractFloorSpace, ABC):
         else:
             raise ValueError("room_type must be of type RoomType")
 
-    @property
-    def meter(self) -> Meter:
-        return self._meter
-
-    @meter.setter
-    def meter(self, value: Meter):
-        if value:
-            if value.meter_location != self.location:
-                raise ValueError("what3words location of meter should be the same as room")
-        self._meter = value
-
     def __str__(self):
         room_details = (
             f"Room ({super().__str__()} Room, "
             f"Room Type: {self.room_type})"
         )
 
-        if self.meter:
-            room_details += f"\nAssociated Meter: {self.meter}"
         return room_details

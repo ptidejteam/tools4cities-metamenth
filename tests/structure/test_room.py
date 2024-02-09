@@ -25,7 +25,7 @@ class TestRoom(BaseTest):
             power_meter = Meter("huz.cab.err", "Honeywell", 5, MeasurementUnit.KILOWATTS, MeterType.POWER)
             self.room.meter = power_meter
         except ValueError as err:
-            self.assertEqual(err.__str__(), "what3words location of meter should be the same as room")
+            self.assertEqual(err.__str__(), "what3words location of meter should be the same as space")
 
     def test_classroom_with_power_meter_and_same_location(self):
         self.room.location = "huz.cab.err"

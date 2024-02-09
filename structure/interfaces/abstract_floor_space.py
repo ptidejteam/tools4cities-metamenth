@@ -5,6 +5,7 @@ from transducers.interfaces.abstract_transducer import AbstractTransducer
 from visitors import EntityRemover
 from visitors import EntityInsert
 from enumerations import BuildingEntity
+from measure_instruments.meter import Meter
 
 
 class AbstractFloorSpace(AbstractSpace):
@@ -15,12 +16,18 @@ class AbstractFloorSpace(AbstractSpace):
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, area: AbstractMeasure, name: str, location: str = None):
+    def __init__(self, area: AbstractMeasure, name: str, location: str = None, meter: Meter = None):
+        """
+        Models spaces on a building's floor
+        :param area: the area of the space
+        :param name: the name of the space
+        :param location: the what3word location of the space
+        """
         super().__init__(area, location)
         self._name = None
         self._adjacent_spaces: List[AbstractFloorSpace] = []
         self._transducers: List[AbstractTransducer] = []
-
+        self._meter = meter
         # apply validation through setters
         self.name = name
 
@@ -56,6 +63,17 @@ class AbstractFloorSpace(AbstractSpace):
             self._transducers = value
         else:
             raise ValueError("transducers must be of type [Transducers]")
+
+    @property
+    def meter(self) -> Meter:
+        return self._meter
+
+    @meter.setter
+    def meter(self, value: Meter):
+        if value:
+            if value.meter_location != self.location:
+                raise ValueError("what3words location of meter should be the same as space")
+        self._meter = value
 
     def add_adjacent_space(self, space: 'AbstractFloorSpace'):
         """
@@ -100,6 +118,7 @@ class AbstractFloorSpace(AbstractSpace):
         return (
             f"{super().__str__()}"
             f"Name: {self.name}"
+            f"Meter: {self.meter}"
             f"Adjacent Spaces: {self.adjacent_spaces}, "
             f"Transducers: {self.transducers}, "
         )
