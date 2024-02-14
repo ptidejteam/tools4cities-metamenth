@@ -28,6 +28,7 @@ Read the documentation here: [MetamEnTh Documentation](https://github.com/petery
    
 5. Run the tests
     ```sh
+     chmod +x run_tests.sh
      ./run_tests.sh
 
 
