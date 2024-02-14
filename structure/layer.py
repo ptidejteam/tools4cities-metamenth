@@ -21,14 +21,19 @@ class Layer:
         has_air_barrier: bool = False,
 
     ):
-        Validate.validate_none({"height": height, "length": length, "thickness": thickness, "material": material})
         self._UID = str(uuid.uuid4())  # Generate a unique identifier
-        self._height = height
-        self._length = length
-        self._thickness = thickness
+        self._height = None
+        self._length = None
+        self._thickness = None
+        self._material = None
         self._has_vapour_barrier = has_vapour_barrier
         self._has_air_barrier = has_air_barrier
-        self._material = material
+
+        # apply validation with setters
+        self.height = height
+        self.length = length
+        self.thickness = thickness
+        self.material = material
 
     @property
     def UID(self) -> str:
