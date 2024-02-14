@@ -19,9 +19,10 @@ from enumerations import MaterialType
 from structure.cover import Cover
 from structure.envelope import Envelope
 from enumerations import CoverType
+from enumerations import RoomType
 
 
-class TestFloor(BaseTest):
+class TestBuilding(BaseTest):
 
     def test_building_with_no_address(self):
         try:
@@ -84,6 +85,35 @@ class TestFloor(BaseTest):
         self.assertEqual(len(building.floors), 2)
         self.assertEqual(building.floors[1], second_floor)
 
+    def test_get_floor_by_uid(self):
+        first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
+
+        building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
+                            BuildingType.RESIDENTIAL, [first_floor])
+
+        floor = building.get_floor_by_uid(first_floor.UID)
+        self.assertEqual(floor, building.floors[0])
+        self.assertEqual(floor.floor_type, FloorType.REGULAR)
+
+    def test_get_floor_by_number(self):
+        first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
+
+        building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
+                            BuildingType.RESIDENTIAL, [first_floor])
+
+        floor = building.get_floor_by_number(1)
+        self.assertEqual(floor, building.floors[0])
+        self.assertEqual(floor.floor_type, FloorType.REGULAR)
+
+    def test_get_floor_with_wrong_number(self):
+        first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
+
+        building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
+                            BuildingType.RESIDENTIAL, [first_floor])
+
+        floor = building.get_floor_by_number(2)
+        self.assertIsNone(floor)
+
     def test_remove_floor_from_building(self):
         first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
         second_floor = copy.deepcopy(first_floor)
@@ -107,6 +137,23 @@ class TestFloor(BaseTest):
         building.floors[0].add_open_spaces([self.hall])
         self.assertEqual(building.floors[0].open_spaces, [self.hall])
         self.assertEqual(building.floors[0].open_spaces[0].space_type, OpenSpaceType.HALL)
+
+    def test_create_building_using_builder(self):
+        first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
+        second_floor = Floor(self.floor_area, 2, FloorType.REGULAR, open_spaces=[self.hall])
+        building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
+                            BuildingType.RESIDENTIAL, [first_floor]).add_floors([second_floor])\
+            .add_open_space(first_floor.UID, "Dinning Area", self.area, OpenSpaceType.DINNING_AREA)\
+            .add_room(second_floor.UID, "library", self.area, RoomType.LIBRARY)
+
+        self.assertEqual(len(building.floors), 2)
+        self.assertEqual(len(building.floors[0].rooms), 1)
+        self.assertEqual(len(building.floors[0].open_spaces), 1)
+        self.assertEqual(len(building.floors[1].rooms), 1)
+        self.assertEqual(len(building.floors[1].open_spaces), 1)
+        self.assertEqual(building.get_floor_by_number(1).get_open_space_by_name("Dinning Area").space_type,
+                         OpenSpaceType.DINNING_AREA)
+        self.assertEqual(building.get_floor_by_uid(second_floor.UID).get_room_by_name("library").area, self.area)
 
     def test_remove_open_space_to_building_floor(self):
         first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])

@@ -7,7 +7,7 @@ from tests.structure.base_test import BaseTest
 from enumerations import MaterialType
 
 
-class TestLayerAndEnvelop(BaseTest):
+class TestCoverAndEnvelop(BaseTest):
 
     def test_floor_cover_without_layers(self):
         cover = Cover(CoverType.FLOOR)
