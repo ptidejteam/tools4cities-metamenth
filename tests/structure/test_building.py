@@ -14,7 +14,7 @@ from measure_instruments.meter import Meter
 from enumerations import MeasurementUnit
 from enumerations import MeterType
 from measure_instruments.weather_station import WeatherStation
-from .base_test import BaseTest
+from tests.structure.base_test import BaseTest
 from enumerations import MaterialType
 from structure.cover import Cover
 from structure.envelope import Envelope

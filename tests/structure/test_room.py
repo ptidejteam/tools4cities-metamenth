@@ -7,8 +7,7 @@ from enumerations import MeterType
 from transducers.sensor import Sensor
 from enumerations import SensorMeasure
 from enumerations import MeasureType
-from .base_test import BaseTest
-from measure_instruments import MeterMeasure
+from tests.structure.base_test import BaseTest
 
 
 class TestRoom(BaseTest):

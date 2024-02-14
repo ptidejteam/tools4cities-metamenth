@@ -4,7 +4,7 @@ from enumerations import FloorType
 from datatypes.operational_schedule import OperationalSchedule
 from datetime import datetime
 from datetime import timedelta
-from .base_test import BaseTest
+from tests.structure.base_test import BaseTest
 from structure.open_space import OpenSpace
 from structure.room import Room
 from enumerations import RoomType

@@ -3,7 +3,7 @@ from structure.cover import Cover
 from structure.envelope import Envelope
 from enumerations import CoverType
 import copy
-from .base_test import BaseTest
+from tests.structure.base_test import BaseTest
 from enumerations import MaterialType
 
 

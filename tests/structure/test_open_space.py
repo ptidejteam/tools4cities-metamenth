@@ -2,7 +2,7 @@ from enumerations import MeasurementUnit
 from structure.open_space import OpenSpace
 from enumerations import OpenSpaceType
 import copy
-from .base_test import BaseTest
+from tests.structure.base_test import BaseTest
 from transducers.sensor import Sensor
 from enumerations import SensorMeasure
 from enumerations import MeasureType
