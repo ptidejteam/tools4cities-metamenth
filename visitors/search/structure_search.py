@@ -21,6 +21,16 @@ class StructureSearch:
         return StructureSearch.search_structure(structures, 'UID', uid)
 
     @staticmethod
+    def search_by_number(structures, entity_number):
+        """
+        search structures by entity number
+        :param structures: the structures to search: floor, room, open spaces
+        :param entity_number: the number of the entity
+        :return:
+        """
+        return StructureSearch.search_structure(structures, 'number', entity_number)
+
+    @staticmethod
     def search_by_name(structures, name):
         """
         search structures by name
