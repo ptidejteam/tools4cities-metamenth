@@ -4,6 +4,8 @@ from datatypes.address import Address
 from datatypes.operational_schedule import OperationalSchedule
 from typing import List
 from .floor import Floor
+from .room import Room
+from .open_space import OpenSpace
 from .envelope import Envelope
 from typing import Optional
 from measure_instruments import WeatherStation
@@ -15,6 +17,8 @@ from datatypes.interfaces.abstract_measure import AbstractMeasure
 from datatypes.zone import Zone
 from visitors import StructureSearch
 from typing import Dict
+from enumerations import RoomType
+from enumerations import OpenSpaceType
 
 
 class Building:
@@ -201,6 +205,7 @@ class Building:
         :return:
         """
         self.weather_stations.append(weather_station)
+        return self
 
     def remove_weather_station(self, weather_station: WeatherStation):
         """
@@ -217,6 +222,7 @@ class Building:
         :return:
         """
         self.meters.append(meter)
+        return self
 
     def remove_meter(self, meter: Meter):
         """
@@ -233,6 +239,7 @@ class Building:
         :return:
         """
         EntityInsert.insert_space_entity(self, schedule, BuildingEntity.SCHEDULE.value)
+        return self
 
     def remove_schedule(self, schedule: OperationalSchedule):
         """
@@ -252,6 +259,7 @@ class Building:
             existing_floor = next((floor for floor in self.floors if floor.number == new_floor.number), None)
             if existing_floor is None:
                 self.floors.append(new_floor)
+        return self # necessary for method chaining
 
     def remove_floor(self, floor: Floor):
         """
@@ -269,6 +277,14 @@ class Building:
         """
         return StructureSearch.search_by_id(self.floors, uid)
 
+    def get_floor_by_number(self, floor_number: int) -> Floor:
+        """
+        Retrieves a floor given the floor number
+        :param floor_number: the number assigned to the floor
+        :return:
+        """
+        return StructureSearch.search_by_number(self.floors, floor_number)
+
     def get_floors(self, search_term: Dict) -> List[Floor]:
         """
         Retrieves floors given the attributes and their values
@@ -276,6 +292,39 @@ class Building:
         :return:
         """
         return StructureSearch.search(self.floors, search_term)
+
+    def add_room(self, floor_uid: str, name: str, area: AbstractMeasure,
+                 room_type: RoomType,
+                 location: str = None):
+        """
+        Adds a room to a building's floor
+        :param floor_uid: the unique ID of the floor
+        :param area: the area of the room
+        :param name: the name of the room
+        :param room_type: the tupe of room
+        :param location: the location of the room
+        :return:
+        """
+        if not self.get_floor_by_uid(floor_uid):
+            raise ValueError("Cannot add room without a floor")
+        self.get_floor_by_uid(floor_uid).add_rooms([Room(area, name, room_type, location)])
+        return self  # Return self for method chaining
+
+    def add_open_space(self, floor_uid: str, name: str, area: AbstractMeasure,
+                       space_type: OpenSpaceType, location: str = None):
+        """
+        Adds an open space to a building's floor
+        :param floor_uid: the floor UID
+        :param name: the name of the open space
+        :param area: the area of the open space
+        :param space_type: the type of open space
+        :param location: the location of the open space
+        :return:
+        """
+        if not self.get_floor_by_uid(floor_uid):
+            raise ValueError("Cannot add open space without a floor")
+        self.get_floor_by_uid(floor_uid).add_open_spaces([OpenSpace(name, area, space_type, location)])
+        return self  # Return self for method chaining
 
     def __str__(self):
         floors_info = "\n".join([f"  - Floor {floor.number}: {floor}" for floor in self.floors])
