@@ -8,6 +8,7 @@ class BuildingEntity(Enum):
     Author: Peter Yefi
     Email: peteryefi@gmail.com
     """
+    BUILDING = "Building"
     FLOOR = "Floor"
     SCHEDULE = "Schedule"
     METER = "Meter"
