@@ -20,6 +20,7 @@ from structure.cover import Cover
 from structure.envelope import Envelope
 from enumerations import CoverType
 from enumerations import RoomType
+from observers.structure_state_change_logger import StructureStateChangeLogger
 
 
 class TestBuilding(BaseTest):
@@ -351,3 +352,10 @@ class TestBuilding(BaseTest):
         self.assertEqual(self.building.envelope.covers[0].layers, [self.layer, new_layer])
         self.assertEqual(self.building.envelope.covers[0].layers[0].thickness.value, 3)
         self.assertEqual(self.building.envelope.covers[0].layers[1].material.material_type, MaterialType.ROOF_STEEL)
+
+    def test_building_structure_observer(self):
+        structure_change_logger = StructureStateChangeLogger()
+        self.building.track_state = True
+        self.building.add_observer(structure_change_logger)
+        self.building.floor_area = self.floor_area
+

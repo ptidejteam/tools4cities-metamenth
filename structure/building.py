@@ -19,25 +19,20 @@ from visitors import StructureSearch
 from typing import Dict
 from enumerations import RoomType
 from enumerations import OpenSpaceType
+from observers.observable import Observable
+from misc import StateTrackDecorator
 
 
-class Building:
+class Building(Observable):
     """
     A representation of a building
 
     Author: Peter Yefi
     Email: peteryefi@gmail.com
     """
-    def __init__(
-        self,
-        construction_year: int,
-        height: AbstractMeasure,
-        floor_area: AbstractMeasure,
-        internal_mass: AbstractMeasure,
-        address: Address,
-        building_type: BuildingType,
-        floors: List[Floor]
-    ):
+
+    def __init__(self, construction_year: int, height: AbstractMeasure, floor_area: AbstractMeasure,
+                 internal_mass: AbstractMeasure, address: Address, building_type: BuildingType, floors: List[Floor]):
         """
         :param construction_year: The construction year of the building
         :param height: The height of the building
@@ -46,6 +41,7 @@ class Building:
         :param address: The address of the building
         :param building_type: The type of building
         """
+        super().__init__()
         self._UID = str(uuid4())
         self._construction_year = None
         self._height = None
@@ -55,10 +51,11 @@ class Building:
         self._building_type = None
         self._schedules: List[OperationalSchedule] = []
         self._envelope: Envelope = Optional[None]
-        self._floors = None
+        self._floors = []
         self._meters: [Meter] = []
         self._weather_stations: List[WeatherStation] = []
         self._zones: List[Zone] = []
+        self.track_state = False
 
         # apply validation
         self.construction_year = construction_year
@@ -100,8 +97,10 @@ class Building:
         return self._floor_area
 
     @floor_area.setter
+    @StateTrackDecorator
     def floor_area(self, value: AbstractMeasure):
         if value is not None:
+            # write state before updating
             self._floor_area = value
         else:
             raise ValueError("floor_area must be of type AbstractMeasure")
@@ -122,6 +121,7 @@ class Building:
         return self._address
 
     @address.setter
+    @StateTrackDecorator
     def address(self, value: Address):
         if value is not None:
             self._address = value
@@ -133,6 +133,7 @@ class Building:
         return self._building_type
 
     @building_type.setter
+    @StateTrackDecorator
     def building_type(self, value: BuildingType):
         if value is not None:
             self._building_type = value
@@ -170,13 +171,14 @@ class Building:
         if value is not None:
             self._meters = value
         else:
-            raise ValueError("meters must be of type [WeatherStation]")
+            raise ValueError("meters must be of type [Meter]")
 
     @property
     def envelope(self) -> Envelope:
         return self._envelope
 
     @envelope.setter
+    @StateTrackDecorator
     def envelope(self, value: Envelope):
         if value is not None:
             self._envelope = value
@@ -198,6 +200,7 @@ class Building:
         else:
             raise ValueError('zones must be of type [Zone]')
 
+    @StateTrackDecorator
     def add_weather_station(self, weather_station: WeatherStation):
         """
         Adds a weather station to a building
@@ -207,6 +210,7 @@ class Building:
         self.weather_stations.append(weather_station)
         return self
 
+    @StateTrackDecorator
     def remove_weather_station(self, weather_station: WeatherStation):
         """
         Adds a weather station to a building
@@ -232,6 +236,7 @@ class Building:
         """
         EntityRemover.remove_building_entity(self, BuildingEntity.METER.value, meter)
 
+    @StateTrackDecorator
     def add_schedule(self, schedule: OperationalSchedule):
         """
         Adds an operational schedule to this building
@@ -241,6 +246,7 @@ class Building:
         EntityInsert.insert_space_entity(self, schedule, BuildingEntity.SCHEDULE.value)
         return self
 
+    @StateTrackDecorator
     def remove_schedule(self, schedule: OperationalSchedule):
         """
         Removes an operational schedule from this building
@@ -259,7 +265,7 @@ class Building:
             existing_floor = next((floor for floor in self.floors if floor.number == new_floor.number), None)
             if existing_floor is None:
                 self.floors.append(new_floor)
-        return self # necessary for method chaining
+        return self  # necessary for method chaining
 
     def remove_floor(self, floor: Floor):
         """
@@ -293,6 +299,7 @@ class Building:
         """
         return StructureSearch.search(self.floors, search_term)
 
+    @StateTrackDecorator
     def add_room(self, floor_uid: str, name: str, area: AbstractMeasure,
                  room_type: RoomType,
                  location: str = None):
@@ -310,6 +317,7 @@ class Building:
         self.get_floor_by_uid(floor_uid).add_rooms([Room(area, name, room_type, location)])
         return self  # Return self for method chaining
 
+    @StateTrackDecorator
     def add_open_space(self, floor_uid: str, name: str, area: AbstractMeasure,
                        space_type: OpenSpaceType, location: str = None):
         """
