@@ -143,8 +143,8 @@ class TestBuilding(BaseTest):
         first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
         second_floor = Floor(self.floor_area, 2, FloorType.REGULAR, open_spaces=[self.hall])
         building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
-                            BuildingType.RESIDENTIAL, [first_floor]).add_floors([second_floor])\
-            .add_open_space(first_floor.UID, "Dinning Area", self.area, OpenSpaceType.DINNING_AREA)\
+                            BuildingType.RESIDENTIAL, [first_floor]).add_floors([second_floor]) \
+            .add_open_space(first_floor.UID, "Dinning Area", self.area, OpenSpaceType.DINNING_AREA) \
             .add_room(second_floor.UID, "library", self.area, RoomType.LIBRARY)
 
         self.assertEqual(len(building.floors), 2)
@@ -353,9 +353,34 @@ class TestBuilding(BaseTest):
         self.assertEqual(self.building.envelope.covers[0].layers[0].thickness.value, 3)
         self.assertEqual(self.building.envelope.covers[0].layers[1].material.material_type, MaterialType.ROOF_STEEL)
 
-    def test_building_structure_observer(self):
+    def test_building_floor_area_change_history(self):
         structure_change_logger = StructureStateChangeLogger()
         self.building.track_state = True
         self.building.add_observer(structure_change_logger)
         self.building.floor_area = self.floor_area
 
+        self.assertEqual(len(structure_change_logger.state_log), 1)
+        self.assertEqual(structure_change_logger.state_log[0]['entity_type'], 'Building')
+        self.assertEqual(structure_change_logger.state_log[0]['state']['floor_area'].value, self.floor_area.value)
+
+    def test_building_weather_station_change_history(self):
+        structure_change_logger = StructureStateChangeLogger()
+        self.building.track_state = True
+        self.building.add_observer(structure_change_logger)
+
+        self.assertEqual(structure_change_logger.state_log, [])
+
+        self.building.add_weather_station(WeatherStation(location="bob.cob.huz"))
+        self.assertEqual(structure_change_logger.state_log[0]['state'], {'weather_stations': []})
+        self.building.add_weather_station(WeatherStation(location="zzz.cob.huz"))
+        self.assertEqual(len(structure_change_logger.state_log), 2)
+        self.assertEqual(structure_change_logger.state_log[1]['state']['weather_stations'][0].location, 'bob.cob.huz')
+
+    def test_building_state_track_turned_off(self):
+        structure_change_logger = StructureStateChangeLogger()
+        self.building.track_state = False  # turn off tracking state changes
+        self.building.add_observer(structure_change_logger)
+        self.building.add_weather_station(WeatherStation(location="bob.cob.huz"))
+        self.building.add_weather_station(WeatherStation(location="zzz.cob.huz"))
+
+        self.assertEqual(structure_change_logger.state_log, [])
