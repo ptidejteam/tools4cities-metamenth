@@ -76,6 +76,16 @@ class TestSensor(TestCase):
         self.assertEqual(smoke_sensor.meta_data, metadata)
         self.assertEqual(smoke_sensor.meta_data['default_data_interval'], 10)
 
+    def test_remove_metadata_from_sensor(self):
+        smoke_sensor = Sensor("SMOKE.SENSOR", SensorMeasure.SMOKE, MeasurementUnit.MICROGRAM_PER_CUBIC_METER,
+                              MeasureType.THERMO_COUPLE_TYPE_B, 10)
+
+        metadata = {'default_data_interval': 10, 'description': 'change of value based on peak threshold'}
+        smoke_sensor.meta_data = metadata
+        self.assertEqual(smoke_sensor.meta_data, metadata)
+        smoke_sensor.remove_meta_data('default_data_interval')
+        self.assertEqual(smoke_sensor.meta_data, {'description': 'change of value based on peak threshold'})
+
     def test_co2_sensor_with_current_value(self):
         co2_sensor = Sensor("CO2.SENSOR", SensorMeasure.CARBON_DIOXIDE, MeasurementUnit.PARTS_PER_MILLION,
                             MeasureType.THERMO_COUPLE_TYPE_B, 70)

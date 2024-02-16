@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Dict, Any
 from datatypes.continuous_measure import ContinuousMeasure
 from uuid import uuid4
+import sys
 
 
 class AbstractTransducer(ABC):
@@ -50,6 +51,17 @@ class AbstractTransducer(ABC):
         :return:
         """
         self.meta_data[key] = value
+
+    def remove_meta_data(self, key):
+        """
+        removes meta data to transducers
+        :param key: the key part of the metadata
+        :return:
+        """
+        try:
+            del self.meta_data[key]
+        except KeyError as err:
+            print(err, file=sys.stderr)
 
     def __str__(self):
         return (f"Unit: {self.UID}, Name: {self.name}, Registry ID: {self.registry_id}, "

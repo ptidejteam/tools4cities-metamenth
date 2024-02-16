@@ -15,19 +15,18 @@ class Actuator(AbstractTransducer, ABC):
     """
 
     def __init__(self, name: str, trigger_output: object, set_point: AbstractMeasure = None,
-                 trigger_input: Sensor = None, trigger_value: float = None):
+                 trigger_input: Sensor = None, actuation_interval: float = None):
         """
         :param name: the unique name of a transducers
         :param trigger_input: the sensor whose data is associated with this trigger
         :param trigger_output: the device or equipment which is actuated
-        :param trigger_value: value recorded by sensor that related to this actuation
         :param set_point: the setpoint value of the actuator
         """
         super().__init__(name)
         self._set_point = None
         self._trigger_output = trigger_output
         self._trigger_input = None
-        self._trigger_value = trigger_value
+        self._actuation_interval = actuation_interval
 
         self.set_point = set_point
         self.trigger_input = trigger_input
@@ -59,12 +58,12 @@ class Actuator(AbstractTransducer, ABC):
         self._set_point = value
 
     @property
-    def trigger_value(self) -> float:
-        return self._trigger_value
+    def actuation_interval(self) -> float:
+        return self._actuation_interval
 
-    @trigger_value.setter
-    def trigger_value(self, value: float):
-        self._trigger_value = value
+    @actuation_interval.setter
+    def actuation_interval(self, value: float):
+        self._actuation_interval = value
 
     @property
     def trigger_input(self) -> Sensor:
@@ -105,7 +104,7 @@ class Actuator(AbstractTransducer, ABC):
             f"Name: {self.name}, "
             f"Trigger Input: {self.trigger_input}, "
             f"Trigger Output: {self.trigger_output}, "
-            f"Trigger Value: {self.trigger_value}, "
+            f"Trigger Value: {self.actuation_interval}, "
             f"Setpoint: {self.set_point}, "
             f"Trigger Count: {len(trigger_data)}\n"
             f"Trigger History: {trigger_data})"
