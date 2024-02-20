@@ -34,5 +34,6 @@ class RoomType(Enum):
     SUPPORT_SPACE = "SupportSpace"
     STAFF = "Staff"
     ENTERTAINMENT = "Entertainment"
+    CONCIERGE = "Concierge"
     OTHER = "Other"
 

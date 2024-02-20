@@ -2,7 +2,6 @@ from abc import ABC
 from datatypes.interfaces.abstract_measure import AbstractMeasure
 from structure.interfaces.abstract_floor_space import AbstractFloorSpace
 from enumerations import RoomType
-from measure_instruments import Meter
 
 
 class Room(AbstractFloorSpace, ABC):
