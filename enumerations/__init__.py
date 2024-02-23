@@ -14,3 +14,4 @@ from .trigger_type import TriggerType
 from .measure_type import MeasureType
 from .sensor_measure import SensorMeasure
 from .recording_types import RecordingType
+from .sensor_log_type import SensorLogType

@@ -35,5 +35,12 @@ class RoomType(Enum):
     STAFF = "Staff"
     ENTERTAINMENT = "Entertainment"
     CONCIERGE = "Concierge"
+    FIRE = "Fire"
+    ELECTRIC = "Electric"
+    MULTIFUNCTIONAL = "Multifunctional"
+    TRIAGE = "Triage"
+    LOCKER = "Locker"
+    JANITOR_CLOSET = "JanitorCloset"
+    PHOTO = "Photo"
     OTHER = "Other"
 
