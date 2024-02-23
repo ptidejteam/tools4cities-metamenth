@@ -6,6 +6,7 @@ from enumerations import MeasurementUnit
 from transducers.sensor import Sensor
 from enumerations import SensorMeasure
 from enumerations import MeasureType
+from enumerations import SensorLogType
 from measure_instruments.sensor_data import SensorData
 
 
@@ -61,15 +62,16 @@ class TestSensor(TestCase):
                                 MeasureType.THERMO_COUPLE_TYPE_A, 60)
         self.assertEqual(current_sensor.data_frequency, 60)
         self.assertEqual(current_sensor.measure.value, SensorMeasure.CURRENT.value)
-        self.assertEqual(current_sensor.change_of_value, False)
+        self.assertEqual(current_sensor.sensor_log_type, SensorLogType.POLLING)
         self.assertEqual(current_sensor.meta_data, {})
 
     def test_cov_smoke_sensor_with_metadata(self):
         smoke_sensor = Sensor("SMOKE.SENSOR", SensorMeasure.SMOKE, MeasurementUnit.MICROGRAM_PER_CUBIC_METER,
                               MeasureType.THERMO_COUPLE_TYPE_B, 10)
         self.assertEqual(smoke_sensor.data_frequency, 10)
-        smoke_sensor.change_of_value = True
-        self.assertEqual(smoke_sensor.change_of_value, True)
+        smoke_sensor.sensor_log_type = SensorLogType.CHANGE_OF_VALUE
+        print(smoke_sensor)
+        self.assertEqual(smoke_sensor.sensor_log_type, SensorLogType.CHANGE_OF_VALUE)
 
         metadata = {'default_data_interval': 10, 'description': 'change of value based on peak threshold'}
         smoke_sensor.meta_data = metadata
