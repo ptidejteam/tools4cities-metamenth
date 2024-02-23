@@ -7,12 +7,15 @@ from enumerations import MeasureType
 from measure_instruments import SensorData
 from typing import List
 from misc import Validate
+from datatypes.interfaces.abstract_range_measure import AbstractRangeMeasure
+from enumerations import SensorLogType
 
 
 class Sensor(AbstractTransducer, ABC):
 
     def __init__(self, name: str,  measure: SensorMeasure, unit: MeasurementUnit, measure_type: MeasureType,
-                 data_frequency: float, current_value: Optional[float] = None):
+                 data_frequency: float, current_value: Optional[float] = None,
+                 measure_range: AbstractRangeMeasure = None, sensor_log_type: SensorLogType = SensorLogType.POLLING):
         """
         :param name: the unique name of a sensor
         :param measure: the phenomenom (e.g., temperature) this sensor measures
@@ -27,7 +30,9 @@ class Sensor(AbstractTransducer, ABC):
         self._unit = None
         self._current_value = current_value
         self._measure_type = None
+        self._measure_range = measure_range
         self._data: [SensorData] = []
+        self._sensor_log_type = sensor_log_type
 
         # Setting values using setters to perform validation
         self.measure = measure
@@ -49,6 +54,17 @@ class Sensor(AbstractTransducer, ABC):
             self._measure = value
         else:
             raise ValueError("measure must be of type SensorMeasure")
+
+    @property
+    def measure_range(self) -> AbstractRangeMeasure:
+        return self._measure_range
+
+    @measure_range.setter
+    def measure_range(self, value: AbstractRangeMeasure):
+        if value is not None:
+            self._measure_range = value
+        else:
+            raise ValueError("measure must be of type AbstractRangeMeasure")
 
     @property
     def data_frequency(self) -> float:
@@ -95,6 +111,17 @@ class Sensor(AbstractTransducer, ABC):
         else:
             raise ValueError("measure_type must be of type MeasureType")
 
+    @property
+    def sensor_log_type(self) -> SensorLogType:
+        return self._sensor_log_type
+
+    @sensor_log_type.setter
+    def sensor_log_type(self, value: SensorLogType):
+        if value is not None:
+            self._sensor_log_type = value
+        else:
+            raise ValueError("measure must be of type SensorLogType")
+
     def add_data(self, data: List[SensorData]):
         """
         Adds data to a sensor
@@ -121,10 +148,12 @@ class Sensor(AbstractTransducer, ABC):
             f"UID: {self.UID}, "
             f"Name: {self.name}, "
             f"Measure: {self.measure}, "
+            f"Measure Range: {self.measure_range}, "
             f"Data Frequency: {self.data_frequency}, "
             f"Unit: {self.unit}, "
             f"CurrentValue: {self.current_value}, "
-            f"Measure Type: {self.measure_type}\n"
+            f"Measure Type: {self.measure_type}, "
+            f"Log Type: {self.sensor_log_type.value}, "
             f"Data Count: {len(sensor_data)}\n"
             f"Data: {sensor_data})"
         )

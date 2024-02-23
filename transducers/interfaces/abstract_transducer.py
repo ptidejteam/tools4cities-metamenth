@@ -12,8 +12,7 @@ class AbstractTransducer(ABC):
                  input_voltage_range: ContinuousMeasure = None,
                  input_current_range: ContinuousMeasure = None,
                  output_current_range: ContinuousMeasure = None,
-                 output_voltage_range: ContinuousMeasure = None,
-                 change_of_value: bool = False):
+                 output_voltage_range: ContinuousMeasure = None):
         """
         Describes a transducers (in a building)
         :param name: the unique name of the transducers
@@ -31,7 +30,6 @@ class AbstractTransducer(ABC):
         self.registry_id = registry_id
         self.output_current_range = output_current_range
         self.output_voltage_range = output_voltage_range
-        self.change_of_value = change_of_value
         self.meta_data: Dict[str, Any] = {}
         self._data = []
 
@@ -69,6 +67,5 @@ class AbstractTransducer(ABC):
                 f"Output Voltage Range: {self.output_voltage_range}, "
                 f"Input Current Range: {self.input_current_range}, "
                 f"Output Current Range: {self.output_current_range}, "
-                f"Change of Value: {self.change_of_value}, "
                 f"Metadata: {self.meta_data})")
 
