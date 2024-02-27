@@ -1,7 +1,7 @@
-from enum import Enum
+from enumerations.abstract_enum import AbstractEnum
 
 
-class FloorType(Enum):
+class FloorType(AbstractEnum):
     """
     Different types of floors in a building.
 

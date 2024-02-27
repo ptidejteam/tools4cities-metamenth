@@ -1,7 +1,7 @@
-from enum import Enum
+from enumerations.abstract_enum import AbstractEnum
 
 
-class BuildingType(Enum):
+class BuildingType(AbstractEnum):
     """
     Different types of buildings.
 
@@ -9,5 +9,6 @@ class BuildingType(Enum):
     Email: peteryefi@gmail.com
     """
     COMMERCIAL = "Commercial"
+    NON_COMMERCIAL = "NonCommercial"
     RESIDENTIAL = "Residential"
 

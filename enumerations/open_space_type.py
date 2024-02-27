@@ -1,7 +1,7 @@
-from enum import Enum
+from enumerations.abstract_enum import AbstractEnum
 
 
-class OpenSpaceType(Enum):
+class OpenSpaceType(AbstractEnum):
     """
     Open spaces on floors of buildings
 

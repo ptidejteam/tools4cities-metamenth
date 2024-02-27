@@ -1,7 +1,7 @@
-from enum import Enum
+from enumerations.abstract_enum import AbstractEnum
 
 
-class RoomType(Enum):
+class RoomType(AbstractEnum):
     """
     Different types of rooms on a floor of a building.
 
@@ -42,5 +42,6 @@ class RoomType(Enum):
     LOCKER = "Locker"
     JANITOR_CLOSET = "JanitorCloset"
     PHOTO = "Photo"
+    READING = "Reading"
     OTHER = "Other"
 
