@@ -1,1 +1,5 @@
 coverage==7.4.1
+fuzzywuzzy==0.18.0
+Levenshtein==0.25.0
+python-Levenshtein==0.25.0
+rapidfuzz==3.6.1

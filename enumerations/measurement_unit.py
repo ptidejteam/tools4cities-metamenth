@@ -8,7 +8,7 @@ class MeasurementUnit(AbstractEnum):
     Author: Peter Yefi
     Email: peteryefi@gmail.com
     """
-    DEGREE_CELSIUS = "°C"
+    DEGREE_CELSIUS = "0C"
     PASCAL = "Pa"
     METERS_PER_SECOND = "m/s"
     R_VALUE = "R-Value"
@@ -42,8 +42,8 @@ class MeasurementUnit(AbstractEnum):
     SQUARE_METERS_KELVIN_PER_WATTS = "m2.K/W"
     METERS = "m"
     CENTIMETERS = "cm"
-    SQUARE_METER = "m2"
-    KILOGRAM = "Kg"
+    SQUARE_METERS = "m2"
+    KILOGRAMS = "Kg"
     CUBIC_METER = "m3"
     CUBIC_CENTIMETER = "cm3"
     LITER = "l"
