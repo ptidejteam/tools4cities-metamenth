@@ -1,7 +1,7 @@
-from enum import Enum
+from enumerations.abstract_enum import AbstractEnum
 
 
-class SensorMeasure(Enum):
+class SensorMeasure(AbstractEnum):
     """
     Various phenomena that can be measured by a sensor
 
@@ -23,4 +23,5 @@ class SensorMeasure(Enum):
     OCCUPANCY = "Occupancy"
     DAYLIGHT = "Daylight"
     AIR_VOLUME = "AirVolume"
+    HUMIDITY = "Humidity"
     OTHER = "Other"

@@ -8,7 +8,7 @@ class MeasurementUnit(AbstractEnum):
     Author: Peter Yefi
     Email: peteryefi@gmail.com
     """
-    DEGREE_CELSIUS = "0C"
+    DEGREE_CELSIUS = "°C"
     PASCAL = "Pa"
     METERS_PER_SECOND = "m/s"
     R_VALUE = "R-Value"
@@ -53,6 +53,7 @@ class MeasurementUnit(AbstractEnum):
     NITS = "Nits (nt)"
     MICROGRAM_PER_CUBIC_METER = "µg/m3"
     SQUARE_FEET = "ft2"
+    RELATIVE_HUMIDITY = "%RH"
 
 
 

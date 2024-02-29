@@ -1,7 +1,7 @@
-from enum import Enum
+from enumerations.abstract_enum import AbstractEnum
 
 
-class SensorLogType(Enum):
+class SensorLogType(AbstractEnum):
     """
     Describes how sensor values are recorded
 
