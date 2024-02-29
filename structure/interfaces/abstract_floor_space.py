@@ -117,8 +117,8 @@ class AbstractFloorSpace(AbstractSpace):
     def __str__(self) -> str:
         return (
             f"{super().__str__()}"
-            f"Name: {self.name}"
-            f"Meter: {self.meter}"
+            f"Name: {self.name}, "
+            f"Meter: {self.meter}, "
             f"Adjacent Spaces: {self.adjacent_spaces}, "
             f"Transducers: {self.transducers}, "
         )

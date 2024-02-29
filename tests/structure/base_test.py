@@ -20,16 +20,16 @@ from enumerations import MaterialType
 class BaseTest(TestCase):
     def setUp(self) -> None:
         self.area = MeasureFactory.create_measure(RecordingType.BINARY.value,
-                                                  Measure(MeasurementUnit.SQUARE_METER, 45))
+                                                  Measure(MeasurementUnit.SQUARE_METERS, 45))
         self.room = Room(self.area, "Room 145", RoomType.BEDROOM)
         self.hall = OpenSpace("LECTURE_HALL_1", self.area, OpenSpaceType.HALL)
         self.address = Address("Montreal", "6399 Rue Sherbrooke", "QC", "H1N 2Z3", "Canada")
         self.floor_area = MeasureFactory.create_measure(RecordingType.BINARY.value,
-                                                        Measure(MeasurementUnit.SQUARE_METER, 5))
+                                                        Measure(MeasurementUnit.SQUARE_METERS, 5))
         self.height = MeasureFactory.create_measure(RecordingType.BINARY.value,
                                                     Measure(MeasurementUnit.METERS, 30))
         self.internal_mass = MeasureFactory.create_measure(RecordingType.BINARY.value,
-                                                           Measure(MeasurementUnit.KILOGRAM, 2000))
+                                                           Measure(MeasurementUnit.KILOGRAMS, 2000))
         self.floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, rooms=[self.room])
         self.building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
                                  BuildingType.COMMERCIAL, [self.floor])

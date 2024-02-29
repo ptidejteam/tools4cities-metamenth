@@ -33,14 +33,14 @@ class TestSensor(TestCase):
             Sensor("CO2.SENSOR", SensorMeasure.CARBON_DIOXIDE, MeasurementUnit.DEGREE_CELSIUS,
                    MeasureType.THERMO_COUPLE_TYPE_A, 5)
         except ValueError as err:
-            self.assertEqual(err.__str__(), "CarbonDioxide sensor can not have DegreeCelsius (°C) measurement unit")
+            self.assertEqual(err.__str__(), "CarbonDioxide sensor can not have °C measurement unit")
 
     def test_pressure_sensor_with_gas_velocity_measurement(self):
         try:
             Sensor("PRESSURE.SENSOR", SensorMeasure.PRESSURE, MeasurementUnit.METERS_PER_SECOND,
                    MeasureType.THERMO_COUPLE_TYPE_A, 5)
         except ValueError as err:
-            self.assertEqual(err.__str__(), "Pressure sensor can not have MetersPerSecond (m/s) measurement unit")
+            self.assertEqual(err.__str__(), "Pressure sensor can not have m/s measurement unit")
 
     def test_air_volume_sensor_with_luminance_measurement(self):
         try:
@@ -48,14 +48,14 @@ class TestSensor(TestCase):
                    MeasureType.THERMO_COUPLE_TYPE_A, 5)
         except ValueError as err:
             self.assertEqual(err.__str__(),
-                             "AirVolume sensor can not have CandelaPerSquareMeter (cd/m2) measurement unit")
+                             "AirVolume sensor can not have cd/m2 measurement unit")
 
     def test_smoke_sensor_with_noise_measurement(self):
         try:
             Sensor("SMOKE.SENSOR", SensorMeasure.SMOKE, MeasurementUnit.DECIBELS,
                    MeasureType.THERMO_COUPLE_TYPE_A, 5)
         except ValueError as err:
-            self.assertEqual(err.__str__(), "Smoke sensor can not have Decibels (dB) measurement unit")
+            self.assertEqual(err.__str__(), "Smoke sensor can not have dB measurement unit")
 
     def test_current_sensor_with_60_seconds_data_interval(self):
         current_sensor = Sensor("CURRENT.SENSOR", SensorMeasure.CURRENT, MeasurementUnit.AMPERE,

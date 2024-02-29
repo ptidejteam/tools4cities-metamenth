@@ -15,7 +15,7 @@ class TestMeter(TestCase):
         try:
             self.assertEqual(self.meter.meter_location, "huz.cab.err")
             self.assertEqual(self.meter.meter_type, MeterType.POWER)
-            self.assertEqual(self.meter.measurement_unit.KILOWATTS.value, "KiloWatts")
+            self.assertEqual(self.meter.measurement_unit.KILOWATTS.value, "kW")
             self.meter.manufacturer = None
         except ValueError as err:
             self.assertEqual(err.__str__(), "Manufacturer must be a string")

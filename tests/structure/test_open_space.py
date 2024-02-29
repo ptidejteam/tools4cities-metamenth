@@ -15,7 +15,7 @@ class TestOpenSpace(BaseTest):
         self.assertEqual(self.hall.zones, [])
         self.assertIsNotNone(self.hall.UID)
         self.assertEqual(self.hall.area.value, 45)
-        self.assertEqual(self.hall.area.measurement_unit, MeasurementUnit.SQUARE_METER)
+        self.assertEqual(self.hall.area.measurement_unit, MeasurementUnit.SQUARE_METERS)
 
     def test_open_space_with_adjacent_space(self):
         dinning_area = copy.deepcopy(self.hall)

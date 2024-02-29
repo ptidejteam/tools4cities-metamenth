@@ -31,7 +31,7 @@ class TestWeatherStation(TestCase):
     def test_weather_station_data(self):
         weather_data = WeatherData(self.temp_measure)
         self.assertEqual(weather_data.data.measurement_unit, MeasurementUnit.DEGREE_CELSIUS)
-        self.assertEqual(weather_data.data.measurement_unit.value, "DegreeCelsius (°C)")
+        self.assertEqual(weather_data.data.measurement_unit.value, "°C")
         self.assertEqual(weather_data.data.value, -8)
         self.assertEqual(weather_data.data.measure_type, WeatherValueType.TEMPERATURE)
 

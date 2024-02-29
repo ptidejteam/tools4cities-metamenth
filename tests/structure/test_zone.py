@@ -18,7 +18,7 @@ class TestZone(TestCase):
 
     def setUp(self) -> None:
         self.area = MeasureFactory.create_measure(RecordingType.BINARY.value,
-                                                  Measure(MeasurementUnit.SQUARE_METER, 30))
+                                                  Measure(MeasurementUnit.SQUARE_METERS, 30))
 
     def test_hvac_zone_with_no_sub_zone(self):
        zone = Zone("COLD_ZONE", ZoneType.HVAC)

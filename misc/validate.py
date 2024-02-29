@@ -98,6 +98,9 @@ class Validate:
         elif sensor_measure == SensorMeasure.VOLTAGE.value:
             if unit == MeasurementUnit.VOLT.value:
                 return True
+        elif sensor_measure == SensorMeasure.HUMIDITY.value:
+            if unit == MeasurementUnit.RELATIVE_HUMIDITY.value:
+                return True
         elif sensor_measure == SensorMeasure.OTHER.value:
             return True
         return False

@@ -15,7 +15,7 @@ class TestRoom(BaseTest):
     def test_classroom_with_name_and_area(self):
         self.assertEqual(self.room.room_type, RoomType.BEDROOM)
         self.assertEqual(self.room.area.value, 45)
-        self.assertEqual(self.room.area.measurement_unit, MeasurementUnit.SQUARE_METER)
+        self.assertEqual(self.room.area.measurement_unit, MeasurementUnit.SQUARE_METERS)
         self.assertEqual(self.room.name, "Room 145")
         self.assertEqual(self.room.location, "")
         self.assertIsNone(self.room.meter)
