@@ -322,16 +322,34 @@ class TestBuilding(BaseTest):
         self.assertEqual(self.building.meters[0].meter_type, MeterType.CHARGE_DISCHARGE)
 
     def test_add_weather_stations_to_building(self):
-        station_one = WeatherStation(location="huz.bob.cob")
-        station_two = WeatherStation(location="bob.cob.huz")
+        station_one = WeatherStation('Station One', location="huz.bob.cob")
+        station_two = WeatherStation('Station Two', location="bob.cob.huz")
         self.building.add_weather_station(station_one)
         self.building.add_weather_station(station_two)
         self.assertEqual(self.building.weather_stations, [station_one, station_two])
         self.assertEqual(self.building.weather_stations[1].location, "bob.cob.huz")
 
+    def test_get_weather_station_by_name(self):
+        station_one = WeatherStation('Station One', location="huz.bob.cob")
+        station_two = WeatherStation('Station Two', location="bob.cob.huz")
+        self.building.add_weather_station(station_one)
+        self.building.add_weather_station(station_two)
+
+        station = self.building.get_weather_station_by_name(station_two.name)
+        self.assertEqual(station_two, station)
+
+    def test_get_weather_station_by_uid(self):
+        station_one = WeatherStation('Station One', location="huz.bob.cob")
+        station_two = WeatherStation('Station Two', location="bob.cob.huz")
+        self.building.add_weather_station(station_one)
+        self.building.add_weather_station(station_two)
+
+        station = self.building.get_weather_station_by_uid(station_one.UID)
+        self.assertEqual(station_one, station)
+
     def test_remove_weather_stations_to_building(self):
-        station_one = WeatherStation(location="huz.bob.cob")
-        station_two = WeatherStation(location="bob.cob.huz")
+        station_one = WeatherStation('Station One', location="huz.bob.cob")
+        station_two = WeatherStation('Station Two', location="bob.cob.huz")
         self.building.add_weather_station(station_one)
         self.building.add_weather_station(station_two)
         self.building.remove_weather_station(station_two)
@@ -370,9 +388,9 @@ class TestBuilding(BaseTest):
 
         self.assertEqual(structure_change_logger.state_log, [])
 
-        self.building.add_weather_station(WeatherStation(location="bob.cob.huz"))
+        self.building.add_weather_station(WeatherStation('Station One', location="bob.cob.huz"))
         self.assertEqual(structure_change_logger.state_log[0]['state'], {'weather_stations': []})
-        self.building.add_weather_station(WeatherStation(location="zzz.cob.huz"))
+        self.building.add_weather_station(WeatherStation('Station Two', location="zzz.cob.huz"))
         self.assertEqual(len(structure_change_logger.state_log), 2)
         self.assertEqual(structure_change_logger.state_log[1]['state']['weather_stations'][0].location, 'bob.cob.huz')
 
@@ -380,7 +398,7 @@ class TestBuilding(BaseTest):
         structure_change_logger = StructureStateChangeLogger()
         self.building.track_state = False  # turn off tracking state changes
         self.building.add_observer(structure_change_logger)
-        self.building.add_weather_station(WeatherStation(location="bob.cob.huz"))
-        self.building.add_weather_station(WeatherStation(location="zzz.cob.huz"))
+        self.building.add_weather_station(WeatherStation('Station One', location="bob.cob.huz"))
+        self.building.add_weather_station(WeatherStation('Station Two', location="zzz.cob.huz"))
 
         self.assertEqual(structure_change_logger.state_log, [])

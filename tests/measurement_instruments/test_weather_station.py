@@ -12,10 +12,10 @@ import copy
 class TestWeatherStation(TestCase):
 
     def setUp(self) -> None:
-        self.station = WeatherStation()
+        self.station = WeatherStation('Station One')
         self.temp_measure = MeasureFactory.create_measure(RecordingType.BINARY.value,
                                                           Measure(MeasurementUnit.DEGREE_CELSIUS, -8))
-        self.temp_measure.measure_type = WeatherValueType.TEMPERATURE
+        self.temp_measure.measure_type = WeatherValueType.OUTSIDE_TEMPERATURE
 
     def test_weather_station_with_no_location_and_data(self):
         self.assertEqual(self.station.location, "")
@@ -33,7 +33,7 @@ class TestWeatherStation(TestCase):
         self.assertEqual(weather_data.data.measurement_unit, MeasurementUnit.DEGREE_CELSIUS)
         self.assertEqual(weather_data.data.measurement_unit.value, "°C")
         self.assertEqual(weather_data.data.value, -8)
-        self.assertEqual(weather_data.data.measure_type, WeatherValueType.TEMPERATURE)
+        self.assertEqual(weather_data.data.measure_type, WeatherValueType.OUTSIDE_TEMPERATURE)
 
     def test_weather_station_with_data(self):
         temp_data = WeatherData(self.temp_measure)
