@@ -21,6 +21,7 @@ from enumerations import RoomType
 from enumerations import OpenSpaceType
 from observers.observable import Observable
 from misc import StateTrackDecorator
+from visitors import StructureEntitySearch
 
 
 class Building(Observable):
@@ -264,6 +265,7 @@ class Building(Observable):
         for new_floor in floors:
             existing_floor = next((floor for floor in self.floors if floor.number == new_floor.number), None)
             if existing_floor is None:
+
                 self.floors.append(new_floor)
         return self  # necessary for method chaining
 
@@ -298,6 +300,22 @@ class Building(Observable):
         :return:
         """
         return StructureSearch.search(self.floors, search_term)
+
+    def get_weather_station_by_name(self, name: str):
+        """
+        Returns a weather station
+        :param name: the name of the weather station
+        :return:
+        """
+        return StructureEntitySearch.search_by_name(self.weather_stations, name)
+
+    def get_weather_station_by_uid(self, uid: str):
+        """
+        Returns a weather station
+        :param uid: the unique identifier of the weather station
+        :return:
+        """
+        return StructureEntitySearch.search_by_id(self.weather_stations, uid)
 
     @StateTrackDecorator
     def add_room(self, floor_uid: str, name: str, area: AbstractMeasure,
