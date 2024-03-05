@@ -1,6 +1,7 @@
 from typing import Dict
 from enumerations import SensorMeasure
 from enumerations import MeasurementUnit
+from datetime import datetime
 
 
 class Validate:
@@ -47,6 +48,29 @@ class Validate:
 
         if none_variables:
             raise ValueError("{0} is/are mandatory".format(none_variables.rstrip()))
+
+    @staticmethod
+    def parse_date(date_string):
+        """
+        Returns datetime in the format YYYY-MM-DD HH:MM:SS
+        :param date_string: the data string
+        :return:
+        """
+        formats = [
+            '%Y-%m-%d %H:%M',
+            '%Y/%m/%d %H:%M:%S.%f',
+            '%y/%m/%d%H:%M:%S.%f'
+            '%Y/%m/%d %H:%M:%S',
+            '%Y/%m/%d %H:%M',
+            '%Y/%m/%d'
+            ]
+        for fmt in formats:
+            try:
+                dt = datetime.strptime(date_string, fmt)
+                return dt.replace(microsecond=0)  # Truncate milliseconds
+            except ValueError:
+                pass
+        raise ValueError("No valid date format found")
 
     @staticmethod
     def validate_sensor_type(sensor_measure: str, unit: str) -> bool:
