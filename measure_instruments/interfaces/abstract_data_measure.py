@@ -1,6 +1,7 @@
 from datetime import datetime
 import uuid
 from abc import ABC
+from misc import Validate
 
 
 class AbstractDataMeasure(ABC):
@@ -12,13 +13,13 @@ class AbstractDataMeasure(ABC):
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, value: float):
+    def __init__(self, value: float, timestamp: str = None):
         """
         :param value: The numerical value measured
 
         """
         self._UID = uuid.uuid4()
-        self._timestamp = datetime.now()
+        self._timestamp = datetime.now() if timestamp is None else Validate.parse_date(timestamp)
         self._value = None
 
         # Apply validation

@@ -3,6 +3,6 @@ from measure_instruments.interfaces.abstract_data_measure import AbstractDataMea
 
 class SensorData(AbstractDataMeasure):
 
-    def __init__(self, value: float):
-        super().__init__(value)
+    def __init__(self, value: float, timestamp: str = None):
+        super().__init__(value, timestamp)
 

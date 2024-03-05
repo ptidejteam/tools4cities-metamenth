@@ -1,18 +1,19 @@
 from datetime import datetime
 from uuid import uuid4
-from misc import Validate
 from datatypes.interfaces.abstract_measure import AbstractMeasure
+from misc import Validate
 
 
 class WeatherData:
-    def __init__(self, data: AbstractMeasure):
+    def __init__(self, data: AbstractMeasure, timestamp: str = None):
         """
         :param data: The binary measure (value and unit) of the weather data.
         """
-        Validate.validate_none({"Data": data})
         self._UID = str(uuid4())  # Generating a unique identifier
-        self._timestamp = datetime.now()
-        self._data = data
+        self._timestamp = datetime.now() if timestamp is None else Validate.parse_date(timestamp)
+        self._data = None
+
+        self.data = data
 
     @property
     def UID(self) -> str:
