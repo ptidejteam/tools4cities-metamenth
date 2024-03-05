@@ -8,7 +8,7 @@ class WeatherValueType(Enum):
     Author: Peter Yefi
     Email: peteryefi@gmail.com
     """
-    TEMPERATURE = "Temperature"
+    OUTSIDE_TEMPERATURE = "OutsideTemperature"
     HUMIDITY = "Humidity"
     RELATIVE_HUMIDITY = "RelativeHumidity"
     PRESSURE = "Pressure"
@@ -17,3 +17,7 @@ class WeatherValueType(Enum):
     WIND_DIRECTOR = "WindDirection"
     MOISTURE_CONTENT = "MoistureContent"
     SOLAR_RADIATION = "SolarRadiation"
+    GLOBAL_NOMINAL_IRRADIANCE = "GlobalNominalIrradiance"
+    DIFFUSE_HORIZONTAL_IRRADIANCE = "DiffuseHorizontalIrradiance"
+    DIRECT_NOMINAL_IRRADIANCE = "DirectNominalIrradiance"
+    GLOBAL_HORIZONTAL_IRRADIANCE = "GlobalHorizontalIrradiance"
