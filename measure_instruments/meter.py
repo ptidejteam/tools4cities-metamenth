@@ -165,9 +165,9 @@ class Meter:
         """
         meter_details = (f"Meter (UID: {self.UID}, Location: {self.meter_location}, "
                          f"Manufacturer: {self.manufacturer}, Frequency: {self.measurement_frequency}, "
-                         f"Unit: {self.measurement_unit.name}, Type: {self.meter_type.name}, "
+                         f"Unit: {self.measurement_unit.value}, Type: {self.meter_type.value}, "
                          f"Measure Mode: {self.measure_mode}, Data Accumulated: {self.data_accumulated}, "
-                         f"Accumulation Frequency: {self.accumulation_frequency})")
+                         f"Accumulation Frequency: {self.accumulation_frequency.value})")
 
         measurements = "\n".join(str(measure) for measure in self.meter_measures)
 
