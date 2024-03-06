@@ -1,14 +1,17 @@
 from enum import Enum
+from enumerations.abstract_enum import AbstractEnum
 
 
-class MeterType(Enum):
+class MeterType(AbstractEnum):
     """
     Different types of meters used in a building.
 
     Author: Peter Yefi
     Email: peteryefi@gmail.com
     """
-    POWER = "Power"
+    ELECTRICITY = "Electricity"
     CHARGE_DISCHARGE = "ChargeDischarge"
+    FLOW = "Flow"
+    HEAT = "Heat"
     GAS = "Gas"
 

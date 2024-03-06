@@ -15,3 +15,5 @@ from .measure_type import MeasureType
 from .sensor_measure import SensorMeasure
 from .recording_types import RecordingType
 from .sensor_log_type import SensorLogType
+from .meter_measure_mode import MeterMeasureMode
+from .meter_accumulation_frequency import MeterAccumulationFrequency

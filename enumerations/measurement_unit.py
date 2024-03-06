@@ -13,6 +13,7 @@ class MeasurementUnit(AbstractEnum):
     METERS_PER_SECOND = "m/s"
     R_VALUE = "R-Value"
     KILOWATTS = "kW"
+    KILOWATTS_PER_HOUR = "kWh"
     DEGREES = "Deg"
     PERCENTAGE = "Percentage"
     WATTS_PER_METER_SQUARE = "W/m2"
