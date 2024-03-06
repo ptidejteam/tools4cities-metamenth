@@ -21,6 +21,7 @@ from structure.envelope import Envelope
 from enumerations import CoverType
 from enumerations import RoomType
 from observers.structure_state_change_logger import StructureStateChangeLogger
+from enumerations import MeterMeasureMode
 
 
 class TestBuilding(BaseTest):
@@ -303,23 +304,95 @@ class TestBuilding(BaseTest):
         self.assertEqual(self.building.zones[0].spaces, [])
 
     def test_add_meters_to_building(self):
-        first_meter = Meter("huz.cab.err", "Honeywell", 5, MeasurementUnit.KILOWATTS, MeterType.POWER)
-        second_meter = Meter("huz.cab.err", "Honeywell", 5, MeasurementUnit.KILOWATTS, MeterType.CHARGE_DISCHARGE)
+        first_meter = Meter(meter_location="huz.cab.err",
+                            manufacturer="Honeywell",
+                            measurement_frequency=5,
+                            measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
+                            meter_type=MeterType.ELECTRICITY, measure_mode=MeterMeasureMode.AUTOMATIC)
+
+        second_meter = Meter(meter_location="huz.cab.err",
+                             manufacturer="Honeywell",
+                             measurement_frequency=5,
+                             measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
+                             meter_type=MeterType.CHARGE_DISCHARGE, measure_mode=MeterMeasureMode.MANUAL)
+
         self.building.add_meter(first_meter)
         self.building.add_meter(second_meter)
+
         self.assertEqual(self.building.meters, [first_meter, second_meter])
-        self.assertEqual(self.building.meters[0].meter_type, MeterType.POWER)
+        self.assertEqual(self.building.meters[0].meter_type, MeterType.ELECTRICITY)
         self.assertEqual(self.building.meters[1].meter_type, MeterType.CHARGE_DISCHARGE)
         self.assertNotEqual(self.building.meters[0], self.building.meters[1])
 
     def test_remove_meters_to_building(self):
-        first_meter = Meter("huz.cab.err", "Honeywell", 5, MeasurementUnit.KILOWATTS, MeterType.POWER)
-        second_meter = Meter("huz.cab.err", "Honeywell", 5, MeasurementUnit.KILOWATTS, MeterType.CHARGE_DISCHARGE)
+        first_meter = Meter(meter_location="huz.cab.err",
+                            manufacturer="Honeywell",
+                            measurement_frequency=5,
+                            measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
+                            meter_type=MeterType.ELECTRICITY, measure_mode=MeterMeasureMode.AUTOMATIC)
+
+        second_meter = Meter(meter_location="huz.cab.err",
+                             manufacturer="Honeywell",
+                             measurement_frequency=5,
+                             measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
+                             meter_type=MeterType.CHARGE_DISCHARGE, measure_mode=MeterMeasureMode.MANUAL)
         self.building.add_meter(first_meter)
         self.building.add_meter(second_meter)
         self.building.remove_meter(first_meter)
+
         self.assertEqual(self.building.meters, [second_meter])
         self.assertEqual(self.building.meters[0].meter_type, MeterType.CHARGE_DISCHARGE)
+
+    def test_get_meter_by_uid(self):
+        first_meter = Meter(meter_location="huz.cab.err",
+                            manufacturer="Honeywell",
+                            measurement_frequency=5,
+                            measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
+                            meter_type=MeterType.ELECTRICITY, measure_mode=MeterMeasureMode.AUTOMATIC)
+
+        second_meter = Meter(meter_location="huz.cab.err",
+                             manufacturer="Honeywell",
+                             measurement_frequency=5,
+                             measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
+                             meter_type=MeterType.CHARGE_DISCHARGE, measure_mode=MeterMeasureMode.MANUAL)
+        self.building.add_meter(first_meter)
+        self.building.add_meter(second_meter)
+
+        self.assertEqual(self.building.get_meter_by_uid(first_meter.UID), first_meter)
+
+    def test_get_meter_by_type(self):
+        first_meter = Meter(meter_location="huz.cab.err",
+                            manufacturer="Honeywell",
+                            measurement_frequency=5,
+                            measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
+                            meter_type=MeterType.ELECTRICITY, measure_mode=MeterMeasureMode.AUTOMATIC)
+
+        second_meter = Meter(meter_location="huz.cab.err",
+                             manufacturer="Honeywell",
+                             measurement_frequency=5,
+                             measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
+                             meter_type=MeterType.CHARGE_DISCHARGE, measure_mode=MeterMeasureMode.MANUAL)
+        self.building.add_meter(first_meter)
+        self.building.add_meter(second_meter)
+
+        self.assertEqual(self.building.get_meter_by_type(second_meter.meter_type), [second_meter])
+
+    def test_search_meters(self):
+        first_meter = Meter(meter_location="huz.cab.err",
+                            manufacturer="Honeywell",
+                            measurement_frequency=5,
+                            measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
+                            meter_type=MeterType.ELECTRICITY, measure_mode=MeterMeasureMode.AUTOMATIC)
+
+        second_meter = Meter(meter_location="huz.cab.err",
+                             manufacturer="Honeywell",
+                             measurement_frequency=5,
+                             measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
+                             meter_type=MeterType.CHARGE_DISCHARGE, measure_mode=MeterMeasureMode.MANUAL)
+        self.building.add_meter(first_meter)
+        self.building.add_meter(second_meter)
+        meters = self.building.search_meters({'manufacturer': 'Honeywell', 'meter_type': MeterType.ELECTRICITY})
+        self.assertEqual(meters, [first_meter])
 
     def test_add_weather_stations_to_building(self):
         station_one = WeatherStation('Station One', location="huz.bob.cob")

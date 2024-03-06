@@ -22,6 +22,7 @@ from enumerations import OpenSpaceType
 from observers.observable import Observable
 from misc import StateTrackDecorator
 from visitors import StructureEntitySearch
+from enumerations import MeterType
 
 
 class Building(Observable):
@@ -301,7 +302,7 @@ class Building(Observable):
         """
         return StructureSearch.search(self.floors, search_term)
 
-    def get_weather_station_by_name(self, name: str):
+    def get_weather_station_by_name(self, name: str) -> WeatherStation:
         """
         Returns a weather station
         :param name: the name of the weather station
@@ -309,13 +310,37 @@ class Building(Observable):
         """
         return StructureEntitySearch.search_by_name(self.weather_stations, name)
 
-    def get_weather_station_by_uid(self, uid: str):
+    def get_weather_station_by_uid(self, uid: str) -> WeatherStation:
         """
         Returns a weather station
         :param uid: the unique identifier of the weather station
         :return:
         """
         return StructureEntitySearch.search_by_id(self.weather_stations, uid)
+
+    def get_meter_by_uid(self, uid: str) -> Meter:
+        """
+        Returns a meter based on uid
+        :param uid: the uid of the meter
+        :return:
+        """
+        return StructureEntitySearch.search_by_id(self.meters, uid)
+
+    def get_meter_by_type(self, meter_type: MeterType) -> [Meter]:
+        """
+        Returns a meter based on type of meter
+        :param meter_type: the type of meter
+        :return:
+        """
+        return StructureEntitySearch.search(self.meters, {'meter_type': meter_type})
+
+    def search_meters(self, search_terms: Dict) -> [Meter]:
+        """
+        Returns a meter based on some attributes and their values
+        :param search_terms: attributes and value key pairs
+        :return:
+        """
+        return StructureEntitySearch.search(self.meters, search_terms)
 
     @StateTrackDecorator
     def add_room(self, floor_uid: str, name: str, area: AbstractMeasure,
