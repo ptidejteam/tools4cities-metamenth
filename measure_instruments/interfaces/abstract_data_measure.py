@@ -2,6 +2,7 @@ from datetime import datetime
 import uuid
 from abc import ABC
 from misc import Validate
+from enumerations import DataMeasurementType
 
 
 class AbstractDataMeasure(ABC):
@@ -13,20 +14,24 @@ class AbstractDataMeasure(ABC):
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, value: float, timestamp: str = None):
+    def __init__(self, value: float, timestamp: str = None, measurement_type: DataMeasurementType = None):
         """
         :param value: The numerical value measured
+        :param timestamp: the time of measurement
+        :param measurement_type: the type of the measurment, e.g., electricity consumption
 
         """
-        self._UID = uuid.uuid4()
+        self._UID = str(uuid.uuid4())
         self._timestamp = datetime.now() if timestamp is None else Validate.parse_date(timestamp)
+
         self._value = None
+        self._measurement_type = measurement_type
 
         # Apply validation
         self.value = value
 
     @property
-    def UID(self):
+    def UID(self) -> str:
         return self._UID
 
     @property
@@ -41,6 +46,15 @@ class AbstractDataMeasure(ABC):
             raise ValueError("Value must be a float")
 
     @property
+    def measurement_type(self) -> DataMeasurementType:
+        return self._measurement_type
+
+    @measurement_type.setter
+    def measurement_type(self, value: DataMeasurementType):
+        self._measurement_type = value
+
+
+    @property
     def timestamp(self) -> datetime:
         return self._timestamp
 
@@ -49,5 +63,5 @@ class AbstractDataMeasure(ABC):
         :return: A formatted string of the meter readings.
         """
         return (f"DataMeasure (UID: {self.UID}, Value: {self.value}, "
-                f"Timestamp: {self.timestamp})")
+                f"Timestamp: {self.timestamp}, Measurement Type: {self.measurement_type.value})")
 

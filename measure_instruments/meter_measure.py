@@ -1,4 +1,5 @@
 from measure_instruments.interfaces.abstract_data_measure import AbstractDataMeasure
+from enumerations import DataMeasurementType
 
 
 class MeterMeasure(AbstractDataMeasure):
@@ -10,9 +11,11 @@ class MeterMeasure(AbstractDataMeasure):
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, value: float):
+    def __init__(self, value: float, timestamp: str = None, measurement_type: DataMeasurementType = None):
         """
-        :param value: The numerical value measured by the meter
+        :param value: The numerical value measured
+        :param timestamp: the time of measurement
+        :param measurement_type: the type of the measurment, e.g., electricity consumption
 
         """
-        super().__init__(value)
+        super().__init__(value, timestamp, measurement_type)

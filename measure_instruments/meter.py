@@ -144,12 +144,11 @@ class Meter:
     def meter_measures(self) -> [MeterMeasure]:
         return self._meter_measures
 
-    def add_meter_measure(self, value: float):
+    def add_meter_measure(self, meter_measure: MeterMeasure):
         """
         Add measurement for this meter
-        :param value: The numerical value of the meter measure.
+        :param meter_measure: the recorded measurement by the meter.
         """
-        meter_measure = MeterMeasure(value)
         self._meter_measures.append(meter_measure)
 
     def __eq__(self, other):

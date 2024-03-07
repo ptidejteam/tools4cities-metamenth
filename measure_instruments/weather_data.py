@@ -8,6 +8,7 @@ class WeatherData:
     def __init__(self, data: AbstractMeasure, timestamp: str = None):
         """
         :param data: The binary measure (value and unit) of the weather data.
+
         """
         self._UID = str(uuid4())  # Generating a unique identifier
         self._timestamp = datetime.now() if timestamp is None else Validate.parse_date(timestamp)
