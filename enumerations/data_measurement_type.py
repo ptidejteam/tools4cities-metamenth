@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class WeatherValueType(Enum):
+class DataMeasurementType(Enum):
     """
     Different weather data a building weather station can record.
 
@@ -21,3 +21,6 @@ class WeatherValueType(Enum):
     DIFFUSE_HORIZONTAL_IRRADIANCE = "DiffuseHorizontalIrradiance"
     DIRECT_NOMINAL_IRRADIANCE = "DirectNominalIrradiance"
     GLOBAL_HORIZONTAL_IRRADIANCE = "GlobalHorizontalIrradiance"
+    EXPORTED_ELECTRICITY = "ExportedElectricity"
+    IMPORTED_ELECTRICITY = "ImportedElectricity"
+    CONSUMED_ELECTRICITY = "ConsumedElectricity"

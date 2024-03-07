@@ -5,13 +5,13 @@ from .meter_type import MeterType
 from .zone_type import ZoneType
 from .open_space_type import OpenSpaceType
 from .room_type import RoomType
-from .weather_value_type import WeatherValueType
+from .data_measurement_type import DataMeasurementType
 from .hvac_type import HVACType
 from .material_type import MaterialType
 from .cover_type import CoverType
 from .building_entity import BuildingEntity
 from .trigger_type import TriggerType
-from .measure_type import MeasureType
+from .sensor_measure_type import SensorMeasureType
 from .sensor_measure import SensorMeasure
 from .recording_types import RecordingType
 from .sensor_log_type import SensorLogType

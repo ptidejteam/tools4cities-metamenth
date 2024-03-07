@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class MeasureType(Enum):
+class SensorMeasureType(Enum):
     """
     Various sensor measurement types
 
