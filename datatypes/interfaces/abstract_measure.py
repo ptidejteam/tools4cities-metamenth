@@ -1,6 +1,6 @@
 from abc import ABC
 from datatypes.measure import Measure
-from enumerations import WeatherValueType
+from enumerations import DataMeasurementType
 
 
 class AbstractMeasure(ABC):
@@ -10,7 +10,7 @@ class AbstractMeasure(ABC):
     Author: Peter Yefi
     Email: peteryefi@gmail.com
     """
-    def __init__(self, measure: Measure, measure_type: WeatherValueType = None):
+    def __init__(self, measure: Measure, measure_type: DataMeasurementType = None):
         self.measurement_unit = measure.unit
         self.measure_type = measure_type
 

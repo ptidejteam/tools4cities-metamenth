@@ -1,6 +1,6 @@
 from datatypes.interfaces.abstract_measure import AbstractMeasure
 from .measure import Measure
-from enumerations import WeatherValueType
+from enumerations import DataMeasurementType
 
 
 class BinaryMeasure(AbstractMeasure):
@@ -10,7 +10,7 @@ class BinaryMeasure(AbstractMeasure):
     Author: Peter Yefi
     Email: peteryefi@gmail.com
     """
-    def __init__(self, measure: Measure, weather_type: WeatherValueType = None):
+    def __init__(self, measure: Measure, weather_type: DataMeasurementType = None):
         super().__init__(measure, weather_type)
         self.value = measure.minimum
 
