@@ -3,7 +3,7 @@ from transducers.interfaces.abstract_transducer import AbstractTransducer
 from typing import Optional
 from enumerations import SensorMeasure
 from enumerations import MeasurementUnit
-from enumerations import MeasureType
+from enumerations import SensorMeasureType
 from measure_instruments import SensorData
 from typing import List
 from misc import Validate
@@ -13,7 +13,7 @@ from enumerations import SensorLogType
 
 class Sensor(AbstractTransducer, ABC):
 
-    def __init__(self, name: str,  measure: SensorMeasure, unit: MeasurementUnit, measure_type: MeasureType,
+    def __init__(self, name: str, measure: SensorMeasure, unit: MeasurementUnit, measure_type: SensorMeasureType,
                  data_frequency: float, current_value: Optional[float] = None,
                  measure_range: AbstractRangeMeasure = None, sensor_log_type: SensorLogType = SensorLogType.POLLING):
         """
@@ -97,7 +97,7 @@ class Sensor(AbstractTransducer, ABC):
        self._current_value = value
 
     @property
-    def measure_type(self) -> MeasureType:
+    def measure_type(self) -> SensorMeasureType:
         return self._measure_type
 
     @property
@@ -105,7 +105,7 @@ class Sensor(AbstractTransducer, ABC):
         return self._data
 
     @measure_type.setter
-    def measure_type(self, value: MeasureType):
+    def measure_type(self, value: SensorMeasureType):
         if value is not None:
             self._measure_type = value
         else:
