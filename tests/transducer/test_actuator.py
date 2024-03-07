@@ -5,7 +5,7 @@ from datatypes.measure import Measure
 from enumerations import MeasurementUnit
 from transducers.sensor import Sensor
 from enumerations import SensorMeasure
-from enumerations import MeasureType
+from enumerations import SensorMeasureType
 from transducers.actuator import Actuator
 from measure_instruments.trigger_history import TriggerHistory
 from enumerations import TriggerType
@@ -36,7 +36,7 @@ class TestSensor(TestCase):
         actuator.set_point = self.temp_set_point
 
         temp_sensor = Sensor("TEMP.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
-                             MeasureType.THERMO_COUPLE_TYPE_B, 10)
+                             SensorMeasureType.THERMO_COUPLE_TYPE_B, 10)
         actuator.trigger_input = temp_sensor
         self.assertEqual(actuator.name, "FILTER.ACT")
         self.assertIsNotNone(actuator.UID)
@@ -50,7 +50,7 @@ class TestSensor(TestCase):
             actuator.set_point = self.temp_set_point
 
             pressure_sensor = Sensor("PRESSURE.SENSOR", SensorMeasure.PRESSURE, MeasurementUnit.PASCAL,
-                                 MeasureType.THERMO_COUPLE_TYPE_B, 10)
+                                     SensorMeasureType.THERMO_COUPLE_TYPE_B, 10)
             actuator.trigger_input = pressure_sensor
             self.assertEqual(actuator.name, "FILTER.ACT")
             self.assertIsNotNone(actuator.UID)

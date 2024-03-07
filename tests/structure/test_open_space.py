@@ -5,7 +5,7 @@ import copy
 from tests.structure.base_test import BaseTest
 from transducers.sensor import Sensor
 from enumerations import SensorMeasure
-from enumerations import MeasureType
+from enumerations import SensorMeasureType
 
 
 class TestOpenSpace(BaseTest):
@@ -40,7 +40,7 @@ class TestOpenSpace(BaseTest):
 
     def test_open_space_with_co2_sensor(self):
         co2_sensor = Sensor("Co2_Sensor", SensorMeasure.CARBON_DIOXIDE,
-                            MeasurementUnit.PARTS_PER_MILLION, MeasureType.PT_100, 5)
+                            MeasurementUnit.PARTS_PER_MILLION, SensorMeasureType.PT_100, 5)
         self.hall.add_transducer(co2_sensor)
         self.assertEqual(self.hall.transducers, [co2_sensor])
         self.assertEqual(self.hall.transducers[0].name, "Co2_Sensor")

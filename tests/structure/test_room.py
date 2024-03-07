@@ -6,7 +6,7 @@ from enumerations import RoomType
 from enumerations import MeterType
 from transducers.sensor import Sensor
 from enumerations import SensorMeasure
-from enumerations import MeasureType
+from enumerations import SensorMeasureType
 from tests.structure.base_test import BaseTest
 
 
@@ -69,9 +69,9 @@ class TestRoom(BaseTest):
 
     def test_classroom_with_co2_and_temp_sensors(self):
         co2_sensor = Sensor("Co2_Sensor", SensorMeasure.CARBON_DIOXIDE,
-                            MeasurementUnit.PARTS_PER_MILLION, MeasureType.PT_100, 5)
+                            MeasurementUnit.PARTS_PER_MILLION, SensorMeasureType.PT_100, 5)
         temp_sensor = Sensor("Temp_Sensor", SensorMeasure.TEMPERATURE,
-                             MeasurementUnit.DEGREE_CELSIUS, MeasureType.PT_100, 5)
+                             MeasurementUnit.DEGREE_CELSIUS, SensorMeasureType.PT_100, 5)
         self.room.add_transducer(co2_sensor)
         self.room.add_transducer(temp_sensor)
         self.assertEqual(len(self.room.transducers), 2)
@@ -81,9 +81,9 @@ class TestRoom(BaseTest):
 
     def test_add_existing_sensor_with_the_same_name(self):
         co2_sensor = Sensor("Co2_Sensor", SensorMeasure.CARBON_DIOXIDE,
-                            MeasurementUnit.PARTS_PER_MILLION, MeasureType.PT_100, 5)
+                            MeasurementUnit.PARTS_PER_MILLION, SensorMeasureType.PT_100, 5)
         temp_sensor = Sensor("Co2_Sensor", SensorMeasure.TEMPERATURE,
-                             MeasurementUnit.DEGREE_CELSIUS, MeasureType.PT_100, 8)
+                             MeasurementUnit.DEGREE_CELSIUS, SensorMeasureType.PT_100, 8)
         self.room.add_transducer(co2_sensor)
         self.room.add_transducer(temp_sensor)
 
@@ -92,9 +92,9 @@ class TestRoom(BaseTest):
 
     def test_remove_transducer_from_room(self):
         co2_sensor = Sensor("Co2_Sensor", SensorMeasure.CARBON_DIOXIDE,
-                            MeasurementUnit.PARTS_PER_MILLION, MeasureType.PT_100, 5)
+                            MeasurementUnit.PARTS_PER_MILLION, SensorMeasureType.PT_100, 5)
         temp_sensor = Sensor("Temp_Sensor", SensorMeasure.TEMPERATURE,
-                             MeasurementUnit.DEGREE_CELSIUS, MeasureType.PT_100, 5)
+                             MeasurementUnit.DEGREE_CELSIUS, SensorMeasureType.PT_100, 5)
         self.room.add_transducer(co2_sensor)
         self.room.add_transducer(temp_sensor)
         self.assertEqual(len(self.room.transducers), 2)
