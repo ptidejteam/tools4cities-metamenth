@@ -59,16 +59,17 @@ class Validate:
         formats = [
             '%Y-%m-%d %H:%M',
             '%Y/%m/%d %H:%M:%S.%f',
-            '%y/%m/%d%H:%M:%S.%f'
+            '%y/%m/%d %H:%M:%S.%f',
             '%Y/%m/%d %H:%M:%S',
             '%Y/%m/%d %H:%M',
-            '%Y/%m/%d'
+            '%Y/%m/%d',
+            '%m/%d/%Y %H:%M'
             ]
         for fmt in formats:
             try:
                 dt = datetime.strptime(date_string, fmt)
                 return dt.replace(microsecond=0)  # Truncate milliseconds
-            except ValueError:
+            except ValueError as err:
                 pass
         raise ValueError("No valid date format found")
 
