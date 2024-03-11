@@ -8,6 +8,7 @@ from transducers.sensor import Sensor
 from enumerations import SensorMeasure
 from enumerations import SensorMeasureType
 from tests.structure.base_test import BaseTest
+from enumerations import MeterMeasureMode
 
 
 class TestRoom(BaseTest):
@@ -22,14 +23,18 @@ class TestRoom(BaseTest):
 
     def test_classroom_with_power_meter_with_different_location(self):
         try:
-            power_meter = Meter("huz.cab.err", "Honeywell", 5, MeasurementUnit.KILOWATTS, MeterType.POWER)
+            power_meter = Meter(meter_location="huz.cab.err", manufacturer="Honeywell",
+                                measurement_frequency=5, measurement_unit=MeasurementUnit.KILOWATTS,
+                                meter_type=MeterType.ELECTRICITY, measure_mode=MeterMeasureMode.MANUAL)
             self.room.meter = power_meter
         except ValueError as err:
             self.assertEqual(err.__str__(), "what3words location of meter should be the same as space")
 
     def test_classroom_with_power_meter_and_same_location(self):
         self.room.location = "huz.cab.err"
-        power_meter = Meter("huz.cab.err", "Honeywell", 5, MeasurementUnit.KILOWATTS, MeterType.POWER)
+        power_meter = Meter("huz.cab.err", manufacturer="Honeywell", measurement_frequency=5,
+                            measurement_unit=MeasurementUnit.KILOWATTS, meter_type=MeterType.ELECTRICITY,
+                            measure_mode=MeterMeasureMode.AUTOMATIC)
         power_meter.add_meter_measure(2)
         power_meter.add_meter_measure(5)
         self.room.meter = power_meter
