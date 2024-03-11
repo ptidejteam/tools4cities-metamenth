@@ -17,3 +17,6 @@ from .recording_types import RecordingType
 from .sensor_log_type import SensorLogType
 from .meter_measure_mode import MeterMeasureMode
 from .meter_accumulation_frequency import MeterAccumulationFrequency
+from .appliacne_category import ApplianceCategory
+from .appliance_type import ApplianceType
+from .waveform import WaveForm
