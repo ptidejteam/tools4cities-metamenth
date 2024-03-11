@@ -22,7 +22,7 @@ class EntityInsert:
     @staticmethod
     def insert_space_entity(space, entity, entity_type):
         """
-        Adds am entity to a space
+        Adds an entity to a space
         :param space: the space entity (room or open space) of type AbstractFloorEntity
         :param entity: the entity (e.g. transducers, appliance, equipment, etc)
         :param entity_type: the type of entity

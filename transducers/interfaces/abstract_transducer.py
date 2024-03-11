@@ -21,7 +21,6 @@ class AbstractTransducer(ABC):
         :param input_current_range: the input current range of the transducers
         :param output_current_range: the output current range of the transducers
         :param output_voltage_range: the output voltage range of the transducers
-        :param change_of_value: indicates if data is recorded based on change of value (COV)
         """
         self.UID = uuid4()
         self.name = name
