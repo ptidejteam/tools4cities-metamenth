@@ -1,13 +1,21 @@
 from abc import ABC
 from uuid import uuid4
+from transducers.interfaces.abstract_transducer import AbstractTransducer
+from utils import EntityInsert
+from enumerations import BuildingEntity
+from utils import EntityRemover
+from utils import StructureEntitySearch
+from typing import Dict
+from datatypes.interfaces.dynamic_entity import DynamicEntity
 
 
-class AbstractSubsystem(ABC):
+class AbstractSubsystem(DynamicEntity):
     def __init__(self, name: str):
         """
         Defines parent class of all subsystems
         :param name:
         """
+        super().__init__()
         self._UID = str(uuid4())
         self._name = None
 
@@ -39,4 +47,5 @@ class AbstractSubsystem(ABC):
         return (
             f"UID: {self.UID}, "
             f"Name: {self.name}, "
+            f"Transducers: {self._transducers}"
         )

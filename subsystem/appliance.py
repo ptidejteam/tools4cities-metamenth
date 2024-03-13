@@ -4,7 +4,6 @@ from enumerations import ApplianceType
 from datatypes.binary_measure import BinaryMeasure
 from datatypes.rated_device_measure import RatedDeviceMeasure
 from datatypes.continuous_measure import ContinuousMeasure
-from transducers.interfaces.abstract_transducer import AbstractTransducer
 
 
 class Appliance(AbstractSubsystem):
@@ -32,7 +31,6 @@ class Appliance(AbstractSubsystem):
 
         self.appliance_type = appliance_type
         self.appliance_category = appliance_category
-        self._transducers: [AbstractTransducer] = []
 
     @property
     def appliance_type(self) -> ApplianceType:
@@ -88,10 +86,6 @@ class Appliance(AbstractSubsystem):
     def operating_conditions(self, value: [ContinuousMeasure]):
         if value is not None and type(value) is list:
             self._operating_conditions.extend(value)
-
-    @property
-    def transducers(self) -> [AbstractTransducer]:
-        return self._transducers.copy()
 
     def __str__(self):
         return (
