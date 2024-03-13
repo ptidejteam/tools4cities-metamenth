@@ -23,13 +23,11 @@ class StateTrackDecorator:
         :param kwargs: key value argument of method modifying instance state
         :return:
         """
-
         try:
             if getattr(instance, 'track_state'):
                 variable_name = self.func.__name__
 
                 index = variable_name.find('_')
-
                 # for methods such as add_room, add_open_space, remove "remove" and "add"
                 if variable_name[:3] == 'add' or variable_name[:6] == 'remove':
                     variable_name = variable_name[index+1:]
@@ -41,7 +39,7 @@ class StateTrackDecorator:
 
                 instance.notify_observers(ObservableMessage(
                     instance.__class__.__name__,
-                    instance.UID, {variable_name: getattr(instance, variable_name)}))
+                    instance.UID, {variable_name: getattr(instance, '_' + variable_name)}))
         except AttributeError as err:
             print(err, file=sys.stderr)
         return self.func(instance, *args, **kwargs)
