@@ -56,8 +56,8 @@ class TestBuilding(BaseTest):
         floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
         building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
                             BuildingType.COMMERCIAL, [floor])
-        self.assertEqual(building.floors, [floor])
-        self.assertEqual(building.floors[0].rooms, [self.room])
+        self.assertEqual(building.get_floors(), [floor])
+        self.assertEqual(building.get_floors()[0].get_rooms(), [self.room])
         self.assertEqual(building.internal_mass, self.internal_mass)
         self.assertEqual(building.building_type, BuildingType.COMMERCIAL)
 
@@ -68,13 +68,13 @@ class TestBuilding(BaseTest):
         second_floor.floor_type = FloorType.ROOFTOP
         building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
                             BuildingType.RESIDENTIAL, [first_floor, second_floor])
-        self.assertEqual(len(building.floors), 2)
-        self.assertEqual(building.floors[0].number, 1)
-        self.assertEqual(building.floors[1].number, 2)
+        self.assertEqual(len(building.get_floors()), 2)
+        self.assertEqual(building.get_floor_by_number(1).number, 1)
+        self.assertEqual(building.get_floor_by_number(2).number, 2)
         self.assertEqual(building.building_type, BuildingType.RESIDENTIAL)
-        self.assertEqual(building.floors[1].floor_type, FloorType.ROOFTOP)
+        self.assertEqual(building.get_floor_by_number(2).floor_type, FloorType.ROOFTOP)
 
-    def test_add_floor_to_exiting_building(self):
+    def test_add_floor_to_existing_building(self):
         first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
 
         building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
@@ -84,8 +84,8 @@ class TestBuilding(BaseTest):
         second_floor.floor_type = FloorType.ROOFTOP
         building.add_floors([second_floor])
 
-        self.assertEqual(len(building.floors), 2)
-        self.assertEqual(building.floors[1], second_floor)
+        self.assertEqual(len(building.get_floors()), 2)
+        self.assertEqual(building.get_floor_by_number(2), second_floor)
 
     def test_get_floor_by_uid(self):
         first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
@@ -94,7 +94,7 @@ class TestBuilding(BaseTest):
                             BuildingType.RESIDENTIAL, [first_floor])
 
         floor = building.get_floor_by_uid(first_floor.UID)
-        self.assertEqual(floor, building.floors[0])
+        self.assertEqual(floor, first_floor)
         self.assertEqual(floor.floor_type, FloorType.REGULAR)
 
     def test_get_floor_by_number(self):
@@ -104,7 +104,7 @@ class TestBuilding(BaseTest):
                             BuildingType.RESIDENTIAL, [first_floor])
 
         floor = building.get_floor_by_number(1)
-        self.assertEqual(floor, building.floors[0])
+        self.assertEqual(floor, first_floor)
         self.assertEqual(floor.floor_type, FloorType.REGULAR)
 
     def test_get_floor_with_wrong_number(self):
@@ -125,9 +125,9 @@ class TestBuilding(BaseTest):
                             BuildingType.RESIDENTIAL, [first_floor, second_floor])
 
         building.remove_floor(first_floor)
-        self.assertEqual(building.floors, [second_floor])
-        self.assertEqual(len(building.floors), 1)
-        self.assertEqual(building.floors[0].floor_type, FloorType.ROOFTOP)
+        self.assertEqual(building.get_floors(), [second_floor])
+        self.assertEqual(len(building.get_floors()), 1)
+        self.assertEqual(building.get_floor_by_number(second_floor.number).floor_type, FloorType.ROOFTOP)
 
     def test_add_open_space_to_building_floor(self):
         first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
@@ -136,9 +136,10 @@ class TestBuilding(BaseTest):
         second_floor.floor_type = FloorType.ROOFTOP
         building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
                             BuildingType.RESIDENTIAL, [first_floor, second_floor])
-        building.floors[0].add_open_spaces([self.hall])
-        self.assertEqual(building.floors[0].open_spaces, [self.hall])
-        self.assertEqual(building.floors[0].open_spaces[0].space_type, OpenSpaceType.HALL)
+        building.get_floor_by_number(1).add_open_spaces([self.hall])
+        self.assertEqual(building.get_floor_by_number(1).get_open_spaces(), [self.hall])
+        self.assertEqual(building.get_floor_by_number(1).get_open_space_by_name(self.hall.name).space_type,
+                         OpenSpaceType.HALL)
 
     def test_create_building_using_builder(self):
         first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
@@ -148,11 +149,11 @@ class TestBuilding(BaseTest):
             .add_open_space(first_floor.UID, "Dinning Area", self.area, OpenSpaceType.DINNING_AREA) \
             .add_room(second_floor.UID, "library", self.area, RoomType.LIBRARY)
 
-        self.assertEqual(len(building.floors), 2)
-        self.assertEqual(len(building.floors[0].rooms), 1)
-        self.assertEqual(len(building.floors[0].open_spaces), 1)
-        self.assertEqual(len(building.floors[1].rooms), 1)
-        self.assertEqual(len(building.floors[1].open_spaces), 1)
+        self.assertEqual(len(building.get_floors()), 2)
+        self.assertEqual(len(building.get_floor_by_number(1).get_rooms()), 1)
+        self.assertEqual(len(building.get_floor_by_number(1).get_open_spaces()), 1)
+        self.assertEqual(len(building.get_floor_by_number(2).get_rooms()), 1)
+        self.assertEqual(len(building.get_floor_by_number(2).get_open_spaces()), 1)
         self.assertEqual(building.get_floor_by_number(1).get_open_space_by_name("Dinning Area").space_type,
                          OpenSpaceType.DINNING_AREA)
         self.assertEqual(building.get_floor_by_uid(second_floor.UID).get_room_by_name("library").area, self.area)
@@ -165,17 +166,17 @@ class TestBuilding(BaseTest):
         second_floor.add_open_spaces([self.hall])
         building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
                             BuildingType.RESIDENTIAL, [first_floor, second_floor])
-        self.assertEqual(building.floors[1].open_spaces, [self.hall])
+        self.assertEqual(building.get_floor_by_number(2).get_open_spaces(), [self.hall])
 
-        building.floors[1].remove_open_space(self.hall)
-        self.assertEqual(building.floors[1].open_spaces, [])
-        self.assertEqual(building.floors[1].rooms, [self.room])
+        building.get_floor_by_number(2).remove_open_space(self.hall)
+        self.assertEqual(building.get_floor_by_number(2).get_open_spaces(), [])
+        self.assertEqual(building.get_floor_by_number(2).get_rooms(), [self.room])
 
     def test_building_with_no_operational_schedule(self):
         first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
         building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
                             BuildingType.RESIDENTIAL, [first_floor])
-        self.assertEqual(building.schedules, [])
+        self.assertEqual(building.get_schedules(), [])
 
     def test_add_operational_schedule_to_building(self):
         first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
@@ -183,18 +184,18 @@ class TestBuilding(BaseTest):
                             BuildingType.RESIDENTIAL, [first_floor])
         schedule = OperationalSchedule("WEEKDAYS", datetime.now(), datetime.now() + timedelta(days=5))
         building.add_schedule(schedule)
-        self.assertEqual(building.schedules, [schedule])
-        self.assertEqual(building.schedules[0].name, "WEEKDAYS")
-        self.assertEqual(building.schedules[0].recurring, True)
+        self.assertEqual(building.get_schedules(), [schedule])
+        self.assertEqual(building.get_schedule_by_uid(schedule.UID).name, "WEEKDAYS")
+        self.assertEqual(building.get_schedule_by_name(schedule.name).recurring, True)
 
     def test_add_building_floor_with_different_schedule(self):
         schedule = OperationalSchedule("WEEKDAYS", datetime.now(), datetime.now() + timedelta(days=5))
         floor_schedule = OperationalSchedule("WEEKEND", datetime.now(), datetime.now() + timedelta(days=2))
         self.building.add_schedule(schedule)
-        self.building.floors[0].add_schedule(floor_schedule)
-        self.assertEqual(self.building.schedules, [schedule])
-        self.assertEqual(self.building.floors[0].schedules, [floor_schedule])
-        self.assertNotEqual(self.building.schedules[0], self.building.floors[0].schedules)
+        self.building.get_floor_by_number(1).add_schedule(floor_schedule)
+        self.assertEqual(self.building.get_schedules(), [schedule])
+        self.assertEqual(self.building.get_floor_by_number(1).get_schedules(), [floor_schedule])
+        self.assertNotEqual(self.building.get_schedules(), self.building.get_floor_by_number(1).get_schedules())
 
     def test_remove_operational_schedule_to_building(self):
         first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
@@ -202,106 +203,125 @@ class TestBuilding(BaseTest):
                             BuildingType.RESIDENTIAL, [first_floor])
         schedule = OperationalSchedule("WEEKDAYS", datetime.now(), datetime.now() + timedelta(days=5))
         building.add_schedule(schedule)
-        self.assertEqual(building.schedules, [schedule])
+        self.assertEqual(building.get_schedules(), [schedule])
 
         building.remove_schedule(schedule)
-        self.assertEqual(building.schedules, [])
-        self.assertEqual(len(building.schedules), 0)
+        self.assertEqual(building.get_schedules(), [])
+        self.assertEqual(len(building.get_schedules()), 0)
 
     def test_add_zone_to_building_and_floor(self):
         first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
         building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
                             BuildingType.RESIDENTIAL, [first_floor])
         zone = Zone("HVAC_COOLING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
-        building.floors[0].add_zone(zone, building)
-        self.assertEqual(building.floors[0].zones, [zone])
-        self.assertEqual(building.zones, [zone])
-        self.assertEqual(building.zones[0].spaces, [first_floor])
-        self.assertEqual(building.zones[0].spaces[0].zones, [zone])
+        building.get_floor_by_uid(first_floor.UID).add_zone(zone, building)
+        self.assertEqual(building.get_floor_by_number(1).get_zones(), [zone])
+        self.assertEqual(building.get_zones(), [zone])
+        self.assertEqual(building.get_zone_by_name(zone.name).get_spaces(), [first_floor])
+        self.assertEqual(building.get_zone_by_name(zone.name).get_space_by_uid(first_floor.UID).get_zones(), [zone])
 
     def test_building_with_floors_in_different_zones(self):
-        second_floor = Floor(self.floor_area, 1, FloorType.ROOFTOP, rooms=[self.room])
+        second_floor = Floor(self.floor_area, 2, FloorType.ROOFTOP, rooms=[self.room])
         building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
                             BuildingType.RESIDENTIAL, [self.floor, second_floor])
         cooling_zone = Zone("HVAC_COOLING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
         heating_zone = Zone("HVAC_HEATING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
-        building.floors[0].add_zone(cooling_zone, building)
-        building.floors[1].add_zone(heating_zone, building)
 
-        self.assertEqual(building.floors[0].zones, [cooling_zone])
-        self.assertEqual(building.floors[1].zones, [heating_zone])
+        building.get_floor_by_uid(self.floor.UID).add_zone(cooling_zone, building)
+        building.get_floor_by_uid(second_floor.UID).add_zone(heating_zone, building)
+
+        self.assertEqual(building.get_floor_by_uid(self.floor.UID).zones, [cooling_zone])
+        self.assertEqual(building.get_floor_by_uid(second_floor.UID).zones, [heating_zone])
         self.assertEqual(building.zones, [cooling_zone, heating_zone])
-        self.assertEqual(building.zones[0].spaces, [self.floor])
-        self.assertEqual(building.zones[1].spaces, [second_floor])
+        self.assertEqual(building.get_zone_by_name(cooling_zone.name).get_spaces(), [self.floor])
+        self.assertEqual(building.get_zone_by_name(heating_zone.name).get_spaces(), [second_floor])
 
     def test_two_building_floors_with_same_zone(self):
-        second_floor = Floor(self.floor_area, 1, FloorType.ROOFTOP, rooms=[self.room])
+        second_floor = Floor(self.floor_area, 2, FloorType.ROOFTOP, rooms=[self.room])
         building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
                             BuildingType.RESIDENTIAL, [self.floor, second_floor])
         cooling_zone = Zone("HVAC_COOLING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
-        building.floors[0].add_zone(cooling_zone, building)
-        building.floors[1].add_zone(cooling_zone, building)
+        building.get_floor_by_uid(self.floor.UID).add_zone(cooling_zone, building)
+        building.get_floor_by_uid(second_floor.UID).add_zone(cooling_zone, building)
 
         self.assertEqual(building.zones, [cooling_zone])
         self.assertEqual(len(building.zones), 1)
         self.assertEqual(building.zones[0].name, "HVAC_COOLING_ZONE")
-        self.assertEqual(building.floors[0].zones, [cooling_zone])
-        self.assertEqual(building.floors[1].zones, [cooling_zone])
-        self.assertEqual(building.zones[0].spaces, [self.floor, second_floor])
+        self.assertEqual(building.get_floor_by_uid(self.floor.UID).zones, [cooling_zone])
+        self.assertEqual(building.get_floor_by_uid(second_floor.UID).zones, [cooling_zone])
+        self.assertEqual(building.zones[0].get_spaces(), [self.floor, second_floor])
 
     def test_two_building_floors_with_spaces_in_different_zones(self):
-        second_floor = Floor(self.floor_area, 1, FloorType.ROOFTOP, open_spaces=[self.hall])
+        second_floor = Floor(self.floor_area, 2, FloorType.ROOFTOP, open_spaces=[self.hall])
         building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
                             BuildingType.RESIDENTIAL, [self.floor, second_floor])
         cooling_zone = Zone("HVAC_COOLING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
         heating_zone = Zone("HVAC_HEATING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
         lighting_zone = Zone("HVAC_LIGHTING_ZONE", ZoneType.LIGHTING)
 
-        building.floors[0].rooms[0].add_zone(cooling_zone, building)
-        building.floors[1].open_spaces[0].add_zone(heating_zone, building)
-        building.floors[0].add_zone(lighting_zone, building)
+        building.get_floor_by_number(1).get_room_by_name(self.room.name).add_zone(cooling_zone, building)
+        building.get_floor_by_number(2).get_open_space_by_name(self.hall.name).add_zone(heating_zone, building)
+        building.get_floor_by_number(1).add_zone(lighting_zone, building)
 
         self.assertEqual(len(building.zones), 3)
         self.assertEqual(building.zones, [cooling_zone, heating_zone, lighting_zone])
-        self.assertEqual(building.floors[0].rooms[0].zones[0], cooling_zone)
-        self.assertEqual(building.floors[1].open_spaces[0].zones[0], heating_zone)
-        self.assertEqual(building.floors[0].zones[0], lighting_zone)
-        self.assertEqual(building.zones[0].spaces, building.floors[0].rooms)
-        self.assertEqual(building.zones[1].spaces, building.floors[1].open_spaces)
+        self.assertEqual(
+            building.get_floor_by_number(1).get_room_by_name(self.room.name).get_zone_by_name(cooling_zone.name),
+            cooling_zone
+        )
+        self.assertEqual(
+            building.get_floor_by_number(2).get_open_space_by_name(self.hall.name).get_zone_by_name(heating_zone.name),
+            heating_zone
+        )
+        self.assertEqual(building.get_floor_by_number(1).get_zone_by_name(lighting_zone.name), lighting_zone)
+        self.assertEqual(building.get_zone_by_name(cooling_zone.name).get_spaces(),
+                         building.get_floor_by_number(1).get_rooms())
+        self.assertEqual(building.get_zone_by_name(heating_zone.name).get_spaces(),
+                         building.get_floor_by_number(2).get_open_spaces())
 
     def test_rooms_on_building_floor_in_adjacent_zones(self):
         building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
                             BuildingType.RESIDENTIAL, [self.floor])
-        building.floors[0].add_open_spaces([self.hall])
+        building.get_floor_by_number(1).add_open_spaces([self.hall])
         cooling_zone = Zone("HVAC_COOLING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
         heating_zone = Zone("HVAC_HEATING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
         cooling_zone.add_adjacent_zones([heating_zone])
-        building.floors[0].rooms[0].add_zone(cooling_zone, building)
-        building.floors[0].open_spaces[0].add_zone(heating_zone, building)
+        building.get_floor_by_number(1).get_room_by_name(self.room.name).add_zone(cooling_zone, building)
+        building.get_floor_by_number(1).get_open_space_by_name(self.hall.name).add_zone(heating_zone, building)
         self.assertEqual(building.zones, [cooling_zone, heating_zone])
-        self.assertEqual(building.floors[0].rooms[0].zones[0].adjacent_zones, [heating_zone])
-        self.assertEqual(building.zones[0].spaces, building.floors[0].rooms)
+        self.assertEqual(
+            building.get_floor_by_number(1).get_room_by_name(self.room.name).get_zone_by_name(
+                cooling_zone.name).get_adjacent_zones(),
+            [heating_zone]
+        )
+        self.assertEqual(building.get_zone_by_name(cooling_zone.name).get_spaces(),
+                         building.get_floor_by_number(1).get_rooms())
 
     def test_rooms_on_building_floor_in_overlapping_zones(self):
         building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
                             BuildingType.RESIDENTIAL, [self.floor])
-        building.floors[0].add_open_spaces([self.hall])
+        building.get_floor_by_number(1).add_open_spaces([self.hall])
         cooling_zone = Zone("HVAC_COOLING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
         heating_zone = Zone("HVAC_HEATING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
         cooling_zone.add_overlapping_zones([heating_zone])
-        building.floors[0].rooms[0].add_zone(cooling_zone, building)
-        building.floors[0].open_spaces[0].add_zone(heating_zone, building)
+        building.get_floor_by_number(1).get_room_by_name(self.room.name).add_zone(cooling_zone, building)
+        building.get_floor_by_number(1).get_open_space_by_name(self.hall.name).add_zone(heating_zone, building)
         self.assertEqual(building.zones, [cooling_zone, heating_zone])
-        self.assertEqual(building.floors[0].rooms[0].zones[0].overlapping_zones, [heating_zone])
-        self.assertEqual(building.zones[0].spaces, building.floors[0].rooms)
+        self.assertEqual(
+            building.get_floor_by_number(1).get_room_by_name(self.room.name)
+                .get_zone_by_name(cooling_zone.name).get_overlapping_zones(),
+            [heating_zone]
+        )
+        self.assertEqual(building.get_zone_by_name(cooling_zone.name).get_spaces(),
+                         building.get_floor_by_number(1).get_rooms())
 
     def test_remove_zone_from_building_floor(self):
         cooling_zone = Zone("HVAC_COOLING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
-        self.building.floors[0].add_zone(cooling_zone, self.building)
-        self.building.floors[0].remove_zone(cooling_zone)
-        self.assertEqual(self.building.floors[0].zones, [])
-        self.assertEqual(self.building.zones, [cooling_zone])
-        self.assertEqual(self.building.zones[0].spaces, [])
+        self.building.get_floor_by_number(1).add_zone(cooling_zone, self.building)
+        self.building.get_floor_by_number(1).remove_zone(cooling_zone)
+        self.assertEqual(self.building.get_floor_by_number(1).get_zones(), [])
+        self.assertEqual(self.building.get_zones(), [cooling_zone])
+        self.assertEqual(self.building.get_zone_by_name(cooling_zone.name).get_spaces(), [])
 
     def test_add_meters_to_building(self):
         first_meter = Meter(meter_location="huz.cab.err",
@@ -318,11 +338,10 @@ class TestBuilding(BaseTest):
 
         self.building.add_meter(first_meter)
         self.building.add_meter(second_meter)
-
-        self.assertEqual(self.building.meters, [first_meter, second_meter])
-        self.assertEqual(self.building.meters[0].meter_type, MeterType.ELECTRICITY)
-        self.assertEqual(self.building.meters[1].meter_type, MeterType.CHARGE_DISCHARGE)
-        self.assertNotEqual(self.building.meters[0], self.building.meters[1])
+        self.assertEqual(self.building.get_meters(), [first_meter, second_meter])
+        self.assertEqual(self.building.get_meter_by_uid(first_meter.UID).meter_type, MeterType.ELECTRICITY)
+        self.assertEqual(self.building.get_meter_by_uid(second_meter.UID).meter_type, MeterType.CHARGE_DISCHARGE)
+        self.assertNotEqual(self.building.get_meter_by_uid(second_meter.UID), first_meter)
 
     def test_remove_meters_to_building(self):
         first_meter = Meter(meter_location="huz.cab.err",
@@ -340,8 +359,8 @@ class TestBuilding(BaseTest):
         self.building.add_meter(second_meter)
         self.building.remove_meter(first_meter)
 
-        self.assertEqual(self.building.meters, [second_meter])
-        self.assertEqual(self.building.meters[0].meter_type, MeterType.CHARGE_DISCHARGE)
+        self.assertEqual(self.building.get_meters(), [second_meter])
+        self.assertEqual(self.building.get_meter_by_uid(second_meter.UID).meter_type, MeterType.CHARGE_DISCHARGE)
 
     def test_get_meter_by_uid(self):
         first_meter = Meter(meter_location="huz.cab.err",
@@ -391,7 +410,7 @@ class TestBuilding(BaseTest):
                              meter_type=MeterType.CHARGE_DISCHARGE, measure_mode=MeterMeasureMode.MANUAL)
         self.building.add_meter(first_meter)
         self.building.add_meter(second_meter)
-        meters = self.building.search_meters({'manufacturer': 'Honeywell', 'meter_type': MeterType.ELECTRICITY})
+        meters = self.building.get_meters({'manufacturer': 'Honeywell', 'meter_type': MeterType.ELECTRICITY})
         self.assertEqual(meters, [first_meter])
 
     def test_add_weather_stations_to_building(self):
@@ -399,8 +418,8 @@ class TestBuilding(BaseTest):
         station_two = WeatherStation('Station Two', location="bob.cob.huz")
         self.building.add_weather_station(station_one)
         self.building.add_weather_station(station_two)
-        self.assertEqual(self.building.weather_stations, [station_one, station_two])
-        self.assertEqual(self.building.weather_stations[1].location, "bob.cob.huz")
+        self.assertEqual(self.building.get_weather_stations(), [station_one, station_two])
+        self.assertEqual(self.building.get_weather_station_by_name(station_two.name).location, "bob.cob.huz")
 
     def test_get_weather_station_by_name(self):
         station_one = WeatherStation('Station One', location="huz.bob.cob")
@@ -426,8 +445,8 @@ class TestBuilding(BaseTest):
         self.building.add_weather_station(station_one)
         self.building.add_weather_station(station_two)
         self.building.remove_weather_station(station_two)
-        self.assertEqual(self.building.weather_stations, [station_one])
-        self.assertEqual(len(self.building.weather_stations), 1)
+        self.assertEqual(self.building.get_weather_stations(), [station_one])
+        self.assertEqual(len(self.building.get_weather_stations()), 1)
 
     def test_add_envelop_to_building(self):
         cover = Cover(CoverType.ROOF)
@@ -439,10 +458,11 @@ class TestBuilding(BaseTest):
         envelope.add_cover(cover)
         self.building.envelope = envelope
         self.assertEqual(self.building.envelope, envelope)
-        self.assertEqual(self.building.envelope.covers[0].cover_type, CoverType.ROOF)
-        self.assertEqual(self.building.envelope.covers[0].layers, [self.layer, new_layer])
-        self.assertEqual(self.building.envelope.covers[0].layers[0].thickness.value, 3)
-        self.assertEqual(self.building.envelope.covers[0].layers[1].material.material_type, MaterialType.ROOF_STEEL)
+        self.assertEqual(self.building.envelope.get_cover_by_uid(cover.UID).cover_type, CoverType.ROOF)
+        self.assertEqual(self.building.envelope.get_cover_by_uid(cover.UID).get_layers(), [self.layer, new_layer])
+        self.assertEqual(self.building.envelope.get_cover_by_uid(cover.UID).get_layers()[0].thickness.value, 3)
+        self.assertEqual(self.building.envelope.get_cover_by_uid(cover.UID).get_layers()[1].material.material_type,
+                         MaterialType.ROOF_STEEL)
 
     def test_building_floor_area_change_history(self):
         structure_change_logger = StructureStateChangeLogger()
