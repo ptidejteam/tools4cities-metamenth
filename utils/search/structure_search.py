@@ -52,6 +52,9 @@ class StructureSearch:
         from structure.layer import Layer
         from structure.cover import Cover
 
+        if search_terms is None:
+            return structures
+
         results = []
         for structure in structures:
             if not isinstance(structure, AbstractSpace) and not isinstance(structure, Layer) and \

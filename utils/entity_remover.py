@@ -22,8 +22,11 @@ class EntityRemover:
         :param entity_object: the object whose list has an item being removed
         :return:
         """
-        building_entity_list.remove(entity)
+
         if entity_type == BuildingEntity.ZONE.value:
             # then remove the zone from the list of zones for the space
-            entity_object.zones.remove(entity)
+            entity.remove_space(entity_object)
+            building_entity_list.remove(entity)
+        else:
+            building_entity_list.remove(entity)
 

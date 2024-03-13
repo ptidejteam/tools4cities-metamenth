@@ -39,6 +39,9 @@ class StructureEntitySearch:
         :return:
         """
         results = []
+        if search_terms is None:
+            return entity_list
+
         for entity in entity_list:
             found = True
             try:
