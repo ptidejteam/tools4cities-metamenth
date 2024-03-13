@@ -3,9 +3,12 @@ from enumerations import HVACType
 from uuid import uuid4
 from typing import List
 from structure.interfaces.abstract_space import AbstractSpace
-from visitors import EntityRemover
+from utils import EntityRemover
 from enumerations import BuildingEntity
-from visitors import EntityInsert
+from utils import EntityInsert
+from utils import StructureEntitySearch
+from utils import StructureSearch
+from typing import Dict
 
 
 class Zone:
@@ -85,45 +88,12 @@ class Zone:
             raise ValueError("HVAC type is only applicable for zones with ZoneType.HVAC.")
         self._hvac_type = value
 
-    @property
-    def adjacent_zones(self) -> List['Zone']:
-        return self._adjacent_zones
-
-    @property
-    def overlapping_zones(self) -> List['Zone']:
-        return self._overlapping_zones
-
-    @property
-    def spaces(self) -> List['AbstractSpace']:
-        return self._spaces
-
-    @spaces.setter
-    def spaces(self, spaces: [AbstractSpace]):
-        if spaces is not None:
-            self._spaces = spaces
-        else:
-            raise ValueError('spaces must be of type [AbstractSpace]')
-
-    @adjacent_zones.setter
-    def adjacent_zones(self, adjacent_zones: ['Zone']):
-        if adjacent_zones is not None:
-            self._adjacent_zones = adjacent_zones
-        else:
-            raise ValueError('adjacent_zones must be of type [Zone]')
-
-    @overlapping_zones.setter
-    def overlapping_zones(self, overlapping_zones: ['Zone']):
-        if overlapping_zones is not None:
-            self._overlapping_zones = overlapping_zones
-        else:
-            raise ValueError('adjacent_zones must be of type [Zone]')
-
     def add_adjacent_zones(self, adjacent_zones: List['Zone']):
         """
         adds zones that are adjacent with the current zone.
         :param adjacent_zones: A list of zones that are adjacent to the current zone.
         """
-        EntityInsert.insert_zonal_entity(self, adjacent_zones, BuildingEntity.ADJACENT_ZONE.value)
+        EntityInsert.insert_building_entity(self._adjacent_zones, adjacent_zones, BuildingEntity.ADJACENT_ZONE.value, self)
 
     def remove_overlapping_zone(self, overlapping_zone: 'Zone'):
         """
@@ -131,7 +101,8 @@ class Zone:
         :param overlapping_zone: the overlapping zone to remove
         :return:
         """
-        EntityRemover.remove_zonal_entity(self, BuildingEntity.OVERLAPPING_ZONE.value, overlapping_zone)
+        EntityRemover.remove_building_entity(self._overlapping_zones, overlapping_zone,
+                                             BuildingEntity.OVERLAPPING_ZONE.value, self)
 
     def remove_adjacent_zone(self, adjacent_zone: 'Zone'):
         """
@@ -139,7 +110,8 @@ class Zone:
         :param adjacent_zone: the adjacent zone to remove
         :return:
         """
-        EntityRemover.remove_zonal_entity(self, BuildingEntity.ADJACENT_ZONE.value, adjacent_zone)
+        EntityRemover.remove_building_entity(self._adjacent_zones, adjacent_zone,
+                                             BuildingEntity.ADJACENT_ZONE.value, self)
 
     def remove_space(self, space: AbstractSpace):
         """
@@ -147,21 +119,86 @@ class Zone:
         :param space: the space to remove
         :return:
         """
-        EntityRemover.remove_zonal_entity(self, BuildingEntity.SPACE.value, space)
+        EntityRemover.remove_building_entity(self._spaces, space)
 
     def add_spaces(self, spaces: List['AbstractSpace']):
         """
         Adds floors or rooms to a zone
         :param spaces: the floors and/or rooms (Abstract spaces) to be added
         """
-        self.spaces.extend(spaces)
+        self._spaces.extend(spaces)
 
     def add_overlapping_zones(self, overlapping_zones: List['Zone']):
         """
         adds zones that overlap with the current zone.
         :param overlapping_zones: A list of zones that are overlapping with the current zone.
         """
-        EntityInsert.insert_zonal_entity(self, overlapping_zones, BuildingEntity.OVERLAPPING_ZONE.value)
+        EntityInsert.insert_building_entity(self._overlapping_zones, overlapping_zones,
+                                            BuildingEntity.OVERLAPPING_ZONE.value, self)
+
+    def get_adjacent_zone_by_name(self, name) -> 'Zone':
+        """
+        Search adjacent zones by name
+        :param name:  the name of the zone
+        :return:
+        """
+        return StructureEntitySearch.search_by_name(self._adjacent_zones, name)
+
+    def get_adjacent_zone_by_uid(self, uid) -> 'Zone':
+        """
+        Search adjacent zones by uid
+        :param uid: the unique identifier of the adjacent zone
+        :return:
+        """
+        return StructureEntitySearch.search_by_id(self._adjacent_zones, uid)
+
+    def get_adjacent_zones(self, search_terms: Dict = None) -> ['Zone']:
+        """
+        Search adjacent zones by attributes values
+        :param search_terms: a dictionary of attributes and their values
+        :return:
+        """
+        return StructureEntitySearch.search(self._adjacent_zones, search_terms)
+
+    def get_overlapping_zone_by_name(self, name) -> 'Zone':
+        """
+        Search overlapping zones by name
+        :param name:  the name of the zone
+        :return:
+        """
+        return StructureEntitySearch.search_by_name(self._overlapping_zones, name)
+
+    def get_overlapping_zone_by_uid(self, uid) -> 'Zone':
+        """
+        Search overlapping zones by uid
+        :param uid: the unique identifier of the overlapping zone
+        :return:
+        """
+        return StructureEntitySearch.search_by_id(self._overlapping_zones, uid)
+
+    def get_overlapping_zones(self, search_terms: Dict = None) -> ['Zone']:
+        """
+        Search overlapping zones by attributes values
+        :param search_terms: a dictionary of attributes and their values
+        :return:
+        """
+        return StructureEntitySearch.search(self._overlapping_zones, search_terms)
+
+    def get_space_by_uid(self, uid) -> 'AbstractSpace':
+        """
+        Search spaces by uid
+        :param uid: the unique identifier of the space
+        :return:
+        """
+        return StructureSearch.search_by_id(self._spaces, uid)
+
+    def get_spaces(self, search_terms: Dict = None) -> ['Zone']:
+        """
+        Search spaces by attributes values
+        :param search_terms: a dictionary of attributes and their values
+        :return:
+        """
+        return StructureSearch.search(self._spaces, search_terms)
 
     def __eq__(self, other):
         # zones are equal if they share the same name
@@ -179,13 +216,13 @@ class Zone:
             f"Description: {self.description}, "
             f"ZoneType: {self.zone_type.value}, "
             f"HVACType: {self.hvac_type.value if self.hvac_type is not None else HVACType.NONE}, "
-            f"Adjacent Zones Count: {len(self.adjacent_zones)}, "
-            f"Overlapping Zones Count: {len(self.overlapping_zones)})"
+            f"Adjacent Zones Count: {len(self._adjacent_zones)}, "
+            f"Overlapping Zones Count: {len(self._overlapping_zones)})"
         )
 
-        overlapping_zones = "\n".join(str(zone) for zone in self.overlapping_zones)
-        spaces = "\n".join(str(space) for space in self.spaces)
-        adjacent_zones = "\n".join(str(zone) for zone in self.adjacent_zones)
+        overlapping_zones = "\n".join(str(zone) for zone in self._overlapping_zones)
+        spaces = "\n".join(str(space) for space in self._spaces)
+        adjacent_zones = "\n".join(str(zone) for zone in self._adjacent_zones)
         return (
             f"{zone_details}\nOverlapping Zones:\n{overlapping_zones}\n"
             f"Adjacent Zones:\n {adjacent_zones}\nSpaces: \n {spaces}"
