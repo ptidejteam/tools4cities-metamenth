@@ -155,7 +155,9 @@ class Meter:
         # Meters are equal if they share the same UID
         if isinstance(other, Meter):
             # Check for equality based on the 'UID' attribute
-            return self.UID == other.UID
+            return self.UID == other.UID and self.meter_type == other.meter_type \
+                   and self.manufacturer == other.manufacturer and self.measure_mode == other.measure_mode \
+                   and self.accumulation_frequency == other.accumulation_frequency
         return False
 
     def __str__(self):
