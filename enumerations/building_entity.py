@@ -21,5 +21,6 @@ class BuildingEntity(Enum):
     OVERLAPPING_ZONE = "OverlappingZone"
     ZONE = "Zone"
     ADJACENT_SPACE = "AdjacentSpace"
+    SUBSYSTEM = "Subsystem"
 
 
