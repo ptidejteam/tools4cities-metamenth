@@ -2,7 +2,7 @@ import uuid
 from structure.cover import Cover
 from typing import List
 from typing import Dict
-from visitors import StructureSearch
+from utils import StructureSearch
 
 
 class Envelope:
@@ -30,28 +30,24 @@ class Envelope:
             raise ValueError("cover must be of type Cover")
         self._covers.append(cover)
 
-    @property
-    def covers(self) -> List['Cover']:
-        return self._covers
-
-    def get_covers_by_uid(self, uid: str) -> Cover:
+    def get_cover_by_uid(self, uid: str) -> Cover:
         """
         Retrieves a cover given the uid
         :param uid: the uid of the cover
         :return:
         """
-        return StructureSearch.search_by_id(self.covers, uid)
+        return StructureSearch.search_by_id(self._covers, uid)
 
-    def get_covers(self, search_term: Dict) -> List[Cover]:
+    def get_covers(self, search_term: Dict = None) -> List[Cover]:
         """
         Retrieves covers given the attributes and their values
         :param search_term: the uid of the floor
         :return:
         """
-        return StructureSearch.search(self.covers, search_term)
+        return StructureSearch.search(self._covers, search_term)
 
     def __str__(self):
-        cover_details = "\n".join(str(cover) for cover in self.covers)
+        cover_details = "\n".join(str(cover) for cover in self._covers)
         return (
             f"Cover("
             f"UID: {self.UID}, "

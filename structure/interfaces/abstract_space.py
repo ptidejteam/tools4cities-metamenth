@@ -5,8 +5,10 @@ from misc import Validate
 from datatypes.operational_schedule import OperationalSchedule
 from typing import List
 from enumerations import BuildingEntity
-from visitors import EntityRemover
-from visitors import EntityInsert
+from utils import EntityRemover
+from utils import EntityInsert
+from utils import StructureEntitySearch
+from typing import Dict
 
 
 class AbstractSpace(ABC):
@@ -72,8 +74,8 @@ class AbstractSpace(ABC):
         EntityInsert.insert_zone(self, zone, building)
 
     @property
-    def schedules(self) -> List[OperationalSchedule]:
-        return self._schedules
+    def schedules(self):
+        raise AttributeError("Cannot get schedules")
 
     @schedules.setter
     def schedules(self, value: List[OperationalSchedule]):
@@ -88,15 +90,15 @@ class AbstractSpace(ABC):
         :param schedule:
         :return:
         """
-        EntityInsert.insert_space_entity(self, schedule, BuildingEntity.SCHEDULE.value)
+        EntityInsert.insert_building_entity(self._schedules, schedule)
 
-    def remove_schedule(self, name):
+    def remove_schedule(self, schedule):
         """
         Removes a schedule from a space
-        :param name:
+        :param schedule: the schedule to remove
         :return:
         """
-        EntityRemover.remove_space_entity(self, BuildingEntity.SCHEDULE.value, name)
+        EntityRemover.remove_building_entity(self._schedules, schedule)
 
     def remove_zone(self, zone):
         """
@@ -104,13 +106,61 @@ class AbstractSpace(ABC):
         :param zone: the zone to be removed
         :return:
         """
-        EntityRemover.remove_space_entity(self, BuildingEntity.ZONE.value, zone)
+        EntityRemover.remove_building_entity(self._zones, zone, BuildingEntity.ZONE.value, self)
+
+    def get_zone_by_name(self, name):
+        """
+        Search zones by name
+        :param name:  the name of the zone
+        :return:
+        """
+        return StructureEntitySearch.search_by_name(self._zones, name)
+
+    def get_zone_by_uid(self, uid):
+        """
+        Search zones by uid
+        :param uid: the unique identifier of the overlapping zone
+        :return:
+        """
+        return StructureEntitySearch.search_by_id(self._zones, uid)
+
+    def get_zones(self, search_terms: Dict = None):
+        """
+        Search zones by attributes values
+        :param search_terms: a dictionary of attributes and their values
+        :return:
+        """
+        return StructureEntitySearch.search(self._zones, search_terms)
+
+    def get_schedule_by_name(self, name) -> OperationalSchedule:
+        """
+        Search schedules by name
+        :param name: the name of the schedule
+        :return:
+        """
+        return StructureEntitySearch.search_by_name(self._schedules, name)
+
+    def get_schedule_by_uid(self, uid) -> OperationalSchedule:
+        """
+        Search schedule by uid
+        :param uid: the unique identifier of the schedule
+        :return:
+        """
+        return StructureEntitySearch.search_by_id(self._schedules, uid)
+
+    def get_schedules(self, search_terms: Dict = None) -> [OperationalSchedule]:
+        """
+        Search schedules by attributes values
+        :param search_terms: a dictionary of attributes and their values
+        :return:
+        """
+        return StructureEntitySearch.search(self._schedules, search_terms)
 
     def __str__(self):
         return (
             f"UID: {self.UID}, "
             f"Area: {self.area}, "
             f"Location: {self.location}, "
-            f"Zones: {self.zones}, "
-            f"Operational Schedule: {self.schedules}, "
+            f"Zones: {self._zones}, "
+            f"Operational Schedule: {self._schedules}, "
         )

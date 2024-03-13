@@ -2,8 +2,7 @@ import uuid
 from enumerations import CoverType
 from structure.layer import Layer
 from typing import List
-from misc import Validate
-from visitors import StructureSearch
+from utils import StructureSearch
 from typing import Dict
 
 
@@ -38,10 +37,6 @@ class Cover:
             raise ValueError("cover_type must be of type CoverType")
         self._cover_type = value
 
-    @property
-    def layers(self) -> List['Layer']:
-        return self._layers
-
     def add_layer(self, layer: Layer):
         """
         Add a layer (e.g., external wall) to the building cover e.g., wall
@@ -59,18 +54,18 @@ class Cover:
         :param uid: the uid of the layer
         :return:
         """
-        return StructureSearch.search_by_id(self.layers, uid)
+        return StructureSearch.search_by_id(self._layers, uid)
 
-    def get_layers(self, search_term: Dict) -> List[Layer]:
+    def get_layers(self, search_term: Dict = None) -> List[Layer]:
         """
         Retrieves layers given the attributes and their values
         :param search_term: the uid of the floor
         :return:
         """
-        return StructureSearch.search(self.layers, search_term)
+        return StructureSearch.search(self._layers, search_term)
 
     def __str__(self):
-        layer_str = "\n".join(str(layer) for layer in self.layers)
+        layer_str = "\n".join(str(layer) for layer in self._layers)
         return (
             f"Cover("
             f"UID: {self.UID}, "

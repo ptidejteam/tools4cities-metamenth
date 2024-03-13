@@ -5,14 +5,14 @@ from datatypes.interfaces.abstract_measure import AbstractMeasure
 from enumerations import FloorType
 from structure.open_space import OpenSpace
 from structure.room import Room
-from typing import List
-from visitors import EntityRemover
+from utils import EntityRemover
 from enumerations import BuildingEntity
-from visitors import EntityInsert
+from utils import EntityInsert
 from typing import Union
-from visitors import StructureSearch
+from utils import StructureSearch
 from typing import Dict
 from typing import List
+
 
 class Floor(AbstractSpace, ABC):
     """
@@ -53,13 +53,13 @@ class Floor(AbstractSpace, ABC):
         self.floor_type = floor_type
 
         if open_spaces:
-            self.open_spaces = open_spaces
+            self.add_open_spaces(open_spaces)
 
         if rooms:
-            self.rooms = rooms
+            self.add_rooms(rooms)
 
         # A floor should have at least one open space or one room
-        if not self.open_spaces and not self.rooms:
+        if not self._open_spaces and not self._rooms:
             raise ValueError("A floor must have at least one room or one open space.")
 
     @property
@@ -93,8 +93,8 @@ class Floor(AbstractSpace, ABC):
             raise ValueError("floor_type must be of type FloorType")
 
     @property
-    def open_spaces(self) -> List[OpenSpace]:
-        return self._open_spaces
+    def open_spaces(self):
+        raise AttributeError("Cannot get open_spaces")
 
     @open_spaces.setter
     def open_spaces(self, value: Union[OpenSpace, List[OpenSpace]]):
@@ -107,8 +107,8 @@ class Floor(AbstractSpace, ABC):
             raise ValueError("open_spaces must be of type [OpenSpace]")
 
     @property
-    def rooms(self) -> List[Room]:
-        return self._rooms
+    def rooms(self):
+        raise AttributeError("Cannot get rooms")
 
     @rooms.setter
     def rooms(self, value: Union[Room, List[Room]]):
@@ -125,7 +125,7 @@ class Floor(AbstractSpace, ABC):
         Add one or multiple OpenSpaces to the floor.
         :param open_spaces: The open spaces to add to the floor.
         """
-        EntityInsert.insert_floor_space(self, open_spaces, BuildingEntity.OPEN_SPACE.value)
+        EntityInsert.insert_building_entity(self._open_spaces, open_spaces, BuildingEntity.OPEN_SPACE.value)
         return self
 
     def add_rooms(self, rooms: List['Room']):
@@ -133,7 +133,7 @@ class Floor(AbstractSpace, ABC):
         Add one or multiple rooms to the floor.
         :param rooms: The open spaces to add to the floor.
         """
-        EntityInsert.insert_floor_space(self, rooms, BuildingEntity.ROOM.value)
+        EntityInsert.insert_building_entity(self._rooms, rooms, BuildingEntity.ROOM.value)
         return self
 
     def remove_open_space(self, open_space: OpenSpace):
@@ -142,7 +142,7 @@ class Floor(AbstractSpace, ABC):
         :param open_space: the open space entity to remove
         :return:
         """
-        EntityRemover.remove_floor_entity(self, BuildingEntity.OPEN_SPACE.value, open_space)
+        EntityRemover.remove_building_entity(self._open_spaces, open_space, BuildingEntity.OPEN_SPACE.value, self)
         return self
 
     def remove_room(self, room: Room):
@@ -151,7 +151,7 @@ class Floor(AbstractSpace, ABC):
         :param room: the room to remove
         :return:
         """
-        EntityRemover.remove_floor_entity(self, BuildingEntity.ROOM.value, room)
+        EntityRemover.remove_building_entity(self._rooms, room, BuildingEntity.ROOM.value, self)
 
     def get_open_space_by_uid(self, uid: str) -> OpenSpace:
         """
@@ -159,7 +159,7 @@ class Floor(AbstractSpace, ABC):
         :param uid: the uid of the open space
         :return:
         """
-        return StructureSearch.search_by_id(self.open_spaces, uid)
+        return StructureSearch.search_by_id(self._open_spaces, uid)
 
     def get_room_by_uid(self, uid: str) -> Room:
         """
@@ -167,7 +167,7 @@ class Floor(AbstractSpace, ABC):
         :param uid: the uid of the room
         :return:
         """
-        return StructureSearch.search_by_id(self.rooms, uid)
+        return StructureSearch.search_by_id(self._rooms, uid)
 
     def get_open_space_by_name(self, name: str) -> OpenSpace:
         """
@@ -175,7 +175,7 @@ class Floor(AbstractSpace, ABC):
         :param name: the name of the open space
         :return:
         """
-        return StructureSearch.search_by_name(self.open_spaces, name)
+        return StructureSearch.search_by_name(self._open_spaces, name)
 
     def get_room_by_name(self, name: str) -> Room:
         """
@@ -183,23 +183,23 @@ class Floor(AbstractSpace, ABC):
         :param name: the name of the room
         :return:
         """
-        return StructureSearch.search_by_name(self.rooms, name)
+        return StructureSearch.search_by_name(self._rooms, name)
 
-    def get_rooms(self, search_term: Dict) -> List[Room]:
+    def get_rooms(self, search_term: Dict = None) -> List[Room]:
         """
         Retrieves rooms that match attributes and their values
         :param search_term: attributes and their values
         :return:
         """
-        return StructureSearch.search(self.rooms, search_term)
+        return StructureSearch.search(self._rooms, search_term)
 
-    def get_open_spaces(self, search_term: Dict) -> List[OpenSpace]:
+    def get_open_spaces(self, search_term: Dict = None) -> List[OpenSpace]:
         """
         Retrieves open spaces that match attributes and their values
         :param search_term: attributes and their values
         :return:
         """
-        return StructureSearch.search(self.open_spaces, search_term)
+        return StructureSearch.search(self._open_spaces, search_term)
 
     def __eq__(self, other):
         # floors are equal if they share the same number
@@ -211,9 +211,9 @@ class Floor(AbstractSpace, ABC):
     def __str__(self):
         floor_details = (f"Floor {super().__str__()} {self.number} ({self.floor_type.value}): {self.description}, "
                          f"Area: {self.area}, Location: {self.location}, UID: {self.UID}, "
-                         f"Rooms Count: {len(self.rooms)}, Open Spaces Count: {len(self.open_spaces)})")
+                         f"Rooms Count: {len(self._rooms)}, Open Spaces Count: {len(self._open_spaces)})")
 
-        rooms = "\n".join(str(room) for room in self.rooms)
-        open_spaces = "\n".join(str(space) for space in self.open_spaces)
+        rooms = "\n".join(str(room) for room in self._rooms)
+        open_spaces = "\n".join(str(space) for space in self._open_spaces)
 
         return f"{floor_details}\nRooms:\n{rooms}\nOpen Space:\n {open_spaces})"

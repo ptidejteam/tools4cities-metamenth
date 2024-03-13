@@ -1,14 +1,15 @@
 from typing import List
 from .abstract_space import AbstractSpace
 from datatypes.interfaces.abstract_measure import AbstractMeasure
-from transducers.interfaces.abstract_transducer import AbstractTransducer
-from visitors import EntityRemover
-from visitors import EntityInsert
-from enumerations import BuildingEntity
+from utils import EntityRemover
+from utils import EntityInsert
 from measure_instruments.meter import Meter
+from utils import StructureEntitySearch
+from typing import Dict
+from datatypes.interfaces.dynamic_entity import DynamicEntity
 
 
-class AbstractFloorSpace(AbstractSpace):
+class AbstractFloorSpace(AbstractSpace, DynamicEntity):
     """
     An abstract class for spaces on a floor
 
@@ -23,10 +24,11 @@ class AbstractFloorSpace(AbstractSpace):
         :param name: the name of the space
         :param location: the what3word location of the space
         """
-        super().__init__(area, location)
+        AbstractSpace.__init__(self, area, location)
+        DynamicEntity.__init__(self)
+
         self._name = None
         self._adjacent_spaces: List[AbstractFloorSpace] = []
-        self._transducers: List[AbstractTransducer] = []
         self._meter = meter
         # apply validation through setters
         self.name = name
@@ -41,28 +43,6 @@ class AbstractFloorSpace(AbstractSpace):
             self._name = value
         else:
             raise ValueError("name must be a string")
-
-    @property
-    def adjacent_spaces(self) -> List['AbstractFloorSpace']:
-        return self._adjacent_spaces
-
-    @adjacent_spaces.setter
-    def adjacent_spaces(self, value: ['AbstractFloorSpace']):
-        if value is not None:
-            self._adjacent_spaces = value
-        else:
-            raise ValueError("adjacent_spaces must be of type [AbstractFloorSpace]")
-
-    @property
-    def transducers(self) -> List[AbstractTransducer]:
-        return self._transducers
-
-    @transducers.setter
-    def transducers(self, value: [AbstractTransducer]):
-        if value is not None:
-            self._transducers = value
-        else:
-            raise ValueError("transducers must be of type [Transducers]")
 
     @property
     def meter(self) -> Meter:
@@ -81,7 +61,7 @@ class AbstractFloorSpace(AbstractSpace):
         :param space:
         :return:
         """
-        EntityInsert.insert_space_entity(self, space, BuildingEntity.ADJACENT_SPACE.value)
+        EntityInsert.insert_building_entity(self._adjacent_spaces, space)
 
     def remove_adjacent_space(self, adjacent_space: 'AbstractFloorSpace'):
         """
@@ -89,23 +69,31 @@ class AbstractFloorSpace(AbstractSpace):
         :param adjacent_space: the adjacent space to remove
         :return:
         """
-        EntityRemover.remove_space_entity(self, BuildingEntity.ADJACENT_SPACE.value, adjacent_space)
+        EntityRemover.remove_building_entity(self._adjacent_spaces, adjacent_space)
 
-    def add_transducer(self, new_transducer: AbstractTransducer):
+    def get_adjacent_space_by_name(self, name) -> 'AbstractFloorSpace':
         """
-        Adds sensors and/or actuators to entities (rooms, open spaces, equipment, etc.)
-        :param new_transducer: a transducers to be added to this space
+        Search adjacent spaces by name
+        :param name:  the name of the zone
         :return:
         """
-        EntityInsert.insert_space_entity(self, new_transducer, BuildingEntity.TRANSDUCER.value)
+        return StructureEntitySearch.search_by_name(self._adjacent_spaces, name)
 
-    def remove_transducer(self, transducer: AbstractTransducer):
+    def get_adjacent_space_by_uid(self, uid) -> 'AbstractFloorSpace':
         """
-        Removes a transducers from a room or open space
-        :param transducer: the transducers to remove
+        Search adjacent spaces by uid
+        :param uid: the unique identifier of the adjacent spaces
         :return:
         """
-        EntityRemover.remove_space_entity(self, BuildingEntity.TRANSDUCER.value, transducer)
+        return StructureEntitySearch.search_by_id(self._adjacent_spaces, uid)
+
+    def get_adjacent_spaces(self, search_terms: Dict) -> ['AbstractFloorSpace']:
+        """
+        Search adjacent spaces by attributes values
+        :param search_terms: a dictionary of attributes and their values
+        :return:
+        """
+        return StructureEntitySearch.search(self._adjacent_spaces, search_terms)
 
     def __eq__(self, other):
         # spaces on a floor are equal if they share the same name
@@ -119,6 +107,6 @@ class AbstractFloorSpace(AbstractSpace):
             f"{super().__str__()}"
             f"Name: {self.name}, "
             f"Meter: {self.meter}, "
-            f"Adjacent Spaces: {self.adjacent_spaces}, "
-            f"Transducers: {self.transducers}, "
+            f"Adjacent Spaces: {self._adjacent_spaces}, "
+            f"Transducers: {self._transducers}, "
         )

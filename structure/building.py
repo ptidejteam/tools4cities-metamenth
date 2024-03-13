@@ -10,18 +10,18 @@ from .envelope import Envelope
 from typing import Optional
 from measure_instruments import WeatherStation
 from measure_instruments import Meter
-from visitors import EntityRemover
-from visitors import EntityInsert
+from utils import EntityRemover
+from utils import EntityInsert
 from enumerations import BuildingEntity
 from datatypes.interfaces.abstract_measure import AbstractMeasure
 from datatypes.zone import Zone
-from visitors import StructureSearch
+from utils import StructureSearch
 from typing import Dict
 from enumerations import RoomType
 from enumerations import OpenSpaceType
 from observers.observable import Observable
 from misc import StateTrackDecorator
-from visitors import StructureEntitySearch
+from utils import StructureEntitySearch
 from enumerations import MeterType
 
 
@@ -66,7 +66,7 @@ class Building(Observable):
         self.internal_mass = internal_mass
         self.address = address
         self.building_type = building_type
-        self.floors = floors
+        self.add_floors(floors)
 
     @property
     def UID(self) -> str:
@@ -143,8 +143,8 @@ class Building(Observable):
             raise ValueError("building_type must be of type BuildingType")
 
     @property
-    def floors(self) -> List[Floor]:
-        return self._floors
+    def floors(self):
+        raise AttributeError("Cannot get floors")
 
     @floors.setter
     def floors(self, value: List[Floor]):
@@ -154,8 +154,8 @@ class Building(Observable):
             raise ValueError("floors must be of type [Floor] and must not be empty")
 
     @property
-    def weather_stations(self) -> List[WeatherStation]:
-        return self._weather_stations
+    def weather_stations(self):
+        raise AttributeError("Cannot get weather stations")
 
     @weather_stations.setter
     def weather_stations(self, value: List[WeatherStation]):
@@ -165,8 +165,8 @@ class Building(Observable):
             raise ValueError("weather_stations must be of type [WeatherStation]")
 
     @property
-    def meters(self) -> List[Meter]:
-        return self._meters
+    def meters(self):
+        raise AttributeError("Cannot get meters")
 
     @meters.setter
     def meters(self, value: List[Meter]):
@@ -188,8 +188,8 @@ class Building(Observable):
             raise ValueError("envelope must be of type Envelope")
 
     @property
-    def schedules(self) -> List[OperationalSchedule]:
-        return self._schedules
+    def schedules(self):
+        raise AttributeError("Cannot get schedules")
 
     @property
     def zones(self):
@@ -209,7 +209,7 @@ class Building(Observable):
         :param weather_station: a station to measure various weather elements
         :return:
         """
-        self.weather_stations.append(weather_station)
+        EntityInsert.insert_building_entity(self._weather_stations, weather_station)
         return self
 
     @StateTrackDecorator
@@ -219,7 +219,7 @@ class Building(Observable):
         :param weather_station: a station to measure various weather elements
         :return:
         """
-        EntityRemover.remove_building_entity(self, BuildingEntity.WEATHER_STATION.value, weather_station)
+        EntityRemover.remove_building_entity(self._weather_stations, weather_station)
 
     def add_meter(self, meter: Meter):
         """
@@ -227,7 +227,7 @@ class Building(Observable):
         :param meter: a meter to measure some phenomena e.g. energy consumption
         :return:
         """
-        self.meters.append(meter)
+        EntityInsert.insert_building_entity(self._meters, meter)
         return self
 
     def remove_meter(self, meter: Meter):
@@ -236,7 +236,7 @@ class Building(Observable):
         :param meter: a meter to measure some phenomena e.g. energy consumption
         :return:
         """
-        EntityRemover.remove_building_entity(self, BuildingEntity.METER.value, meter)
+        EntityRemover.remove_building_entity(self._meters, meter)
 
     @StateTrackDecorator
     def add_schedule(self, schedule: OperationalSchedule):
@@ -245,7 +245,7 @@ class Building(Observable):
         :param schedule: the schedule
         :return:
         """
-        EntityInsert.insert_space_entity(self, schedule, BuildingEntity.SCHEDULE.value)
+        EntityInsert.insert_building_entity(self._schedules, schedule)
         return self
 
     @StateTrackDecorator
@@ -255,7 +255,7 @@ class Building(Observable):
         :param schedule: the schedule
         :return:
         """
-        EntityRemover.remove_space_entity(self, BuildingEntity.SCHEDULE.value, schedule)
+        EntityRemover.remove_building_entity(self._schedules, schedule)
 
     def add_floors(self, floors: List[Floor]):
         """
@@ -263,11 +263,7 @@ class Building(Observable):
         :param floors: the floors to add to this building
         :return:
         """
-        for new_floor in floors:
-            existing_floor = next((floor for floor in self.floors if floor.number == new_floor.number), None)
-            if existing_floor is None:
-
-                self.floors.append(new_floor)
+        EntityInsert.insert_building_entity(self._floors, floors, BuildingEntity.FLOOR.value)
         return self  # necessary for method chaining
 
     def remove_floor(self, floor: Floor):
@@ -276,7 +272,7 @@ class Building(Observable):
         :param floor: the floor to remove
         :return:
         """
-        EntityRemover.remove_building_entity(self, BuildingEntity.FLOOR.value, floor)
+        EntityRemover.remove_building_entity(self._floors, floor)
 
     def get_floor_by_uid(self, uid: str) -> Floor:
         """
@@ -284,7 +280,7 @@ class Building(Observable):
         :param uid: the uid of the floor
         :return:
         """
-        return StructureSearch.search_by_id(self.floors, uid)
+        return StructureSearch.search_by_id(self._floors, uid)
 
     def get_floor_by_number(self, floor_number: int) -> Floor:
         """
@@ -292,15 +288,15 @@ class Building(Observable):
         :param floor_number: the number assigned to the floor
         :return:
         """
-        return StructureSearch.search_by_number(self.floors, floor_number)
+        return StructureSearch.search_by_number(self._floors, floor_number)
 
-    def get_floors(self, search_term: Dict) -> List[Floor]:
+    def get_floors(self, search_term: Dict = None) -> List[Floor]:
         """
         Retrieves floors given the attributes and their values
         :param search_term: the uid of the floor
         :return:
         """
-        return StructureSearch.search(self.floors, search_term)
+        return StructureSearch.search(self._floors, search_term)
 
     def get_weather_station_by_name(self, name: str) -> WeatherStation:
         """
@@ -308,7 +304,7 @@ class Building(Observable):
         :param name: the name of the weather station
         :return:
         """
-        return StructureEntitySearch.search_by_name(self.weather_stations, name)
+        return StructureEntitySearch.search_by_name(self._weather_stations, name)
 
     def get_weather_station_by_uid(self, uid: str) -> WeatherStation:
         """
@@ -316,7 +312,15 @@ class Building(Observable):
         :param uid: the unique identifier of the weather station
         :return:
         """
-        return StructureEntitySearch.search_by_id(self.weather_stations, uid)
+        return StructureEntitySearch.search_by_id(self._weather_stations, uid)
+
+    def get_weather_stations(self, search_term: Dict = None) -> [WeatherStation]:
+        """
+        Returns a list of weather stations
+        :param search_term: attributes and their values
+        :return:
+        """
+        return StructureEntitySearch.search(self._weather_stations, search_term)
 
     def get_meter_by_uid(self, uid: str) -> Meter:
         """
@@ -324,7 +328,7 @@ class Building(Observable):
         :param uid: the uid of the meter
         :return:
         """
-        return StructureEntitySearch.search_by_id(self.meters, uid)
+        return StructureEntitySearch.search_by_id(self._meters, uid)
 
     def get_meter_by_type(self, meter_type: MeterType) -> [Meter]:
         """
@@ -332,15 +336,63 @@ class Building(Observable):
         :param meter_type: the type of meter
         :return:
         """
-        return StructureEntitySearch.search(self.meters, {'meter_type': meter_type})
+        return StructureEntitySearch.search(self._meters, {'meter_type': meter_type})
 
-    def search_meters(self, search_terms: Dict) -> [Meter]:
+    def get_meters(self, search_terms: Dict = None) -> [Meter]:
         """
         Returns a meter based on some attributes and their values
         :param search_terms: attributes and value key pairs
         :return:
         """
-        return StructureEntitySearch.search(self.meters, search_terms)
+        return StructureEntitySearch.search(self._meters, search_terms)
+
+    def get_zone_by_name(self, name) -> Zone:
+        """
+        Search zones by name
+        :param name:  the name of the zone
+        :return:
+        """
+        return StructureEntitySearch.search_by_name(self._zones, name)
+
+    def get_zone_by_uid(self, uid) -> Zone:
+        """
+        Search zones by uid
+        :param uid: the unique identifier of the overlapping zone
+        :return:
+        """
+        return StructureEntitySearch.search_by_id(self._zones, uid)
+
+    def get_zones(self, search_terms: Dict = None) -> [Zone]:
+        """
+        Search zones by attributes values
+        :param search_terms: a dictionary of attributes and their values
+        :return:
+        """
+        return StructureEntitySearch.search(self._zones, search_terms)
+
+    def get_schedule_by_name(self, name) -> OperationalSchedule:
+        """
+        Search schedules by name
+        :param name: the name of the schedule
+        :return:
+        """
+        return StructureEntitySearch.search_by_name(self._schedules, name)
+
+    def get_schedule_by_uid(self, uid) -> OperationalSchedule:
+        """
+        Search schedule by uid
+        :param uid: the unique identifier of the schedule
+        :return:
+        """
+        return StructureEntitySearch.search_by_id(self._schedules, uid)
+
+    def get_schedules(self, search_terms: Dict = None) -> [OperationalSchedule]:
+        """
+        Search schedules by attributes values
+        :param search_terms: a dictionary of attributes and their values
+        :return:
+        """
+        return StructureEntitySearch.search(self._schedules, search_terms)
 
     @StateTrackDecorator
     def add_room(self, floor_uid: str, name: str, area: AbstractMeasure,
@@ -378,10 +430,10 @@ class Building(Observable):
         return self  # Return self for method chaining
 
     def __str__(self):
-        floors_info = "\n".join([f"  - Floor {floor.number}: {floor}" for floor in self.floors])
-        weather_stations_info = "\n".join([f"  - {station}" for station in self.weather_stations])
-        schedules_info = "\n".join([f"  - {schedule}" for schedule in self.schedules])
-        meter_info = "\n".join([f"  - {meter}" for meter in self.meters])
+        floors_info = "\n".join([f"  - Floor {floor.number}: {floor}" for floor in self._floors])
+        weather_stations_info = "\n".join([f"  - {station}" for station in self._weather_stations])
+        schedules_info = "\n".join([f"  - {schedule}" for schedule in self._schedules])
+        meter_info = "\n".join([f"  - {meter}" for meter in self._meters])
 
         return (f"Building("
                 f"UID: {self.UID}, "
@@ -391,9 +443,9 @@ class Building(Observable):
                 f"Internal Mass: {self.internal_mass}, "
                 f"Address: {self.address}, "
                 f"Building Type: {self.building_type}, "
-                f"Floor Count: {len(self.floors)}, "
-                f"Weather Stations Count: {len(self.weather_stations)}, "
-                f"Schedules Count: {len(self.schedules)}, "
+                f"Floor Count: {len(self._floors)}, "
+                f"Weather Stations Count: {len(self._weather_stations)}, "
+                f"Schedules Count: {len(self._schedules)}, "
                 f"Floors:\n{floors_info}, "
                 f"Weather Stations:\n{weather_stations_info}, "
                 f"Schedules:\n{schedules_info}, "
