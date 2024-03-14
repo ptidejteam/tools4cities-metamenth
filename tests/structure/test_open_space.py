@@ -11,8 +11,8 @@ from enumerations import SensorMeasureType
 class TestOpenSpace(BaseTest):
 
     def test_open_space_with_no_adjacent_spaces_and_zones(self):
-        self.assertEqual(self.hall.adjacent_spaces, [])
-        self.assertEqual(self.hall.zones, [])
+        self.assertEqual(self.hall.get_adjacent_spaces(), [])
+        self.assertEqual(self.hall.get_zones(), [])
         self.assertIsNotNone(self.hall.UID)
         self.assertEqual(self.hall.area.value, 45)
         self.assertEqual(self.hall.area.measurement_unit, MeasurementUnit.SQUARE_METERS)
@@ -20,10 +20,11 @@ class TestOpenSpace(BaseTest):
     def test_open_space_with_adjacent_space(self):
         dinning_area = copy.deepcopy(self.hall)
         dinning_area.space_type = OpenSpaceType.DINNING_AREA
+        dinning_area.name = "DINNING"
         self.hall.add_adjacent_space(dinning_area)
-        self.assertEqual(self.hall.adjacent_spaces[0], dinning_area)
-        self.assertEqual(self.hall.adjacent_spaces[0].space_type, OpenSpaceType.DINNING_AREA)
-        self.assertEqual(len(self.hall.adjacent_spaces), 1)
+        self.assertEqual(self.hall.get_adjacent_space_by_name(dinning_area.name), dinning_area)
+        self.assertEqual(self.hall.get_adjacent_space_by_name(dinning_area.name).space_type, OpenSpaceType.DINNING_AREA)
+        self.assertEqual(len(self.hall.get_adjacent_spaces()), 1)
 
     def test_open_space_with_no_space_type(self):
         try:
@@ -42,5 +43,5 @@ class TestOpenSpace(BaseTest):
         co2_sensor = Sensor("Co2_Sensor", SensorMeasure.CARBON_DIOXIDE,
                             MeasurementUnit.PARTS_PER_MILLION, SensorMeasureType.PT_100, 5)
         self.hall.add_transducer(co2_sensor)
-        self.assertEqual(self.hall.transducers, [co2_sensor])
-        self.assertEqual(self.hall.transducers[0].name, "Co2_Sensor")
+        self.assertEqual(self.hall.get_transducers(), [co2_sensor])
+        self.assertEqual(self.hall.get_transducer_by_uid(co2_sensor.UID).name, "Co2_Sensor")

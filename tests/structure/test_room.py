@@ -9,6 +9,7 @@ from enumerations import SensorMeasure
 from enumerations import SensorMeasureType
 from tests.structure.base_test import BaseTest
 from enumerations import MeterMeasureMode
+from measure_instruments import MeterMeasure
 
 
 class TestRoom(BaseTest):
@@ -35,8 +36,8 @@ class TestRoom(BaseTest):
         power_meter = Meter("huz.cab.err", manufacturer="Honeywell", measurement_frequency=5,
                             measurement_unit=MeasurementUnit.KILOWATTS, meter_type=MeterType.ELECTRICITY,
                             measure_mode=MeterMeasureMode.AUTOMATIC)
-        power_meter.add_meter_measure(2)
-        power_meter.add_meter_measure(5)
+        power_meter.add_meter_measure(MeterMeasure(2))
+        power_meter.add_meter_measure(MeterMeasure(5))
         self.room.meter = power_meter
         self.assertEqual(self.room.meter.meter_type, power_meter.meter_type)
         self.assertEqual(len(self.room.meter.meter_measures), 2)
@@ -45,32 +46,32 @@ class TestRoom(BaseTest):
     def test_classroom_with_adjacent_hall(self):
         hall = OpenSpace("LECTURE_HALL_2", self.area, OpenSpaceType.HALL)
         self.room.add_adjacent_space(hall)
-        self.assertEqual(len(self.room.adjacent_spaces), 1)
-        self.assertEqual(self.room.adjacent_spaces[0], hall)
-        self.assertEqual(self.room.adjacent_spaces[0].space_type, OpenSpaceType.HALL)
+        self.assertEqual(len(self.room.get_adjacent_spaces()), 1)
+        self.assertEqual(self.room.get_adjacent_space_by_name(hall.name), hall)
+        self.assertEqual(self.room.get_adjacent_space_by_uid(hall.UID).space_type, OpenSpaceType.HALL)
 
     def test_classroom_as_adjacent_room_to_hall(self):
         self.hall = OpenSpace("LECTURE_HALL_3", self.area, OpenSpaceType.HALL)
         self.room.add_adjacent_space(self.hall)
         self.hall.add_adjacent_space(self.room)
-        self.assertEqual(self.hall.adjacent_spaces[0], self.room)
-        self.assertEqual(self.hall.adjacent_spaces[0].room_type, RoomType.BEDROOM)
+        self.assertEqual(self.hall.get_adjacent_space_by_uid(self.room.UID), self.room)
+        self.assertEqual(self.hall.get_adjacent_space_by_uid(self.room.UID).room_type, RoomType.BEDROOM)
 
     def test_remove_adjacent_space(self):
         self.hall = OpenSpace("LECTURE_HALL_4", self.area, OpenSpaceType.HALL)
         self.room.add_adjacent_space(self.hall)
-        self.assertEqual(self.room.adjacent_spaces[0], self.hall)
+        self.assertEqual(self.room.get_adjacent_space_by_uid(self.hall.UID), self.hall)
 
         self.room.remove_adjacent_space(self.hall)
-        self.assertEqual(self.room.adjacent_spaces, [])
+        self.assertEqual(self.room.get_adjacent_spaces(), [])
 
     def test_add_existing_adjacent_space(self):
         self.hall = OpenSpace("LECTURE_HALL_5", self.area, OpenSpaceType.HALL)
         self.room.add_adjacent_space(self.hall)
         self.room.add_adjacent_space(self.hall)
         # should not add an adjacent space that already exists
-        self.assertEqual(len(self.room.adjacent_spaces), 1)
-        self.assertEqual(self.room.adjacent_spaces, [self.hall])
+        self.assertEqual(len(self.room.get_adjacent_spaces()), 1)
+        self.assertEqual(self.room.get_adjacent_spaces(), [self.hall])
 
     def test_classroom_with_co2_and_temp_sensors(self):
         co2_sensor = Sensor("Co2_Sensor", SensorMeasure.CARBON_DIOXIDE,
@@ -79,10 +80,10 @@ class TestRoom(BaseTest):
                              MeasurementUnit.DEGREE_CELSIUS, SensorMeasureType.PT_100, 5)
         self.room.add_transducer(co2_sensor)
         self.room.add_transducer(temp_sensor)
-        self.assertEqual(len(self.room.transducers), 2)
-        self.assertEqual(self.room.transducers[0].measure, SensorMeasure.CARBON_DIOXIDE)
-        self.assertEqual(self.room.transducers[1].measure, SensorMeasure.TEMPERATURE)
-        self.assertEqual(self.room.transducers[0].data_frequency, self.room.transducers[1].data_frequency)
+        self.assertEqual(len(self.room.get_transducers()), 2)
+        self.assertEqual(self.room.get_transducer_by_name(co2_sensor.name).measure, SensorMeasure.CARBON_DIOXIDE)
+        self.assertEqual(self.room.get_transducer_by_name(temp_sensor.name).measure, SensorMeasure.TEMPERATURE)
+        self.assertEqual(self.room.get_transducer_by_name(co2_sensor.name).data_frequency, co2_sensor.data_frequency)
 
     def test_add_existing_sensor_with_the_same_name(self):
         co2_sensor = Sensor("Co2_Sensor", SensorMeasure.CARBON_DIOXIDE,
@@ -92,8 +93,8 @@ class TestRoom(BaseTest):
         self.room.add_transducer(co2_sensor)
         self.room.add_transducer(temp_sensor)
 
-        self.assertEqual(len(self.room.transducers), 1)
-        self.assertEqual(self.room.transducers[0].data_frequency, 5)
+        self.assertEqual(len(self.room.get_transducers()), 1)
+        self.assertEqual(self.room.get_transducer_by_name(co2_sensor.name).data_frequency, 5)
 
     def test_remove_transducer_from_room(self):
         co2_sensor = Sensor("Co2_Sensor", SensorMeasure.CARBON_DIOXIDE,
@@ -102,13 +103,13 @@ class TestRoom(BaseTest):
                              MeasurementUnit.DEGREE_CELSIUS, SensorMeasureType.PT_100, 5)
         self.room.add_transducer(co2_sensor)
         self.room.add_transducer(temp_sensor)
-        self.assertEqual(len(self.room.transducers), 2)
+        self.assertEqual(len(self.room.get_transducers()), 2)
 
         self.room.remove_transducer(co2_sensor)
 
-        self.assertEqual(len(self.room.transducers), 1)
-        self.assertEqual(self.room.transducers[0], temp_sensor)
+        self.assertEqual(len(self.room.get_transducers()), 1)
+        self.assertEqual(self.room.get_transducer_by_uid(temp_sensor.UID), temp_sensor)
 
         self.room.remove_transducer(temp_sensor)
-        self.assertEqual(len(self.room.transducers), 0)
+        self.assertEqual(len(self.room.get_transducers()), 0)
 

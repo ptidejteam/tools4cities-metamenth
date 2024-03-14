@@ -50,11 +50,11 @@ class TestZone(TestCase):
         zone_3 = Zone(name="COLD_ZONE", zone_type=ZoneType.HVAC, description="Data center area")
         zone_1.add_adjacent_zones([zone_2, zone_3])
         zone_2.add_adjacent_zones([zone_1, zone_3])
-        self.assertEqual(zone_1.adjacent_zones[0], zone_2)
-        self.assertEqual(zone_1.adjacent_zones[1], zone_3)
-        self.assertEqual(zone_2.adjacent_zones[0], zone_1)
-        self.assertEqual(zone_2.adjacent_zones[1], zone_3)
-        self.assertEqual(zone_3.adjacent_zones, [])
+        self.assertEqual(zone_1.get_adjacent_zone_by_name("WARM_ZONE"), zone_2)
+        self.assertEqual(zone_1.get_adjacent_zone_by_name("COLD_ZONE"), zone_3)
+        self.assertEqual(zone_2.get_adjacent_zone_by_name("DIM_ZONE"), zone_1)
+        self.assertEqual(zone_2.get_adjacent_zone_by_name("COLD_ZONE"), zone_3)
+        self.assertEqual(zone_3.get_adjacent_zones(), [])
 
     def test_zone_with_overlapping_zones(self):
         zone_1 = Zone(name="DIM_ZONE", zone_type=ZoneType.LIGHTING, description="Relaxation zone")
@@ -62,11 +62,11 @@ class TestZone(TestCase):
         zone_3 = Zone(name="COLD_ZONE", zone_type=ZoneType.HVAC, description="Data center area")
         zone_1.add_overlapping_zones([zone_2, zone_3])
         zone_2.add_overlapping_zones([zone_1, zone_3])
-        self.assertEqual(zone_1.overlapping_zones[0], zone_2)
-        self.assertEqual(zone_1.overlapping_zones[1], zone_3)
-        self.assertEqual(zone_2.overlapping_zones[0], zone_1)
-        self.assertEqual(zone_2.overlapping_zones[1], zone_3)
-        self.assertEqual(zone_3.overlapping_zones, [])
+        self.assertEqual(zone_1.get_overlapping_zone_by_name("WARM_ZONE"), zone_2)
+        self.assertEqual(zone_1.get_overlapping_zone_by_name("COLD_ZONE"), zone_3)
+        self.assertEqual(zone_2.get_overlapping_zone_by_name("DIM_ZONE"), zone_1)
+        self.assertEqual(zone_2.get_overlapping_zone_by_name("COLD_ZONE"), zone_3)
+        self.assertEqual(zone_3.get_overlapping_zones(), [])
 
     def test_zone_with_existing_adjacent_zone(self):
         zone = Zone(name="DIM_ZONE", zone_type=ZoneType.LIGHTING, description="Relaxation zone")
@@ -74,24 +74,24 @@ class TestZone(TestCase):
         zone.add_adjacent_zones([adjacent_zone])
         zone.add_adjacent_zones([adjacent_zone])
         # should not add a zone if there is an existing one with the same name. No duplicates
-        self.assertEqual(zone.adjacent_zones, [adjacent_zone])
-        self.assertEqual(len(zone.adjacent_zones), 1)
+        self.assertEqual(zone.get_adjacent_zones(), [adjacent_zone])
+        self.assertEqual(len(zone.get_adjacent_zones()), 1)
 
     def test_zone_with_room(self):
         zone = Zone("COLD_ZONE", ZoneType.HVAC)
         room = Room(self.area, "Room 145", RoomType.CLASSROOM)
         zone.add_spaces([room])
-        self.assertEqual(len(zone.spaces), 1)
-        self.assertEqual(zone.spaces[0], room)
+        self.assertEqual(len(zone.get_spaces()), 1)
+        self.assertEqual(zone.get_space_by_uid(room.UID), room)
 
     def test_zone_with_room_and_open_space(self):
         zone = Zone("COLD_ZONE", ZoneType.HVAC)
         room = Room(self.area, "Room 145", RoomType.CLASSROOM)
         corridor = OpenSpace("CORRIDOR_3", self.area, OpenSpaceType.CORRIDOR)
         zone.add_spaces([room, corridor])
-        self.assertEqual(len(zone.spaces), 2)
-        self.assertEqual(zone.spaces[0], room)
-        self.assertEqual(zone.spaces[1], corridor)
+        self.assertEqual(len(zone.get_spaces()), 2)
+        self.assertEqual(zone.get_space_by_uid(room.UID), room)
+        self.assertEqual(zone.get_space_by_uid(corridor.UID), corridor)
 
     def test_zone_with_floor_and_spaces(self):
         zone = Zone("COLD_ZONE", ZoneType.HVAC)
@@ -99,28 +99,28 @@ class TestZone(TestCase):
         corridor = OpenSpace("CORRIDOR_2", self.area, OpenSpaceType.CORRIDOR)
         floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, rooms=[room], open_spaces=[corridor])
         zone.add_spaces([floor])
-        self.assertEqual(len(zone.spaces), 1)
-        self.assertEqual(zone.spaces[0], floor)
-        self.assertEqual(zone.spaces[0].floor_type, FloorType.REGULAR)
+        self.assertEqual(len(zone.get_spaces()), 1)
+        self.assertEqual(zone.get_space_by_uid(floor.UID), floor)
+        self.assertEqual(zone.get_space_by_uid(floor.UID).floor_type, FloorType.REGULAR)
 
     def test_remove_adjacent_zone(self):
         zone = Zone(name="DIM_ZONE", zone_type=ZoneType.LIGHTING, description="Relaxation zone")
         adjacent_zone = Zone(name="COLD_ZONE", zone_type=ZoneType.HVAC, description="Data center area")
         zone.add_adjacent_zones([adjacent_zone])
-        self.assertEqual(len(zone.adjacent_zones), 1)
+        self.assertEqual(len(zone.get_adjacent_zones()), 1)
         zone.remove_adjacent_zone(adjacent_zone)
-        self.assertEqual(len(zone.adjacent_zones), 0)
-        self.assertEqual(zone.adjacent_zones, [])
+        self.assertEqual(len(zone.get_adjacent_zones()), 0)
+        self.assertEqual(zone.get_adjacent_zones(), [])
 
     def test_remove_overlapping_zone(self):
         zone = Zone(name="DIM_ZONE", zone_type=ZoneType.LIGHTING, description="Relaxation zone")
         over_zone = Zone(name="COLD_ZONE", zone_type=ZoneType.HVAC, description="Data center area")
         zone.add_overlapping_zones([over_zone])
 
-        self.assertEqual(len(zone.overlapping_zones), 1)
+        self.assertEqual(len(zone.get_overlapping_zones()), 1)
         zone.remove_overlapping_zone(over_zone)
-        self.assertEqual(len(zone.overlapping_zones), 0)
-        self.assertEqual(zone.overlapping_zones, [])
+        self.assertEqual(len(zone.get_overlapping_zones()), 0)
+        self.assertEqual(zone.get_overlapping_zones(), [])
 
     def test_remove_space_from_zone(self):
         zone = Zone("COLD_ZONE", ZoneType.HVAC)
@@ -129,10 +129,10 @@ class TestZone(TestCase):
         floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, rooms=[room], open_spaces=[corridor])
         zone.add_spaces([floor, corridor])
 
-        self.assertEqual(len(zone.spaces), 2)
+        self.assertEqual(len(zone.get_spaces()), 2)
         zone.remove_space(floor)
-        self.assertEqual(zone.spaces, [corridor])
-        self.assertEqual(len(zone.spaces), 1)
+        self.assertEqual(zone.get_spaces(), [corridor])
+        self.assertEqual(len(zone.get_spaces()), 1)
 
 
 

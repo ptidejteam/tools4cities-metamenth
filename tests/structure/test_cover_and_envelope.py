@@ -13,8 +13,8 @@ class TestCoverAndEnvelop(BaseTest):
         cover = Cover(CoverType.FLOOR)
         self.assertEqual(cover.cover_type, CoverType.FLOOR)
         self.assertIsNotNone(cover.UID)
-        self.assertEqual(cover.layers, [])
-        self.assertEqual(len(cover.layers), 0)
+        self.assertEqual(cover.get_layers(), [])
+        self.assertEqual(len(cover.get_layers()), 0)
 
     def test_floor_cover_without_cover_type(self):
         try:
@@ -34,8 +34,8 @@ class TestCoverAndEnvelop(BaseTest):
     def test_roof_cover_with_roof_layer(self):
         cover = Cover(CoverType.ROOF)
         cover.add_layer(self.layer)
-        self.assertEqual(cover.layers[0], self.layer)
-        self.assertEqual(cover.layers[0].material.heat_capacity, self.hc_measure)
+        self.assertEqual(cover.get_layer_by_uid(self.layer.UID), self.layer)
+        self.assertEqual(cover.get_layer_by_uid(self.layer.UID).material.heat_capacity, self.hc_measure)
 
     def test_roof_cover_with_two_layers(self):
         cover = Cover(CoverType.ROOF)
@@ -43,13 +43,13 @@ class TestCoverAndEnvelop(BaseTest):
         new_layer = copy.deepcopy(self.layer)
         new_layer.has_vapour_barrier = True
         cover.add_layer(new_layer)
-        self.assertEqual(cover.layers[1].has_vapour_barrier, True)
-        self.assertEqual(len(cover.layers), 2)
+        self.assertEqual(cover.get_layers()[1].has_vapour_barrier, True)
+        self.assertEqual(len(cover.get_layers()), 2)
 
     def test_empty_envelope(self):
         envelope = Envelope()
         self.assertIsNotNone(envelope.UID)
-        self.assertEqual(envelope.covers, [])
+        self.assertEqual(envelope.get_covers(), [])
 
     def test_envelope_with_none_cover(self):
         try:
@@ -66,11 +66,11 @@ class TestCoverAndEnvelop(BaseTest):
         cover.add_layer(new_layer)
         envelope = Envelope()
         envelope.add_cover(cover)
-        self.assertEqual(envelope.covers[0], cover)
-        self.assertIsInstance(envelope.covers[0], Cover)
-        self.assertIsInstance(envelope.covers[0].layers[0], Layer)
-        self.assertEqual(envelope.covers[0].cover_type, CoverType.ROOF)
-        self.assertEqual(len(envelope.covers[0].layers), 2)
+        self.assertEqual(envelope.get_cover_by_uid(cover.UID), cover)
+        self.assertIsInstance(envelope.get_cover_by_uid(cover.UID), Cover)
+        self.assertIsInstance(envelope.get_cover_by_uid(cover.UID).get_layer_by_uid(self.layer.UID), Layer)
+        self.assertEqual(envelope.get_cover_by_uid(cover.UID).cover_type, CoverType.ROOF)
+        self.assertEqual(len(envelope.get_cover_by_uid(cover.UID).get_layers()), 2)
 
     def test_get_layer_by_uid(self):
         cover = Cover(CoverType.ROOF)
@@ -132,8 +132,8 @@ class TestCoverAndEnvelop(BaseTest):
         envelope.add_cover(first_cover)
         envelope.add_cover(second_cover)
 
-        self.assertEqual(envelope.get_covers_by_uid(first_cover.UID), first_cover)
-        self.assertEqual(envelope.get_covers_by_uid(second_cover.UID), second_cover)
+        self.assertEqual(envelope.get_cover_by_uid(first_cover.UID), first_cover)
+        self.assertEqual(envelope.get_cover_by_uid(second_cover.UID), second_cover)
 
     def test_get_cover_with_wrong_uid(self):
         cover = Cover(CoverType.ROOF)
@@ -142,8 +142,8 @@ class TestCoverAndEnvelop(BaseTest):
         envelope = Envelope()
         envelope.add_cover(cover)
 
-        self.assertIsNone(envelope.get_covers_by_uid(self.layer.UID))
-        self.assertNotEqual(envelope.get_covers_by_uid(self.layer.UID), cover)
+        self.assertIsNone(envelope.get_cover_by_uid(self.layer.UID))
+        self.assertNotEqual(envelope.get_cover_by_uid(self.layer.UID), cover)
 
     def test_search_covers_with_wrong_attributes(self):
         first_cover = Cover(CoverType.ROOF)
