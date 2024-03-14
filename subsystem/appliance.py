@@ -1,7 +1,7 @@
 from subsystem.interfaces.abstract_subsystem import AbstractSubsystem
 from enumerations import ApplianceCategory
 from enumerations import ApplianceType
-from datatypes.binary_measure import BinaryMeasure
+from datatypes.interfaces.abstract_measure import AbstractMeasure
 from datatypes.rated_device_measure import RatedDeviceMeasure
 from datatypes.continuous_measure import ContinuousMeasure
 
@@ -9,7 +9,7 @@ from datatypes.continuous_measure import ContinuousMeasure
 class Appliance(AbstractSubsystem):
     def __init__(self, name: str, appliance_category: [ApplianceCategory],
                  appliance_type: ApplianceType, manufacturer: str = None,
-                 consumption_capacity: BinaryMeasure = None,
+                 consumption_capacity: AbstractMeasure = None,
                  rated_device_measure: RatedDeviceMeasure = None,
                  operating_conditions: [ContinuousMeasure] = None):
         """
@@ -52,11 +52,11 @@ class Appliance(AbstractSubsystem):
         self._manufacturer = value
 
     @property
-    def consumption_capacity(self) -> BinaryMeasure:
+    def consumption_capacity(self) -> AbstractMeasure:
         return self._consumption_capacity
 
     @consumption_capacity.setter
-    def consumption_capacity(self, value: BinaryMeasure):
+    def consumption_capacity(self, value: AbstractMeasure):
         self._consumption_capacity = value
 
     @property
@@ -69,7 +69,7 @@ class Appliance(AbstractSubsystem):
 
     @property
     def appliance_category(self) -> [ApplianceCategory]:
-        return self._appliance_category.copy()
+        return self._appliance_category.copy() if self._appliance_category else []
 
     @appliance_category.setter
     def appliance_category(self, value: [ApplianceCategory]):
@@ -80,7 +80,7 @@ class Appliance(AbstractSubsystem):
 
     @property
     def operating_conditions(self) -> [ContinuousMeasure]:
-        return self._operating_conditions.copy()
+        return self._operating_conditions.copy() if self._operating_conditions else []
 
     @operating_conditions.setter
     def operating_conditions(self, value: [ContinuousMeasure]):

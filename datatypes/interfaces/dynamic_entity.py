@@ -48,7 +48,7 @@ class DynamicEntity(ABC):
         """
         return StructureEntitySearch.search_by_id(self._transducers, uid)
 
-    def get_transducers(self, search_terms: Dict) -> ['AbstractTransducer']:
+    def get_transducers(self, search_terms: Dict = None) -> ['AbstractTransducer']:
         """
         Search transducers by attributes values
         :param search_terms: a dictionary of attributes and their values

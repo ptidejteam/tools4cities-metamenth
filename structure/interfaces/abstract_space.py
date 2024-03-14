@@ -90,7 +90,7 @@ class AbstractSpace(ABC):
         :param schedule:
         :return:
         """
-        EntityInsert.insert_building_entity(self._schedules, schedule)
+        EntityInsert.insert_building_entity(self._schedules, schedule, BuildingEntity.SCHEDULE.value)
 
     def remove_schedule(self, schedule):
         """
