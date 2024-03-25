@@ -80,7 +80,7 @@ class AbstractFloorSpace(AbstractSpace, DynamicEntity):
         :param appliance: the appliance to add
         :return:
         """
-        EntityInsert.insert_building_entity(self._appliances, appliance)
+        EntityInsert.insert_building_entity(self._appliances, appliance, BuildingEntity.APPLIANCE.value)
 
     def remove_appliance(self, appliance: Appliance):
         """
