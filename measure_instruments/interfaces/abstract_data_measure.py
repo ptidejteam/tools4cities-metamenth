@@ -22,7 +22,7 @@ class AbstractDataMeasure(ABC):
 
         """
         self._UID = str(uuid.uuid4())
-        self._timestamp = datetime.now() if timestamp is None else Validate.parse_date(timestamp)
+        self._timestamp = datetime.now().replace(microsecond=0) if timestamp is None else Validate.parse_date(timestamp)
 
         self._value = None
         self._measurement_type = measurement_type
@@ -63,5 +63,5 @@ class AbstractDataMeasure(ABC):
         :return: A formatted string of the meter readings.
         """
         return (f"DataMeasure (UID: {self.UID}, Value: {self.value}, "
-                f"Timestamp: {self.timestamp}, Measurement Type: {self.measurement_type.value})")
+                f"Timestamp: {self.timestamp}, Measurement Type: {self.measurement_type.value if self.measurement_type else None})")
 
