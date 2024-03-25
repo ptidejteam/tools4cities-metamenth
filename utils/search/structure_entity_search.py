@@ -1,5 +1,12 @@
 from typing import Dict
 import sys
+from datetime import datetime
+from typing import Union
+from typing import List
+from measure_instruments.sensor_data import SensorData
+from measure_instruments.trigger_history import TriggerHistory
+from measure_instruments.meter_measure import MeterMeasure
+from misc import Validate
 
 
 class StructureEntitySearch:
@@ -55,6 +62,29 @@ class StructureEntitySearch:
                 print(err, file=sys.stderr)
 
         return results
+
+    @staticmethod
+    def date_range_search(entity_list: Union[List[SensorData], List[TriggerHistory], List[MeterMeasure]],
+                          from_timestamp: str, to_timestamp: str = None):
+        """
+
+        :param entity_list: a list of sensor, actuator or meter data
+        :param from_timestamp: the start timestamp
+        :param to_timestamp: the end timestamp
+        :return:
+        """
+
+        if to_timestamp is None:
+            to_tp = datetime.now().replace(microsecond=0)
+        else:
+            to_tp = Validate.parse_date(to_timestamp)
+        from_tp = Validate.parse_date(from_timestamp)
+        filtered_data = []
+        for data in entity_list:
+            if from_tp <= data.timestamp <= to_tp:
+                filtered_data.append(data)
+
+        return filtered_data
 
     @staticmethod
     def search_structure_entity(entity_list, search_field, search_value):

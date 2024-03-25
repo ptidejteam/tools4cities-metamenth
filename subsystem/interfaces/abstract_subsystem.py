@@ -16,7 +16,7 @@ class AbstractSubsystem(DynamicEntity):
 
     @property
     def UID(self) -> str:
-        return self.UID
+        return self._UID
 
     @property
     def name(self) -> str:
@@ -33,7 +33,7 @@ class AbstractSubsystem(DynamicEntity):
         # subsystems are equal if they share the same name and UID
         if isinstance(other, AbstractSubsystem):
             # Check for equality based on the 'name' attribute
-            return self.name == other.name and self.UID == other.UID
+            return self.name == other.name
         return False
 
     def __str__(self):
