@@ -27,6 +27,7 @@ class Floor(AbstractSpace, ABC):
         area: AbstractMeasure,
         number: int,
         floor_type: FloorType,
+        height: AbstractMeasure = None,
         description: str = None,
         open_spaces: [OpenSpace] = None,
         rooms: [Room] = None,
@@ -43,6 +44,7 @@ class Floor(AbstractSpace, ABC):
         """
         super().__init__(area, location)
         self._description = description
+        self._height = height
         self._number = None
         self._floor_type = None
         self._open_spaces: List['OpenSpace'] = []
@@ -91,6 +93,17 @@ class Floor(AbstractSpace, ABC):
             self._floor_type = value
         else:
             raise ValueError("floor_type must be of type FloorType")
+
+    @property
+    def height(self) -> AbstractMeasure:
+        return self._height
+
+    @height.setter
+    def height(self, value: AbstractMeasure):
+        if value is not None:
+            self._height = value
+        else:
+            raise ValueError("height must be of type AbstractMeasure")
 
     @property
     def open_spaces(self):
@@ -210,7 +223,7 @@ class Floor(AbstractSpace, ABC):
 
     def __str__(self):
         floor_details = (f"Floor {super().__str__()} {self.number} ({self.floor_type.value}): {self.description}, "
-                         f"Area: {self.area}, Location: {self.location}, UID: {self.UID}, "
+                         f"Area: {self.area}, Height: {self.height}, Location: {self.location}, UID: {self.UID}, "
                          f"Rooms Count: {len(self._rooms)}, Open Spaces Count: {len(self._open_spaces)})")
 
         rooms = "\n".join(str(room) for room in self._rooms)
