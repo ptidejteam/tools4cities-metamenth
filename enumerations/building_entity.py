@@ -22,5 +22,6 @@ class BuildingEntity(Enum):
     ZONE = "Zone"
     ADJACENT_SPACE = "AdjacentSpace"
     SUBSYSTEM = "Subsystem"
+    APPLIANCE = "Appliance"
 
 
