@@ -10,6 +10,10 @@ from enumerations import SensorMeasureType
 from tests.structure.base_test import BaseTest
 from enumerations import MeterMeasureMode
 from measure_instruments import MeterMeasure
+from subsystem.appliance import Appliance
+from enumerations import SensorLogType
+from enumerations import ApplianceType
+from enumerations import ApplianceCategory
 
 
 class TestRoom(BaseTest):
@@ -112,4 +116,41 @@ class TestRoom(BaseTest):
 
         self.room.remove_transducer(temp_sensor)
         self.assertEqual(len(self.room.get_transducers()), 0)
+
+    def test_room_with_thermostat(self):
+        co2_sensor = Sensor("Co2_Sensor", SensorMeasure.CARBON_DIOXIDE,
+                            MeasurementUnit.PARTS_PER_MILLION, SensorMeasureType.PT_100, 5)
+
+        temp_sensor = Sensor("TEMPERATURE.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                             SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+
+        thermostat = Appliance("Thermostat", [ApplianceCategory.OFFICE, ApplianceCategory.SMART],
+                               ApplianceType.THERMOSTAT)
+
+        thermostat.add_transducer(temp_sensor)
+        thermostat.add_transducer(co2_sensor)
+
+        self.room.add_appliance(thermostat)
+        self.assertEqual(self.room.get_appliance_by_name("Thermostat"), thermostat)
+        self.assertEqual(self.room.get_appliance_by_uid(thermostat.UID).get_transducers(), [temp_sensor, co2_sensor])
+
+    def test_room_with_duplicate_thermostats(self):
+        co2_sensor = Sensor("Co2_Sensor", SensorMeasure.CARBON_DIOXIDE,
+                            MeasurementUnit.PARTS_PER_MILLION, SensorMeasureType.PT_100, 5)
+
+        temp_sensor = Sensor("TEMPERATURE.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                             SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+
+        thermostat = Appliance("Thermostat", [ApplianceCategory.OFFICE, ApplianceCategory.SMART],
+                               ApplianceType.THERMOSTAT)
+
+        thermostat.add_transducer(temp_sensor)
+        thermostat.add_transducer(co2_sensor)
+
+        self.room.add_appliance(thermostat)
+        self.room.add_appliance(thermostat)
+
+        self.assertEqual(len(self.room.get_appliances()), 1)
+        self.assertEqual(self.room.get_appliances(), [thermostat])
+
 

@@ -74,6 +74,23 @@ class TestBuilding(BaseTest):
         self.assertEqual(building.building_type, BuildingType.RESIDENTIAL)
         self.assertEqual(building.get_floor_by_number(2).floor_type, FloorType.ROOFTOP)
 
+    def test_residential_building_with_appliances(self):
+        self.room.add_appliance(self.thermostat)
+        self.room.add_appliance(self.smart_camera)
+        first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
+        second_floor = copy.deepcopy(first_floor)
+        second_floor.number = 2
+        second_floor.floor_type = FloorType.ROOFTOP
+        building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
+                            BuildingType.RESIDENTIAL, [first_floor, second_floor])
+
+        self.assertEqual(len(building.get_floors()), 2)
+        self.assertEqual(building.building_type, BuildingType.RESIDENTIAL)
+        self.assertEqual(building.get_floor_by_number(1).get_room_by_name(self.room.name).get_appliances(),
+                         [self.thermostat, self.smart_camera])
+        self.assertEqual(building.get_floor_by_number(1).get_room_by_name(self.room.name)
+                         .get_appliance_by_uid(self.thermostat.UID), self.thermostat)
+
     def test_add_floor_to_existing_building(self):
         first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
 

@@ -85,16 +85,16 @@ class TestSensor(TestCase):
         actuator = Actuator("FILTER.ACT", object())
         trigger_his = TriggerHistory(TriggerType.CLOSE)
         actuator.add_data([trigger_his])
-        self.assertEqual(actuator.data, [trigger_his])
-        self.assertEqual(actuator.data[0].trigger_type, trigger_his.trigger_type.CLOSE)
-        self.assertIsNotNone(actuator.data[0].timestamp)
+        self.assertEqual(actuator.get_data(), [trigger_his])
+        self.assertEqual(actuator.get_data()[0].trigger_type, trigger_his.trigger_type.CLOSE)
+        self.assertIsNotNone(actuator.get_data()[0].timestamp)
 
     def test_remove_data_from_actuator(self):
         actuator = Actuator("FILTER.ACT", object())
         trigger_his = TriggerHistory(TriggerType.OPEN_CLOSE, 1)
         actuator.add_data([trigger_his])
-        self.assertEqual(actuator.data, [trigger_his])
+        self.assertEqual(actuator.get_data(), [trigger_his])
 
         actuator.remove_data(trigger_his)
-        self.assertEqual(actuator.data, [])
-        self.assertEqual(len(actuator.data), 0)
+        self.assertEqual(actuator.get_data(), [])
+        self.assertEqual(len(actuator.get_data()), 0)

@@ -8,6 +8,7 @@ from enumerations import SensorMeasure
 from enumerations import SensorMeasureType
 from enumerations import SensorLogType
 from measure_instruments.sensor_data import SensorData
+from time import sleep
 
 
 class TestSensor(TestCase):
@@ -131,9 +132,9 @@ class TestSensor(TestCase):
         data_point_two = SensorData(187)
         data_point_three = SensorData(204)
         co2_sensor.add_data([data_point_one, data_point_two, data_point_three])
-        self.assertEqual(len(co2_sensor.data), 3)
-        self.assertEqual(co2_sensor.data[0], data_point_one)
-        self.assertEqual(co2_sensor.data[1].value, data_point_two.value)
+        self.assertEqual(len(co2_sensor.get_data()), 3)
+        self.assertEqual(co2_sensor.get_data()[0], data_point_one)
+        self.assertEqual(co2_sensor.get_data()[1].value, data_point_two.value)
 
     def test_remove_data_to_sensor(self):
         co2_sensor = Sensor("CO2.SENSOR", SensorMeasure.CARBON_DIOXIDE,
@@ -145,6 +146,34 @@ class TestSensor(TestCase):
         co2_sensor.add_data([data_point_one, data_point_two, data_point_three])
 
         co2_sensor.remove_data(data_point_two)
-        self.assertEqual(len(co2_sensor.data), 2)
-        self.assertEqual(co2_sensor.data, [data_point_one, data_point_three])
+        self.assertEqual(len(co2_sensor.get_data()), 2)
+        self.assertEqual(co2_sensor.get_data(), [data_point_one, data_point_three])
+
+    def test_search_sensor_data_with_date(self):
+        co2_sensor = Sensor("CO2.SENSOR", SensorMeasure.CARBON_DIOXIDE,
+                            MeasurementUnit.PARTS_PER_MILLION,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_C, 70)
+
+        sensor_data = []
+        for data in range(180, 200):
+            sensor_data.append(SensorData(data))
+            sleep(0.5)
+        co2_sensor.add_data(sensor_data)
+        returned_data = co2_sensor.get_data_by_date(str(sensor_data[10].timestamp))
+        self.assertGreater(returned_data[0].timestamp, sensor_data[0].timestamp)
+        self.assertEqual(len(returned_data), 10)
+
+    def test_search_sensor_data_with_date_range(self):
+        co2_sensor = Sensor("CO2.SENSOR", SensorMeasure.CARBON_DIOXIDE,
+                            MeasurementUnit.PARTS_PER_MILLION,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_C, 70)
+
+        sensor_data = []
+        for data in range(190, 200):
+            sensor_data.append(SensorData(data))
+            sleep(0.5)
+        co2_sensor.add_data(sensor_data)
+        returned_data = co2_sensor.get_data_by_date(str(sensor_data[0].timestamp), str(sensor_data[2].timestamp))
+        self.assertEqual(returned_data[0].timestamp, sensor_data[0].timestamp)
+        self.assertEqual(returned_data[2].timestamp, sensor_data[2].timestamp)
 

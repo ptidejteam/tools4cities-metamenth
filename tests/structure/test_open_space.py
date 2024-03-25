@@ -6,6 +6,10 @@ from tests.structure.base_test import BaseTest
 from transducers.sensor import Sensor
 from enumerations import SensorMeasure
 from enumerations import SensorMeasureType
+from enumerations import ApplianceCategory
+from enumerations import ApplianceType
+from subsystem.appliance import Appliance
+from enumerations import SensorLogType
 
 
 class TestOpenSpace(BaseTest):
@@ -45,3 +49,21 @@ class TestOpenSpace(BaseTest):
         self.hall.add_transducer(co2_sensor)
         self.assertEqual(self.hall.get_transducers(), [co2_sensor])
         self.assertEqual(self.hall.get_transducer_by_uid(co2_sensor.UID).name, "Co2_Sensor")
+
+    def test_open_space_with_thermostat(self):
+        co2_sensor = Sensor("Co2_Sensor", SensorMeasure.CARBON_DIOXIDE,
+                            MeasurementUnit.PARTS_PER_MILLION, SensorMeasureType.PT_100, 5)
+
+        temp_sensor = Sensor("TEMPERATURE.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                             SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+
+        thermostat = Appliance("Thermostat", [ApplianceCategory.OFFICE, ApplianceCategory.SMART],
+                               ApplianceType.THERMOSTAT)
+
+        thermostat.add_transducer(temp_sensor)
+        thermostat.add_transducer(co2_sensor)
+
+        self.hall.add_appliance(thermostat)
+
+        self.assertEqual(self.hall.get_appliance_by_name("Thermostat"), thermostat)
+        self.assertEqual(self.hall.get_appliance_by_uid(thermostat.UID).get_transducers(), [temp_sensor, co2_sensor])

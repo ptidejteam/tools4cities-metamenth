@@ -99,4 +99,48 @@ class TestAppliance(TestCase):
         self.assertEqual(refrigerator.rated_device_measure.current_rating, current_rating)
         self.assertEqual(refrigerator.operating_conditions, [])
 
-        # TODO; Test appliance with sensors having data, remove sensor from appliance, add and remove sensor data of appliance
+    def test_thermostat_with_temperature_sensor_data(self):
+        thermostat = Appliance("Thermostat", [ApplianceCategory.OFFICE, ApplianceCategory.SMART],
+                               ApplianceType.THERMOSTAT)
+        temp_sensor = Sensor("TEMPERATURE.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                             SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+        sensor_data = []
+        for temp in range(20, 30):
+            sensor_data.append(SensorData(temp))
+        temp_sensor.add_data(sensor_data)
+        thermostat.add_transducer(temp_sensor)
+        self.assertNotEqual(thermostat.get_transducer_by_name("TEMPERATURE.SENSOR").get_data(), [])
+        self.assertEqual(thermostat.get_transducer_by_uid(temp_sensor.UID).get_data(), sensor_data)
+
+    def test_remove_sensor_from_appliance(self):
+        thermostat = Appliance("Thermostat", [ApplianceCategory.OFFICE, ApplianceCategory.SMART],
+                               ApplianceType.THERMOSTAT)
+        presence_sensor = Sensor("PRESENCE.SENSOR", SensorMeasure.OCCUPANCY, MeasurementUnit.PRESENCE,
+                                 SensorMeasureType.THERMO_COUPLE_TYPE_A, 0, sensor_log_type=SensorLogType.POLLING)
+        temp_sensor = Sensor("TEMPERATURE.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                             SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+
+        thermostat.add_transducer(presence_sensor)
+        thermostat.add_transducer(temp_sensor)
+
+        self.assertEqual(thermostat.get_transducers(), [presence_sensor, temp_sensor])
+        thermostat.remove_transducer(temp_sensor)
+        self.assertEqual(thermostat.get_transducers(), [presence_sensor])
+
+    def test_remove_sensor_data_from_appliance_sensor(self):
+        thermostat = Appliance("Thermostat", [ApplianceCategory.OFFICE, ApplianceCategory.SMART],
+                               ApplianceType.THERMOSTAT)
+        temp_sensor = Sensor("TEMPERATURE.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                             SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+
+        thermostat.add_transducer(temp_sensor)
+        sensor_data = []
+        for temp in range(20, 30):
+            sensor_data.append(SensorData(temp))
+        thermostat.get_transducer_by_name("TEMPERATURE.SENSOR").add_data(sensor_data)
+
+        self.assertEqual(thermostat.get_transducer_by_name("TEMPERATURE.SENSOR").get_data(), sensor_data)
+        thermostat.get_transducer_by_name("TEMPERATURE.SENSOR").remove_data(sensor_data[0])
+        self.assertNotEqual(thermostat.get_transducer_by_name("TEMPERATURE.SENSOR").get_data(), sensor_data)
+        self.assertEqual(thermostat.get_transducer_by_name("TEMPERATURE.SENSOR").get_data(), sensor_data[1:])
+

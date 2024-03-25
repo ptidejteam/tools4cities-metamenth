@@ -30,6 +30,20 @@ class TestFloor(BaseTest):
         self.assertEqual(floor.get_open_spaces(), [self.hall])
         self.assertEqual(floor.get_open_space_by_name(self.hall.name).space_type, OpenSpaceType.HALL)
 
+    def test_floor_spaces_with_appliances(self):
+        floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR,
+                      rooms=[self.room], open_spaces=[self.hall])
+
+        floor.get_room_by_name(self.room.name).add_appliance(self.thermostat)
+        floor.get_open_space_by_name(self.hall.name).add_appliance(self.smart_camera)
+
+        self.assertEqual(floor.get_room_by_name(self.room.name).get_appliance_by_name(self.smart_camera.name), None)
+        self.assertEqual(floor.get_open_space_by_name(self.hall.name).get_appliance_by_name(self.thermostat.name), None)
+        self.assertEqual(floor.get_room_by_name(self.room.name).get_appliance_by_name(self.thermostat.name),
+                         self.thermostat)
+        self.assertEqual(floor.get_open_space_by_name(self.hall.name).get_appliance_by_name(self.smart_camera.name),
+                         self.smart_camera)
+
     def test_remove_room_from_floor(self):
         floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR,
                       rooms=[self.room], open_spaces=[self.hall])
