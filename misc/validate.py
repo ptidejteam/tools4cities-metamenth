@@ -63,7 +63,9 @@ class Validate:
             '%Y/%m/%d %H:%M:%S',
             '%Y/%m/%d %H:%M',
             '%Y/%m/%d',
-            '%m/%d/%Y %H:%M'
+            '%m/%d/%Y %H:%M',
+            '%Y-%m-%d %H:%M:%S.%f',
+            '%Y-%m-%d %H:%M:%S'
             ]
         for fmt in formats:
             try:
