@@ -7,7 +7,7 @@ from enumerations import BuildingEntity
 from typing import Dict
 
 
-class DynamicEntity(ABC):
+class AbstractDynamicEntity(ABC):
 
     def __init__(self):
         self._transducers: [AbstractTransducer] = []

@@ -6,12 +6,12 @@ from utils import EntityInsert
 from measure_instruments.meter import Meter
 from utils import StructureEntitySearch
 from typing import Dict
-from datatypes.interfaces.dynamic_entity import DynamicEntity
+from datatypes.interfaces.abstract_dynamic_entity import AbstractDynamicEntity
 from enumerations import BuildingEntity
 from subsystem.appliance import Appliance
 
 
-class AbstractFloorSpace(AbstractSpace, DynamicEntity):
+class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
     """
     An abstract class for spaces on a floor
 
@@ -27,7 +27,7 @@ class AbstractFloorSpace(AbstractSpace, DynamicEntity):
         :param location: the what3word location of the space
         """
         AbstractSpace.__init__(self, area, location)
-        DynamicEntity.__init__(self)
+        AbstractDynamicEntity.__init__(self)
 
         self._name = None
         self._adjacent_spaces: List[AbstractFloorSpace] = []

@@ -1,8 +1,8 @@
 from uuid import uuid4
-from datatypes.interfaces.dynamic_entity import DynamicEntity
+from datatypes.interfaces.abstract_dynamic_entity import AbstractDynamicEntity
 
 
-class AbstractSubsystem(DynamicEntity):
+class AbstractSubsystem(AbstractDynamicEntity):
     def __init__(self, name: str):
         """
         Defines parent class of all subsystems
