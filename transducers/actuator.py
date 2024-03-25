@@ -31,9 +31,6 @@ class Actuator(AbstractTransducer, ABC):
         self.set_point = set_point
         self.trigger_input = trigger_input
 
-    @property
-    def data(self) -> List[TriggerHistory]:
-        return self._data
 
     @property
     def trigger_output(self) -> object:
@@ -77,26 +74,8 @@ class Actuator(AbstractTransducer, ABC):
                                  .format(value.unit, self._set_point.measurement_unit))
         self._trigger_input = value
 
-    def add_data(self, data: List[TriggerHistory]):
-        """
-        Adds data to a actuator
-        :param data: the actuator data to be added
-        :return:
-        """
-        if data is None:
-            raise ValueError('data should be a list of TriggerHistory')
-        self._data.extend(data)
-
-    def remove_data(self, data: TriggerHistory):
-        """
-        removes data from actuator
-        :param data: the data to remove
-        :return:
-        """
-        self._data.remove(data)
-
     def __str__(self):
-        trigger_data = "\n".join(str(data) for data in self.data)
+        trigger_data = "\n".join(str(data) for data in self._data)
         return (
             f"Sensor("
             f"{super().__str__()}, "

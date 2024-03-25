@@ -100,10 +100,6 @@ class Sensor(AbstractTransducer, ABC):
     def measure_type(self) -> SensorMeasureType:
         return self._measure_type
 
-    @property
-    def data(self) -> List[SensorData]:
-        return self._data
-
     @measure_type.setter
     def measure_type(self, value: SensorMeasureType):
         if value is not None:
@@ -122,26 +118,8 @@ class Sensor(AbstractTransducer, ABC):
         else:
             raise ValueError("measure must be of type SensorLogType")
 
-    def add_data(self, data: List[SensorData]):
-        """
-        Adds data to a sensor
-        :param data: the sensor data to be added
-        :return:
-        """
-        if data is None:
-            raise ValueError('data should be a list of SensorData')
-        self._data.extend(data)
-
-    def remove_data(self, data: SensorData):
-        """
-        removes data from sensor
-        :param data: the data to remove
-        :return:
-        """
-        self._data.remove(data)
-
     def __str__(self):
-        sensor_data = "\n".join(str(data) for data in self.data)
+        sensor_data = "\n".join(str(data) for data in self._data)
         return (
             f"Sensor("
             f"{super().__str__()}, "

@@ -3,6 +3,11 @@ from typing import Dict, Any
 from datatypes.continuous_measure import ContinuousMeasure
 from uuid import uuid4
 import sys
+from utils import StructureEntitySearch
+from typing import List
+from typing import Union
+from measure_instruments.sensor_data import SensorData
+from measure_instruments.trigger_history import TriggerHistory
 
 
 class AbstractTransducer(ABC):
@@ -32,13 +37,13 @@ class AbstractTransducer(ABC):
         self.meta_data: Dict[str, Any] = {}
         self._data = []
 
-    @abstractmethod
-    def add_data(self, data):
-        pass
+    def add_data(self, data: Union[List[TriggerHistory], List[SensorData]]):
+        if data is None:
+            raise ValueError('data should be a list of SensorData or TriggerHistory')
+        self._data.extend(data)
 
-    @abstractmethod
-    def remove_data(self, data):
-        pass
+    def remove_data(self, data: Union[TriggerHistory, SensorData]):
+        self._data.remove(data)
 
     def add_meta_data(self, key, value):
         """
@@ -59,6 +64,23 @@ class AbstractTransducer(ABC):
             del self.meta_data[key]
         except KeyError as err:
             print(err, file=sys.stderr)
+
+    def get_data(self, search_terms: Dict = None) -> Union[List[SensorData], List[TriggerHistory]]:
+        """
+        Search data by attributes values
+        :param search_terms: a dictionary of attributes and their values
+        :return [SensorData|TriggerHistory]:
+        """
+        return StructureEntitySearch.search(self._data, search_terms)
+
+    def get_data_by_date(self, from_timestamp: str, to_timestamp: str = None) -> Union[List[SensorData], List[TriggerHistory]]:
+        """
+        searches transducer data based on provided timestamp
+        :param from_timestamp: the start timestamp
+        :param to_timestamp: the end timestamp
+        :return: [SensorData|TriggerHistory]
+        """
+        return StructureEntitySearch.date_range_search(self._data, from_timestamp, to_timestamp)
 
     def __str__(self):
         return (f"Unit: {self.UID}, Name: {self.name}, Registry ID: {self.registry_id}, "
