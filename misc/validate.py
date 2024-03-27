@@ -58,6 +58,7 @@ class Validate:
         """
         formats = [
             '%Y-%m-%d %H:%M',
+            '%Y-%m-%d',
             '%Y/%m/%d %H:%M:%S.%f',
             '%y/%m/%d %H:%M:%S.%f',
             '%Y/%m/%d %H:%M:%S',
