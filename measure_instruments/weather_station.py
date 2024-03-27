@@ -2,6 +2,8 @@ from uuid import uuid4
 from measure_instruments.weather_data import WeatherData
 from typing import List
 from misc import Validate
+from typing import Dict
+from utils import StructureEntitySearch
 
 
 class WeatherStation:
@@ -39,16 +41,29 @@ class WeatherStation:
     def location(self, value: str):
         self._location = Validate.validate_what3word(value)
 
-    @property
-    def weather_data(self) -> List[WeatherData]:
-        return self._weather_data
-
     def add_weather_data(self, weather_data: [WeatherData]):
         """
         Adds some data recordings to this WeatherStation.
         :param weather_data: some weather data recorded for the weather station.
         """
-        self.weather_data.extend(weather_data)
+        self._weather_data.extend(weather_data)
+
+    def get_weather_data(self, search_terms: Dict = None) -> [WeatherData]:
+        """
+        Search weather data by attributes values
+        :param search_terms: a dictionary of attributes and their values
+        :return [MeterMeasure]:
+        """
+        return StructureEntitySearch.search(self._weather_data, search_terms)
+
+    def get_meter_measure_by_date(self, from_timestamp: str, to_timestamp: str = None) ->[WeatherData]:
+        """
+        searches weather data based on provided timestamp
+        :param from_timestamp: the start timestamp
+        :param to_timestamp: the end timestamp
+        :return: [MeterMeasure]
+        """
+        return StructureEntitySearch.date_range_search(self._weather_data, from_timestamp, to_timestamp)
 
     def __eq__(self, other):
         # Weather stations are equal if they share the same name
@@ -63,7 +78,7 @@ class WeatherStation:
             f"UID: {self.UID}, "
             f"UID: {self.name}, "
             f"Location: {self.location}, "
-            f"WeatherData Count: {len(self.weather_data)})"
+            f"WeatherData Count: {len(self._weather_data)})"
         )
-        weather_data = "\n".join(str(data) for data in self.weather_data)
+        weather_data = "\n".join(str(data) for data in self._weather_data)
         return f"{weather_station_details}\nWeather Data:\n{weather_data}"

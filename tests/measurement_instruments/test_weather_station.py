@@ -1,6 +1,6 @@
 from unittest import TestCase
-from measure_instruments import WeatherStation
-from measure_instruments import WeatherData
+from measure_instruments.weather_station import WeatherStation
+from measure_instruments.weather_data import WeatherData
 from enumerations import DataMeasurementType
 from misc import MeasureFactory
 from enumerations import RecordingType
@@ -20,7 +20,7 @@ class TestWeatherStation(TestCase):
     def test_weather_station_with_no_location_and_data(self):
         self.assertEqual(self.station.location, "")
         self.assertIsInstance(self.station.UID, str)
-        self.assertEqual(len(self.station.weather_data), 0)
+        self.assertEqual(len(self.station.get_weather_data()), 0)
 
     def test_weather_station_with_invalid_location(self):
         try:
@@ -43,11 +43,11 @@ class TestWeatherStation(TestCase):
         wind_measure.measure_type = DataMeasurementType.WIND_SPEED
         wind_speed_data = WeatherData(wind_measure)
         self.station.add_weather_data([temp_data, wind_speed_data])
-        self.assertEqual(len(self.station.weather_data), 2)
-        self.assertEqual(self.station.weather_data[0], temp_data)
-        self.assertIsInstance(self.station.weather_data[0], WeatherData)
-        self.assertEqual(self.station.weather_data[1].data.value, 3.5)
-        self.assertEqual(self.station.weather_data[1].data.measurement_unit, MeasurementUnit.METERS_PER_SECOND)
-        self.assertEqual(self.station.weather_data[1].data.measure_type, DataMeasurementType.WIND_SPEED)
+        self.assertEqual(len(self.station.get_weather_data()), 2)
+        self.assertEqual(self.station.get_weather_data()[0], temp_data)
+        self.assertIsInstance(self.station.get_weather_data()[0], WeatherData)
+        self.assertEqual(self.station.get_weather_data()[1].data.value, 3.5)
+        self.assertEqual(self.station.get_weather_data()[1].data.measurement_unit, MeasurementUnit.METERS_PER_SECOND)
+        self.assertEqual(self.station.get_weather_data()[1].data.measure_type, DataMeasurementType.WIND_SPEED)
 
 

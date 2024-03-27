@@ -6,6 +6,7 @@ from typing import List
 from measure_instruments.sensor_data import SensorData
 from measure_instruments.trigger_history import TriggerHistory
 from measure_instruments.meter_measure import MeterMeasure
+from measure_instruments.weather_data import WeatherData
 from misc import Validate
 
 
@@ -64,8 +65,8 @@ class StructureEntitySearch:
         return results
 
     @staticmethod
-    def date_range_search(entity_list: Union[List[SensorData], List[TriggerHistory], List[MeterMeasure]],
-                          from_timestamp: str, to_timestamp: str = None):
+    def date_range_search(entity_list: Union[List[SensorData], List[TriggerHistory], List[MeterMeasure],
+                                             List[WeatherData]], from_timestamp: str, to_timestamp: str = None):
         """
 
         :param entity_list: a list of sensor, actuator or meter data
