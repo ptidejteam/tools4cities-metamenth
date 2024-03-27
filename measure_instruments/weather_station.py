@@ -56,7 +56,7 @@ class WeatherStation:
         """
         return StructureEntitySearch.search(self._weather_data, search_terms)
 
-    def get_meter_measure_by_date(self, from_timestamp: str, to_timestamp: str = None) ->[WeatherData]:
+    def get_weather_data_by_date(self, from_timestamp: str, to_timestamp: str = None) ->[WeatherData]:
         """
         searches weather data based on provided timestamp
         :param from_timestamp: the start timestamp
