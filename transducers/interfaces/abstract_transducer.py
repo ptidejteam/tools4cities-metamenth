@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Dict, Any
 from datatypes.continuous_measure import ContinuousMeasure
 from uuid import uuid4

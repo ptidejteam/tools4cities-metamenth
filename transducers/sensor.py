@@ -4,8 +4,7 @@ from typing import Optional
 from enumerations import SensorMeasure
 from enumerations import MeasurementUnit
 from enumerations import SensorMeasureType
-from measure_instruments import SensorData
-from typing import List
+from measure_instruments.sensor_data import SensorData
 from misc import Validate
 from datatypes.interfaces.abstract_range_measure import AbstractRangeMeasure
 from enumerations import SensorLogType

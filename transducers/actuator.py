@@ -1,7 +1,5 @@
 from abc import ABC
 from transducers.interfaces.abstract_transducer import AbstractTransducer
-from measure_instruments import TriggerHistory
-from typing import List
 from .sensor import Sensor
 from datatypes.interfaces.abstract_measure import AbstractMeasure
 
