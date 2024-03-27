@@ -2,9 +2,11 @@ import uuid
 from enumerations import MeterType
 from enumerations import MeasurementUnit
 from enumerations import MeterMeasureMode
-from measure_instruments import MeterMeasure
+from measure_instruments.meter_measure import MeterMeasure
 from enumerations import MeterAccumulationFrequency
 from misc import Validate
+from typing import Dict
+from utils import StructureEntitySearch
 
 
 class Meter:
@@ -140,9 +142,22 @@ class Meter:
         else:
             raise ValueError("Meter type must be of type MeterType")
 
-    @property
-    def meter_measures(self) -> [MeterMeasure]:
-        return self._meter_measures
+    def get_meter_measures(self, search_terms: Dict = None) -> [MeterMeasure]:
+        """
+        Search meter recordings by attributes values
+        :param search_terms: a dictionary of attributes and their values
+        :return [MeterMeasure]:
+        """
+        return StructureEntitySearch.search(self._meter_measures, search_terms)
+
+    def get_meter_measure_by_date(self, from_timestamp: str, to_timestamp: str = None) ->[MeterMeasure]:
+        """
+        searches meter recordings based on provided timestamp
+        :param from_timestamp: the start timestamp
+        :param to_timestamp: the end timestamp
+        :return: [MeterMeasure]
+        """
+        return StructureEntitySearch.date_range_search(self._meter_measures, from_timestamp, to_timestamp)
 
     def add_meter_measure(self, meter_measure: MeterMeasure):
         """

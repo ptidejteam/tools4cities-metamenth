@@ -1,5 +1,5 @@
 from uuid import uuid4
-from measure_instruments import WeatherData
+from measure_instruments.weather_data import WeatherData
 from typing import List
 from misc import Validate
 
