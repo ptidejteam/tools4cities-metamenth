@@ -8,8 +8,8 @@ from .room import Room
 from .open_space import OpenSpace
 from .envelope import Envelope
 from typing import Optional
-from measure_instruments import WeatherStation
-from measure_instruments import Meter
+from measure_instruments.weather_station import WeatherStation
+from measure_instruments.meter import Meter
 from utils import EntityRemover
 from utils import EntityInsert
 from enumerations import BuildingEntity
