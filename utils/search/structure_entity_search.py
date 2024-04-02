@@ -8,6 +8,7 @@ from measure_instruments.trigger_history import TriggerHistory
 from measure_instruments.meter_measure import MeterMeasure
 from measure_instruments.weather_data import WeatherData
 from misc import Validate
+from enumerations.abstract_enum import AbstractEnum
 
 
 class StructureEntitySearch:
@@ -54,7 +55,10 @@ class StructureEntitySearch:
             found = True
             try:
                 for attribute, value in search_terms.items():
-                    if getattr(entity, attribute) != value:
+                    att_value = getattr(entity, attribute)
+                    if isinstance(att_value, AbstractEnum):
+                        att_value = att_value.value
+                    if att_value != value:
                         found = False
                 if found:
                     results.append(entity)

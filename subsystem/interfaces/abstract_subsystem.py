@@ -1,14 +1,12 @@
 from uuid import uuid4
-from datatypes.interfaces.abstract_dynamic_entity import AbstractDynamicEntity
 
 
-class AbstractSubsystem(AbstractDynamicEntity):
+class AbstractSubsystem:
     def __init__(self, name: str):
         """
         Defines parent class of all subsystems
         :param name:
         """
-        super().__init__()
         self._UID = str(uuid4())
         self._name = None
 

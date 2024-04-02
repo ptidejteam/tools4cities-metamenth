@@ -1,5 +1,6 @@
 from typing import Dict
 import sys
+from enumerations.abstract_enum import AbstractEnum
 
 
 class StructureSearch:
@@ -63,7 +64,10 @@ class StructureSearch:
             found = True
             try:
                 for attribute, value in search_terms.items():
-                    if getattr(structure, attribute) != value:
+                    att_value = getattr(structure, attribute)
+                    if isinstance(att_value, AbstractEnum):
+                        att_value = att_value.value
+                    if att_value != value:
                         found = False
                 if found:
                     results.append(structure)

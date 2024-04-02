@@ -23,7 +23,6 @@ class AbstractDataMeasure(ABC):
         """
         self._UID = str(uuid.uuid4())
         self._timestamp = datetime.now().replace(microsecond=0) if timestamp is None else Validate.parse_date(timestamp)
-
         self._value = None
         self._measurement_type = measurement_type
 

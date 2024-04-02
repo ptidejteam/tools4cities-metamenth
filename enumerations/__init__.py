@@ -20,3 +20,5 @@ from .meter_accumulation_frequency import MeterAccumulationFrequency
 from .appliacne_category import ApplianceCategory
 from .appliance_type import ApplianceType
 from .waveform import WaveForm
+from .duct_type import DuctType
+from .duct_sub_type import DuctSubType

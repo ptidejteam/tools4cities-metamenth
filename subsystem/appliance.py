@@ -4,9 +4,10 @@ from enumerations import ApplianceType
 from datatypes.interfaces.abstract_measure import AbstractMeasure
 from datatypes.rated_device_measure import RatedDeviceMeasure
 from datatypes.continuous_measure import ContinuousMeasure
+from datatypes.interfaces.abstract_dynamic_entity import AbstractDynamicEntity
 
 
-class Appliance(AbstractSubsystem):
+class Appliance(AbstractSubsystem, AbstractDynamicEntity):
     def __init__(self, name: str, appliance_category: [ApplianceCategory],
                  appliance_type: ApplianceType, manufacturer: str = None,
                  consumption_capacity: AbstractMeasure = None,
@@ -21,7 +22,9 @@ class Appliance(AbstractSubsystem):
         :param consumption_capacity: the power consumption capacity of the appliance
         :param rated_device_measure: the rated device measure of the appliance
         """
-        super().__init__(name)
+        AbstractSubsystem.__init__(self, name)
+        AbstractDynamicEntity.__init__(self)
+
         self._appliance_type = None
         self._manufacturer = manufacturer
         self._consumption_capacity = consumption_capacity

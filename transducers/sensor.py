@@ -1,16 +1,14 @@
-from abc import ABC
 from transducers.interfaces.abstract_transducer import AbstractTransducer
 from typing import Optional
 from enumerations import SensorMeasure
 from enumerations import MeasurementUnit
 from enumerations import SensorMeasureType
-from measure_instruments.sensor_data import SensorData
 from misc import Validate
 from datatypes.interfaces.abstract_range_measure import AbstractRangeMeasure
 from enumerations import SensorLogType
 
 
-class Sensor(AbstractTransducer, ABC):
+class Sensor(AbstractTransducer):
 
     def __init__(self, name: str, measure: SensorMeasure, unit: MeasurementUnit, measure_type: SensorMeasureType,
                  data_frequency: float, current_value: Optional[float] = None,
@@ -30,7 +28,6 @@ class Sensor(AbstractTransducer, ABC):
         self._current_value = current_value
         self._measure_type = None
         self._measure_range = measure_range
-        self._data: [SensorData] = []
         self._sensor_log_type = sensor_log_type
 
         # Setting values using setters to perform validation
