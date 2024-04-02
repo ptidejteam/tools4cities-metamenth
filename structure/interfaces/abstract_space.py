@@ -1,4 +1,3 @@
-from abc import ABC
 import uuid
 from datatypes.interfaces.abstract_measure import AbstractMeasure
 from misc import Validate
@@ -9,9 +8,10 @@ from utils import EntityRemover
 from utils import EntityInsert
 from utils import StructureEntitySearch
 from typing import Dict
+from datatypes.interfaces.abstract_zonal_entity import AbstractZonalEntity
 
 
-class AbstractSpace(ABC):
+class AbstractSpace(AbstractZonalEntity):
     """
     An abstract class for spaces in a building
     """
@@ -21,10 +21,10 @@ class AbstractSpace(ABC):
         :param area: The area of the space.
         :param location: The location of the space (three words delimited with two periods).
         """
+        super().__init__()
         self._UID = str(uuid.uuid4())
         self._area = None
         self._location = None
-        self._zones = []
         self._schedules: List[OperationalSchedule] = []
 
         # Apply validation
@@ -54,26 +54,6 @@ class AbstractSpace(ABC):
         self._location = Validate.validate_what3word(value)
 
     @property
-    def zones(self):
-        return self._zones
-
-    @zones.setter
-    def zones(self, value):
-        if value is not None:
-            self._zones = value
-        else:
-            raise ValueError('zones must be of type [Zone]')
-
-    def add_zone(self, zone, building):
-        """
-        Adds a zone to this floor
-        :param zone: the zone
-        :param building, the building which spaces requires a zone
-        :return:
-        """
-        EntityInsert.insert_zone(self, zone, building)
-
-    @property
     def schedules(self):
         raise AttributeError("Cannot get schedules")
 
@@ -99,38 +79,6 @@ class AbstractSpace(ABC):
         :return:
         """
         EntityRemover.remove_building_entity(self._schedules, schedule)
-
-    def remove_zone(self, zone):
-        """
-        Removes a zone from a space: floor, room, open space
-        :param zone: the zone to be removed
-        :return:
-        """
-        EntityRemover.remove_building_entity(self._zones, zone, BuildingEntity.ZONE.value, self)
-
-    def get_zone_by_name(self, name):
-        """
-        Search zones by name
-        :param name:  the name of the zone
-        :return:
-        """
-        return StructureEntitySearch.search_by_name(self._zones, name)
-
-    def get_zone_by_uid(self, uid):
-        """
-        Search zones by uid
-        :param uid: the unique identifier of the overlapping zone
-        :return:
-        """
-        return StructureEntitySearch.search_by_id(self._zones, uid)
-
-    def get_zones(self, search_terms: Dict = None):
-        """
-        Search zones by attributes values
-        :param search_terms: a dictionary of attributes and their values
-        :return:
-        """
-        return StructureEntitySearch.search(self._zones, search_terms)
 
     def get_schedule_by_name(self, name) -> OperationalSchedule:
         """

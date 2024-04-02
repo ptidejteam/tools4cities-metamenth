@@ -410,8 +410,7 @@ class TestBuilding(BaseTest):
                              meter_type=MeterType.CHARGE_DISCHARGE, measure_mode=MeterMeasureMode.MANUAL)
         self.building.add_meter(first_meter)
         self.building.add_meter(second_meter)
-
-        self.assertEqual(self.building.get_meter_by_type(second_meter.meter_type), [second_meter])
+        self.assertEqual(self.building.get_meter_by_type(second_meter.meter_type.value), [second_meter])
 
     def test_search_meters(self):
         first_meter = Meter(meter_location="huz.cab.err",
@@ -427,7 +426,7 @@ class TestBuilding(BaseTest):
                              meter_type=MeterType.CHARGE_DISCHARGE, measure_mode=MeterMeasureMode.MANUAL)
         self.building.add_meter(first_meter)
         self.building.add_meter(second_meter)
-        meters = self.building.get_meters({'manufacturer': 'Honeywell', 'meter_type': MeterType.ELECTRICITY})
+        meters = self.building.get_meters({'manufacturer': 'Honeywell', 'meter_type': MeterType.ELECTRICITY.value})
         self.assertEqual(meters, [first_meter])
 
     def test_add_weather_stations_to_building(self):

@@ -139,7 +139,7 @@ class TestFloor(BaseTest):
     def test_search_rooms(self):
         room = Room(self.area, "Room 444", RoomType.BEDROOM)
         floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, rooms=[room, self.room])
-        rooms = floor.get_rooms({'room_type': RoomType.BEDROOM})
+        rooms = floor.get_rooms({'room_type': RoomType.BEDROOM.value})
         self.assertEqual(rooms, [room, self.room])
 
     def test_search_open_spaces_with_wrong_search_terms(self):
@@ -153,7 +153,7 @@ class TestFloor(BaseTest):
     def test_search_open_spaces(self):
         hall = OpenSpace("HALL_ONE", self.area, OpenSpaceType.HALL)
         floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, open_spaces=[hall, self.hall])
-        open_spaces = floor.get_open_spaces({'space_type': OpenSpaceType.HALL})
+        open_spaces = floor.get_open_spaces({'space_type': OpenSpaceType.HALL.value})
         self.assertEqual(open_spaces, [hall, self.hall])
 
 

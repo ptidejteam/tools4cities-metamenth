@@ -9,7 +9,7 @@ from enumerations import SensorMeasure
 from enumerations import SensorMeasureType
 from tests.structure.base_test import BaseTest
 from enumerations import MeterMeasureMode
-from measure_instruments import MeterMeasure
+from measure_instruments.meter_measure import MeterMeasure
 from subsystem.appliance import Appliance
 from enumerations import SensorLogType
 from enumerations import ApplianceType
@@ -44,7 +44,7 @@ class TestRoom(BaseTest):
         power_meter.add_meter_measure(MeterMeasure(5))
         self.room.meter = power_meter
         self.assertEqual(self.room.meter.meter_type, power_meter.meter_type)
-        self.assertEqual(len(self.room.meter.meter_measures), 2)
+        self.assertEqual(len(self.room.meter.get_meter_measures()), 2)
         self.assertEqual(self.room.location, power_meter.meter_location)
 
     def test_classroom_with_adjacent_hall(self):
