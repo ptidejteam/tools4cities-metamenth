@@ -37,6 +37,5 @@ class AbstractSubsystem:
     def __str__(self):
         return (
             f"UID: {self.UID}, "
-            f"Name: {self.name}, "
-            f"Transducers: {self._transducers}"
+            f"Name: {self.name}"
         )

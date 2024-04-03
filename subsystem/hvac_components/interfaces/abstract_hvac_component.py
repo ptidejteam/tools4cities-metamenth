@@ -1,4 +1,3 @@
-from abc import ABC
 from uuid import uuid4
 from datatypes.rated_device_measure import RatedDeviceMeasure
 from datatypes.operational_schedule import OperationalSchedule
@@ -9,11 +8,13 @@ from measure_instruments.meter import Meter
 from utils import StructureEntitySearch
 from utils import EntityRemover
 from utils import EntityInsert
+from datatypes.interfaces.abstract_dynamic_entity import AbstractDynamicEntity
 
 
-class AbstractHVACComponent(ABC):
+class AbstractHVACComponent(AbstractDynamicEntity):
 
     def __init__(self, name: str, meter: Meter = None, rated_device_measure: RatedDeviceMeasure = None):
+        super().__init__()
         self._UID = str(uuid4())
         self._name = None
         self._meter = meter
@@ -108,13 +109,19 @@ class AbstractHVACComponent(ABC):
         """
         EntityRemover.remove_building_entity(self._operational_schedule, schedule)
 
+    def __eq__(self, other):
+        # subsystems are equal if they share the same name
+        if isinstance(other, AbstractHVACComponent):
+            # Check for equality based on the 'name' attribute
+            return self.name == other.name
+        return False
+
     def __str__(self):
         return (
-            f"HVACComponent ("
-            f"Manufacturer: {self.UID}, "
+            f"UID: {self.UID}, "
             f"Appliance Type: {self.name}, "
             f"Appliance Category: {self.meter}, "
             f"Consumption Capacity: {self.rated_device_measure}, "
             f"Operating Conditions: {self._operational_schedule}, "
-            f"Rated Device Measure: {self.operating_conditions})"
+            f"Rated Device Measure: {self.operating_conditions}, "
         )

@@ -22,3 +22,8 @@ from .appliance_type import ApplianceType
 from .waveform import WaveForm
 from .duct_type import DuctType
 from .duct_sub_type import DuctSubType
+from .heat_exchanger_flow_type import HeatExchangerFlowType
+from .heat_exchanger_type import HeatExchangerType
+from .power_state import PowerState
+from .damper_type import DamperType
+from .duct_connection_entity_type import DuctConnectionEntityType

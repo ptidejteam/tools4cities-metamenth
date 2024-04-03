@@ -1,4 +1,3 @@
-from enum import Enum
 from enumerations.abstract_enum import AbstractEnum
 
 
