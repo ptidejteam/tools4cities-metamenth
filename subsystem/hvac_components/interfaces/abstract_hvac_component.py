@@ -45,7 +45,7 @@ class AbstractHVACComponent(AbstractDynamicEntity):
 
     @meter.setter
     def meter(self, value: Meter):
-        self._name = value
+        self._meter = value
 
     @property
     def rated_device_measure(self) -> RatedDeviceMeasure:
@@ -119,9 +119,9 @@ class AbstractHVACComponent(AbstractDynamicEntity):
     def __str__(self):
         return (
             f"UID: {self.UID}, "
-            f"Appliance Type: {self.name}, "
-            f"Appliance Category: {self.meter}, "
-            f"Consumption Capacity: {self.rated_device_measure}, "
-            f"Operating Conditions: {self._operational_schedule}, "
-            f"Rated Device Measure: {self.operating_conditions}, "
+            f"Name: {self.name}, "
+            f"Meter: {self.meter}, "
+            f"Rated Device Measure: {self.rated_device_measure}, "
+            f"Operational Schedule: {self._operational_schedule}, "
+            f"Operating Conditions: {self.operating_conditions}, "
         )

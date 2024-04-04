@@ -27,3 +27,4 @@ from .heat_exchanger_type import HeatExchangerType
 from .power_state import PowerState
 from .damper_type import DamperType
 from .duct_connection_entity_type import DuctConnectionEntityType
+from .ventilation_type import VentilationType

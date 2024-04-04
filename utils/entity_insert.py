@@ -30,7 +30,8 @@ class EntityInsert:
         :return:
         """
         if entity_type in [BuildingEntity.TRANSDUCER.value, BuildingEntity.SCHEDULE.value,
-                           BuildingEntity.ADJACENT_SPACE.value, BuildingEntity.APPLIANCE.value]:
+                           BuildingEntity.ADJACENT_SPACE.value, BuildingEntity.APPLIANCE.value,
+                           BuildingEntity.HVAC_COMPONENT.value]:
             # add transducer to room, open space or subsystem
             EntityInsert._insert_unique(entity_list, entity)
 

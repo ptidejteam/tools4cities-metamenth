@@ -23,5 +23,6 @@ class BuildingEntity(Enum):
     ADJACENT_SPACE = "AdjacentSpace"
     SUBSYSTEM = "Subsystem"
     APPLIANCE = "Appliance"
+    HVAC_COMPONENT = "HVACComponent"
 
 
