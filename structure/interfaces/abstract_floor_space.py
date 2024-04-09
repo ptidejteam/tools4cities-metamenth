@@ -9,6 +9,9 @@ from typing import Dict
 from datatypes.interfaces.abstract_dynamic_entity import AbstractDynamicEntity
 from enumerations import BuildingEntity
 from subsystem.appliance import Appliance
+from subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
+from subsystem.interfaces.abstract_ventilation_component import AbstractVentilationComponent
+from typing import Union
 
 
 class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
@@ -33,6 +36,7 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
         self._adjacent_spaces: List[AbstractFloorSpace] = []
         self._meter = meter
         self._appliances: List[Appliance] = []
+        self._hvac_components: Union[List[AbstractHVACComponent], List[AbstractVentilationComponent]] = []
         # apply validation through setters
         self.name = name
 
@@ -89,6 +93,31 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
         :return:
         """
         EntityRemover.remove_building_entity(self._appliances, appliance)
+
+    def add_hvac_component(self, hvac_component: Union[AbstractHVACComponent, AbstractVentilationComponent]):
+        """
+        adds hvac component to floor spaces
+        :param hvac_component: the hvac component to add
+        :return:
+        """
+        EntityInsert.insert_building_entity(self._hvac_components, hvac_component, BuildingEntity.HVAC_COMPONENT.value)
+
+    def remove_hvac_component(self, hvac_component: Union[AbstractHVACComponent, AbstractVentilationComponent]):
+        """
+        Removes hvac component from a space (room and open space)
+        :param hvac_component: the adjacent space to remove
+        :return:
+        """
+        EntityRemover.remove_building_entity(self._hvac_components, hvac_component)
+
+    def get_hvac_components(self, search_terms: Dict = None) -> Union[List[AbstractHVACComponent],
+                                                                      List[AbstractVentilationComponent]]:
+        """
+        Search appliances by attributes values
+        :param search_terms: a dictionary of attributes and their values
+        :return:
+        """
+        return StructureEntitySearch.search(self._hvac_components, search_terms)
 
     def get_adjacent_space_by_name(self, name) -> 'AbstractFloorSpace':
         """
@@ -149,6 +178,7 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
         transducers_info = "\n".join([f" - Transducer: {transducer}" for transducer in self._transducers])
         appliances_info = "\n".join([f" - Appliance: {appliance}" for appliance in self._appliances])
         spaces_info = "\n".join([f" - Adjacent Space: {space}" for space in self._adjacent_spaces])
+        hvac_component_info = "\n".join([f" - HVAC Components: {component}" for component in self._hvac_components])
 
         return (
             f"{super().__str__()}"
@@ -156,5 +186,6 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
             f"Meter: {self.meter}, "
             f"Adjacent Spaces: {spaces_info}, "
             f"Transducers: {transducers_info}, "
+            f"HVAC Components: {hvac_component_info}"
             f"Appliances: {appliances_info}\n"
         )
