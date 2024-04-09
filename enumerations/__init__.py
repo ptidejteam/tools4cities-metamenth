@@ -34,3 +34,7 @@ from .compressor_type import CompressorType
 from .boiler_category import BoilerCategory
 from .refrigerant_type import RefrigerantType
 from .coil_material import CoilMaterial
+from .heat_source import HeatSource
+from .chiller_type import ChillerType
+from .circulation_pump_type import CirculationPumpType
+from .air_volume_type import AirVolumeType

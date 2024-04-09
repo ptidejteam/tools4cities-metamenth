@@ -11,5 +11,9 @@ class PowerState(AbstractEnum):
     ON = "On"
     OFF = "Off"
     OUT_OF_SERVICE = "OutOfService"
+    VARIABLE_SPEED = "VariableSpeed"
+    INTERMITTENT = "Intermittent"
+    BOOST = "Boost"
+    NIGHT_MODE = "NightMode"
     OTHER = "Other"
 

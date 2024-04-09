@@ -39,6 +39,6 @@ class BaseboardHeater(AbstractVentilationComponent):
         return (
             f"BaseboardHeater ({super().__str__()}"
             f"Heating Type: {self.heating_type}"
-            f"Power State: {self.power_state})"
+            f"Power State: {self.power_state.value})"
         )
 
