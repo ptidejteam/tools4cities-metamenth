@@ -28,3 +28,9 @@ from .power_state import PowerState
 from .damper_type import DamperType
 from .duct_connection_entity_type import DuctConnectionEntityType
 from .ventilation_type import VentilationType
+from .radiant_slab_type import RadiantSlabType
+from .heating_type import HeatingType
+from .compressor_type import CompressorType
+from .boiler_category import BoilerCategory
+from .refrigerant_type import RefrigerantType
+from .coil_material import CoilMaterial
