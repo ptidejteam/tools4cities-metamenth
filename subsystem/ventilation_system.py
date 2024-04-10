@@ -5,6 +5,7 @@ from subsystem.interfaces.abstract_ventilation_component import AbstractVentilat
 from utils import EntityRemover
 from utils import EntityInsert
 from utils import StructureEntitySearch
+from typing import Dict
 
 
 class VentilationSystem:

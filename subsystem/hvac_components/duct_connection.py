@@ -1,4 +1,4 @@
-from structure.interfaces.abstract_floor_space import AbstractFloorSpace
+from structure.interfaces.abstract_space import AbstractSpace
 from subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
 from enumerations import DuctConnectionEntityType
 from subsystem.hvac_components.fan import Fan
@@ -23,7 +23,7 @@ class DuctConnection:
         :return:
         """
         from subsystem.hvac_components.duct import Duct
-        allowed_entity_types = [AbstractHVACComponent, AbstractFloorSpace, Duct]
+        allowed_entity_types = [AbstractHVACComponent, AbstractSpace, Duct]
         disallowed_inside_entities = [Fan, Damper, HeatExchanger]
 
         if any(isinstance(duct_entity, cls) for cls in allowed_entity_types):

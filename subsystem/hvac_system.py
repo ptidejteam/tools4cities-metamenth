@@ -1,6 +1,6 @@
 from uuid import uuid4
 from typing import List
-from subsystem.hvac_components.ventilation_system import VentilationSystem
+from subsystem.ventilation_system import VentilationSystem
 from typing import Union
 
 
