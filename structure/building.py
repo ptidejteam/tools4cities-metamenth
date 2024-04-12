@@ -23,6 +23,7 @@ from observers.observable import Observable
 from misc import StateTrackDecorator
 from utils import StructureEntitySearch
 from enumerations import MeterType
+from subsystem.building_control_system import BuildingControlSystem
 
 
 class Building(Observable):
@@ -57,6 +58,7 @@ class Building(Observable):
         self._meters: [Meter] = []
         self._weather_stations: List[WeatherStation] = []
         self._zones: List[Zone] = []
+        self._control_system: [BuildingControlSystem] = []
         self.track_state = False
 
         # apply validation
@@ -201,6 +203,14 @@ class Building(Observable):
             self._zones = value
         else:
             raise ValueError('zones must be of type [Zone]')
+
+    @property
+    def control_system(self):
+        return self._control_system.copy()
+
+    def add_control_system(self, control_system: BuildingControlSystem):
+        if control_system:
+            self._control_system.append(control_system)
 
     @StateTrackDecorator
     def add_weather_station(self, weather_station: WeatherStation):
