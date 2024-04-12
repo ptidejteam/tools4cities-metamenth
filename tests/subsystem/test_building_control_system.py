@@ -19,6 +19,13 @@ from subsystem.hvac_components.boiler import Boiler
 from enumerations import BoilerCategory
 from subsystem.hvac_components.chiller import Chiller
 from enumerations import ChillerType
+from measure_instruments.meter import Meter
+from enumerations import MeterType
+from enumerations import MeterMeasureMode
+from enumerations import MeasurementUnit
+from subsystem.hvac_components.cooling_tower import CoolingTower
+from subsystem.hvac_components.air_volume_box import AirVolumeBox
+from enumerations import AirVolumeType
 
 
 class TestBuildingControlSystem(BaseTest):
@@ -32,6 +39,13 @@ class TestBuildingControlSystem(BaseTest):
         # connect supply air duct to the floor it supplies air to
         supply_duct_conn = DuctConnection()
         supply_duct_conn.add_entity(DuctConnectionEntityType.DESTINATION, self.floor)
+
+        # connect VAV box to the supply air duct
+        room_vav_box = AirVolumeBox('PR.VNT.VAV.01', AirVolumeType.VARIABLE_AIR_VOLUME)
+        room_vav_box.inlet_dampers = [Damper('PR.VNT.DMP.03', DamperType.MANUAL_VOLUME)]
+
+        supply_air_duct.add_connected_air_volume_box(room_vav_box)
+        self.room.add_hvac_component(room_vav_box)
 
         # add the principal duct as the source to the supply air duct
         supply_duct_conn.add_entity(DuctConnectionEntityType.SOURCE, duct)
@@ -139,6 +153,15 @@ class TestBuildingControlSystem(BaseTest):
         self.assertEqual(duct.get_dampers()[0].percentage_opened, 35)
         self.assertEqual(duct.get_heat_exchangers(), [heat_exchanger])
 
+    def test_principal_duct_with_supply_air_having_vav_box(self):
+        duct, supply_air_duct, return_air_duct = self._init_ducts()
+        vav_box = supply_air_duct.get_connected_air_volume_box()[0]
+        self.assertEqual(vav_box.air_volume_type, AirVolumeType.VARIABLE_AIR_VOLUME)
+        self.assertEqual(vav_box.has_heater, False)
+        self.assertIsInstance(vav_box.inlet_dampers[0], Damper)
+        self.assertEqual(vav_box.inlet_dampers[0].damper_type, DamperType.MANUAL_VOLUME)
+        self.assertEqual(self.room.get_hvac_components(), [vav_box])
+
     def test_principal_duct_with_supply_and_return_air_ducts(self):
         duct, supply_air_duct, return_air_duct = self._init_ducts()
 
@@ -167,7 +190,49 @@ class TestBuildingControlSystem(BaseTest):
         self.assertEqual(boiler.ducts[0].connections.get_destination_entities(), [heat_exchanger])
         self.assertEqual(chiller_heat_exchanger_tube.connections.get_source_entities(), [chiller])
 
+    def test_principal_duct_with_components_having_meters_and_sensors(self):
+        principal_duct, _, _ = self._init_ducts()
+        principal_duct, chiller, boiler, heat_exchanger, chiller_heat_exchanger_tube, boiler_heat_exchanger_tube = \
+            self._connect_components(principal_duct)
 
+        # add meter and sensors to chiller and boiler
+        chiller.add_transducer(self.temp_sensor)
+        chiller.add_transducer(self.pressure_sensor)
+        flow_meter = Meter(meter_location="huz.cab.err", manufacturer="Honeywell", measurement_frequency=5,
+                           measurement_unit=MeasurementUnit.LITERS_PER_SECOND, meter_type=MeterType.FLOW,
+                           measure_mode=MeterMeasureMode.AUTOMATIC)
+        chiller.meter = flow_meter
 
+        boiler.add_transducer(self.temp_sensor)
+        boiler.add_transducer(self.pressure_sensor)
+        power_meter = Meter(meter_location="huz.cab.err", manufacturer="Honeywell", measurement_frequency=5,
+                            measurement_unit=MeasurementUnit.KILOWATTS, meter_type=MeterType.POWER,
+                            measure_mode=MeterMeasureMode.AUTOMATIC)
+        boiler.meter = power_meter
+        heat_exchanger_ducts = principal_duct.get_heat_exchangers()[0].ducts
+        self.assertEqual(heat_exchanger_ducts[1].connections.get_source_entities()[0].meter, power_meter)
+        self.assertEqual(heat_exchanger_ducts[1].connections.get_source_entities()[0].get_transducers(),
+                         [self.temp_sensor, self.pressure_sensor])
+        self.assertEqual(heat_exchanger_ducts[0].connections.get_source_entities()[0].meter, flow_meter)
+        self.assertEqual(heat_exchanger_ducts[0].connections.get_source_entities()[0].get_transducers(),
+            [self.temp_sensor, self.pressure_sensor])
 
+    def test_principal_duct_with_components_and_cooling_tower(self):
+        principal_duct, _, _ = self._init_ducts()
+        principal_duct, chiller, _, heat_exchanger, _, _ = self._connect_components(principal_duct)
+        cooling_tower = CoolingTower("PR.VNT.CLT.01")
+        tower_chiller_tube = Duct('TB.CL.CLT.01', DuctType.WATER)
+        tower_chiller_conn = DuctConnection()
+        tower_chiller_conn.add_entity(DuctConnectionEntityType.SOURCE, cooling_tower)
+        tower_chiller_conn.add_entity(DuctConnectionEntityType.DESTINATION, chiller)
+        tower_chiller_conn.is_loop = True
+        tower_chiller_tube.connections = tower_chiller_conn
+        chiller.add_duct(tower_chiller_tube)
+        cooling_tower.add_duct(tower_chiller_tube)
 
+        vnt_chiller = principal_duct.get_heat_exchangers()[0].ducts[0].connections.get_source_entities()[0]
+        self.assertEqual(vnt_chiller, chiller)
+        self.assertEqual(vnt_chiller.ducts[1], tower_chiller_tube)
+        self.assertEqual(vnt_chiller.ducts[1].connections.is_loop, True)
+        self.assertEqual(vnt_chiller.ducts[1].connections.get_source_entities(), [cooling_tower])
+        self.assertEqual(vnt_chiller.ducts[0].connections.get_destination_entities(), [heat_exchanger])

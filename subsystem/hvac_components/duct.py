@@ -13,6 +13,7 @@ from utils import EntityRemover
 from enumerations import BuildingEntity
 from typing import Dict
 from utils import StructureEntitySearch
+from subsystem.hvac_components.air_volume_box import AirVolumeBox
 
 
 class Duct(AbstractDynamicEntity, AbstractZonalEntity):
@@ -28,6 +29,7 @@ class Duct(AbstractDynamicEntity, AbstractZonalEntity):
         self._heat_exchangers: List[HeatExchanger] = []
         self._fans: List[Fan] = []
         self._dampers: List[Damper] = []
+        self._connected_air_volume_box: [AirVolumeBox] = []
 
         self.name = name
         self.duct_type = duct_type
@@ -93,6 +95,23 @@ class Duct(AbstractDynamicEntity, AbstractZonalEntity):
         """
         EntityInsert.insert_building_entity(self._fans, new_fan, BuildingEntity.HVAC_COMPONENT.value)
 
+    def add_connected_air_volume_box(self, new_vav_box: AirVolumeBox):
+        """
+        Adds VAV boxes connected to this duct
+        :param new_vav_box: a fan to be added to this duct
+        :return:
+        """
+        EntityInsert.insert_building_entity(self._connected_air_volume_box, new_vav_box,
+                                            BuildingEntity.HVAC_COMPONENT.value)
+
+    def remove_connected_air_volume_box(self, vav_box: AirVolumeBox):
+        """
+        Removes a VAV box from a duct
+        :param vav_box: the VAV box to remove
+        :return:
+        """
+        EntityRemover.remove_building_entity(self._connected_air_volume_box, vav_box)
+
     def add_damper(self, new_damper: Damper):
         """
         Adds dampers
@@ -149,6 +168,14 @@ class Duct(AbstractDynamicEntity, AbstractZonalEntity):
         """
         return StructureEntitySearch.search(self._fans, search_terms)
 
+    def get_connected_air_volume_box(self, search_terms: Dict = None) -> [AirVolumeBox]:
+        """
+        Search source entities by attribute values
+        :param search_terms: a dictionary of attributes and their values
+        :return:
+        """
+        return StructureEntitySearch.search(self._connected_air_volume_box, search_terms)
+
     def __eq__(self, other):
         # ducts are equal if they share the same name
         if isinstance(other, Duct):
@@ -166,5 +193,6 @@ class Duct(AbstractDynamicEntity, AbstractZonalEntity):
             f"Fans: {self._fans}, "
             f"Heat Exchangers: {self._heat_exchangers}, "
             f"Dampers: {self._dampers}, "
+            f"Air Volume Box: {self._connected_air_volume_box}"
             f"Connection: {self.connections})"
         )

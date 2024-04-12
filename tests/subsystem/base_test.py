@@ -39,6 +39,8 @@ class BaseTest(TestCase):
                                  SensorMeasureType.THERMO_COUPLE_TYPE_A, 0, sensor_log_type=SensorLogType.POLLING)
         self.temp_sensor = Sensor("TEMP.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
                              SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+        self.pressure_sensor = Sensor("PRESENCE.SENSOR", SensorMeasure.PRESSURE, MeasurementUnit.PASCAL,
+                                      SensorMeasureType.THERMO_COUPLE_TYPE_A, 10, sensor_log_type=SensorLogType.POLLING)
 
 
 

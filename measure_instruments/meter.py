@@ -185,6 +185,6 @@ class Meter:
                          f"Measure Mode: {self.measure_mode.value}, Data Accumulated: {self.data_accumulated}, "
                          f"Accumulation Frequency: {self.accumulation_frequency.value})")
 
-        measurements = "\n".join(str(measure) for measure in self.meter_measures)
+        measurements = "\n".join(str(measure) for measure in self.get_meter_measures())
 
         return f"{meter_details}\nMeasurements:\n{measurements}"

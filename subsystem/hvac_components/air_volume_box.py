@@ -1,22 +1,19 @@
-from subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
+from subsystem.hvac_components.interfaces.abstract_duct_connected_component import AbstractDuctConnectedComponent
 from enumerations import AirVolumeType
 from subsystem.hvac_components.duct import Damper
-from typing import List
-from typing import Union
 
 
-class AirVolumeBox(AbstractHVACComponent):
-    def __init__(self, name: str, air_volume_type: AirVolumeType, inlet_dampers: Union[None, List[Damper]],
+class AirVolumeBox(AbstractDuctConnectedComponent):
+    def __init__(self, name: str, air_volume_type: AirVolumeType,
                  has_heater: bool = False):
         """
         Models an air volume box in a built environment
         :param name: the unique name of the air volume box
-        :param inlet_dampers: inlet dampers that may be in the air volume boxes
         :param has_heater: indicates if the air volume box has heaters installed
         """
         super().__init__(name)
         self._air_volume_type = None
-        self._inlet_dampers = inlet_dampers
+        self._inlet_dampers: [Damper] = []
         self._has_heater = has_heater
 
         self.air_volume_type = air_volume_type
@@ -29,7 +26,7 @@ class AirVolumeBox(AbstractHVACComponent):
     def air_volume_type(self, value: AirVolumeType):
         if not value:
             raise ValueError("air_volume_type must be of type AirVolumeType")
-        self._pump_type = value
+        self._air_volume_type = value
 
     @property
     def has_heater(self) -> bool:
