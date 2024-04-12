@@ -55,6 +55,7 @@ class MeasurementUnit(AbstractEnum):
     MICROGRAM_PER_CUBIC_METER = "µg/m3"
     SQUARE_FEET = "ft2"
     RELATIVE_HUMIDITY = "%RH"
+    REVOLUTIONS_PER_MINUTE = "RMP"
 
 
 

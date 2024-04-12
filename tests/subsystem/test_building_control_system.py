@@ -26,6 +26,7 @@ from enumerations import MeasurementUnit
 from subsystem.hvac_components.cooling_tower import CoolingTower
 from subsystem.hvac_components.air_volume_box import AirVolumeBox
 from enumerations import AirVolumeType
+from subsystem.hvac_components.variable_frequency_drive import VariableFrequencyDrive
 
 
 class TestBuildingControlSystem(BaseTest):
@@ -68,7 +69,7 @@ class TestBuildingControlSystem(BaseTest):
         # add the return air duct as a source to the principal ventilation duct to recuperate heat from waste aire
         principal_duct_conn.add_entity(DuctConnectionEntityType.SOURCE, return_air_duct)
 
-        fan = Fan("PR.VNT.FN.01", PowerState.ON, True)
+        fan = Fan("PR.VNT.FN.01", PowerState.ON, None)
         duct.add_fan(fan)
         return duct, supply_air_duct, return_air_duct
 
@@ -138,8 +139,8 @@ class TestBuildingControlSystem(BaseTest):
         duct.duct_sub_type = DuctSubType.FRESH_AIR
         duct.add_transducer(self.presence_sensor)
         duct.add_transducer(self.temp_sensor)
-
-        fan = Fan("PR.VNT.FN.01", PowerState.ON, True)
+        vfd = VariableFrequencyDrive('PR.VNT.VRD.01')
+        fan = Fan("PR.VNT.FN.01", PowerState.ON, vfd)
         heat_exchanger = HeatExchanger("PR.VNT.HE.01", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
         damper = Damper("PR.VNT.DP.01", DamperType.BACK_DRAFT, 35)
         duct.add_heat_exchanger(heat_exchanger)
@@ -149,6 +150,7 @@ class TestBuildingControlSystem(BaseTest):
         self.assertEqual(duct.connections, None)
         self.assertEqual(duct.get_transducers({'measure': SensorMeasure.OCCUPANCY.value}), [self.presence_sensor])
         self.assertEqual(duct.get_fans({'name': 'PR.VNT.FN.01'})[0], fan)
+        self.assertEqual(duct.get_fans({'name': 'PR.VNT.FN.01'})[0].vfd, vfd)
         self.assertEqual(duct.get_dampers(), [damper])
         self.assertEqual(duct.get_dampers()[0].percentage_opened, 35)
         self.assertEqual(duct.get_heat_exchangers(), [heat_exchanger])

@@ -1,4 +1,5 @@
 from subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
+from subsystem.hvac_components.variable_frequency_drive import VariableFrequencyDrive
 
 
 class AbstractDuctConnectedComponent(AbstractHVACComponent):
@@ -7,10 +8,15 @@ class AbstractDuctConnectedComponent(AbstractHVACComponent):
         super().__init__(name)
 
         self._ducts: [] = []
+        self._vfd = None
 
     @property
     def ducts(self) -> []:
         return self._ducts.copy()
+
+    @property
+    def vfd(self) -> VariableFrequencyDrive:
+        return self._vfd
 
     def add_duct(self, duct):
         from subsystem.hvac_components.duct import Duct
@@ -19,8 +25,13 @@ class AbstractDuctConnectedComponent(AbstractHVACComponent):
         else:
             raise ValueError("value provided is not a duct")
 
+    @vfd.setter
+    def vfd(self, value: VariableFrequencyDrive):
+        self._vfd = value
+
     def __str__(self):
         return (
             f"({super().__str__()}"
             f"Ducts {self.ducts}, "
+            f"VFD: {self.vfd}, "
         )
