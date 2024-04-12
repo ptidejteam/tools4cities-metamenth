@@ -1,9 +1,9 @@
-from subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
+from subsystem.hvac_components.interfaces.abstract_duct_connected_component import AbstractDuctConnectedComponent
 from enumerations import HeatExchangerType
 from enumerations import HeatExchangerFlowType
 
 
-class HeatExchanger(AbstractHVACComponent):
+class HeatExchanger(AbstractDuctConnectedComponent):
     def __init__(self, name: str, heat_exchanger_type: HeatExchangerType,
                  heat_exchanger_flow_type: HeatExchangerFlowType):
         """

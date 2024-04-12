@@ -1,9 +1,9 @@
-from subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
+from subsystem.hvac_components.interfaces.abstract_duct_connected_component import AbstractDuctConnectedComponent
 from enumerations import PowerState
 from enumerations import CirculationPumpType
 
 
-class CirculationPump(AbstractHVACComponent):
+class CirculationPump(AbstractDuctConnectedComponent):
     def __init__(self, name: str, pump_type: CirculationPumpType, power_state: PowerState):
         """
         Models a circulation pump in a built environment

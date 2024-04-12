@@ -1,9 +1,9 @@
-from subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
+from subsystem.hvac_components.interfaces.abstract_duct_connected_component import AbstractDuctConnectedComponent
 from enumerations import HeatSource
 from subsystem.hvac_components.condenser import Condenser
 
 
-class HeatPump(AbstractHVACComponent):
+class HeatPump(AbstractDuctConnectedComponent):
     def __init__(self, name: str, heat_source: HeatSource,  condenser: Condenser = None, manufacturer: str = None):
         """
         Models a heat pump in a built environment

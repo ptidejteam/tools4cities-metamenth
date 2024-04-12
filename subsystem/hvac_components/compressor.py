@@ -1,8 +1,8 @@
-from subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
+from subsystem.hvac_components.interfaces.abstract_duct_connected_component import AbstractDuctConnectedComponent
 from enumerations import CompressorType
 
 
-class Compressor(AbstractHVACComponent):
+class Compressor(AbstractDuctConnectedComponent):
     def __init__(self, name: str, compressor_type: CompressorType):
         """
         Models a compressor in an hvac system

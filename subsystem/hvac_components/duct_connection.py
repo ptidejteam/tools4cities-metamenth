@@ -85,7 +85,7 @@ class DuctConnection:
     @is_loop.setter
     def is_loop(self, value: bool):
         if value:
-            if len(self._source_entities) == 1 and len(self._destination_entities) == 1:
+            if len(self._source_entities) <= 1 and len(self._destination_entities) <= 1:
                 self._is_loop = value
             else:
                 raise ValueError("is_loop can only be true if there are single source and destination entities")

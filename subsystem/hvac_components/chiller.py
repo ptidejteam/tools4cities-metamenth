@@ -1,9 +1,9 @@
-from subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
+from subsystem.hvac_components.interfaces.abstract_duct_connected_component import AbstractDuctConnectedComponent
 from enumerations import ChillerType
 from enumerations import PowerState
 
 
-class Chiller(AbstractHVACComponent):
+class Chiller(AbstractDuctConnectedComponent):
     def __init__(self, name: str, chiller_type: ChillerType, power_state: PowerState):
         """
         Models a chiller in a built environment

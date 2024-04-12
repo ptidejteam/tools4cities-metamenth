@@ -1,9 +1,9 @@
-from subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
+from subsystem.hvac_components.interfaces.abstract_duct_connected_component import AbstractDuctConnectedComponent
 from enumerations import BoilerCategory
 from enumerations import PowerState
 
 
-class Boiler(AbstractHVACComponent):
+class Boiler(AbstractDuctConnectedComponent):
     def __init__(self, name: str, category: BoilerCategory, power_state: PowerState):
         """
         Models a boiler in an hvac system

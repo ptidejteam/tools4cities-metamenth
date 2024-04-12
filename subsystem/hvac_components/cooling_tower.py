@@ -1,7 +1,7 @@
-from subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
+from subsystem.hvac_components.interfaces.abstract_duct_connected_component import AbstractDuctConnectedComponent
 
 
-class CoolingTower(AbstractHVACComponent):
+class CoolingTower(AbstractDuctConnectedComponent):
     def __init__(self, name: str):
         """
         Models a cooling tower in an hvac system
