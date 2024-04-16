@@ -128,7 +128,6 @@ class TestZone(TestCase):
         corridor = OpenSpace("CORRIDOR_1", self.area, OpenSpaceType.CORRIDOR)
         floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, rooms=[room], open_spaces=[corridor])
         zone.add_spaces([floor, corridor])
-
         self.assertEqual(len(zone.get_spaces()), 2)
         zone.remove_space(floor)
         self.assertEqual(zone.get_spaces(), [corridor])

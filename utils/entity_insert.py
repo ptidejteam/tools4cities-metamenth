@@ -10,14 +10,16 @@ class EntityInsert:
         pass
 
     @staticmethod
-    def insert_zone(space, zone, building):
+    def insert_zone(entity, zone, building):
         # all unique zones are registered with the building
         if zone not in building.zones:
             building.zones.append(zone)
-        if zone not in space.zones:
+        if zone not in entity.zones:
             # add the space to the zone
-            space.zones.append(zone)
-            zone.add_spaces([space])
+            entity.zones.append(zone)
+            from structure.interfaces.abstract_space import AbstractSpace
+            if isinstance(entity, AbstractSpace):
+                zone.add_spaces([entity])
 
     @staticmethod
     def insert_building_entity(entity_list, entity, entity_type=None, entity_object=None):
@@ -31,17 +33,13 @@ class EntityInsert:
         """
         if entity_type in [BuildingEntity.TRANSDUCER.value, BuildingEntity.SCHEDULE.value,
                            BuildingEntity.ADJACENT_SPACE.value, BuildingEntity.APPLIANCE.value,
-                           BuildingEntity.HVAC_COMPONENT.value]:
+                           BuildingEntity.HVAC_COMPONENT.value, BuildingEntity.FLOOR.value]:
             # add transducer to room, open space or subsystem
             EntityInsert._insert_unique(entity_list, entity)
 
-        elif entity_type == BuildingEntity.FLOOR.value:
-            # add floor to list of floors in a building
-            for floor in entity:
-                EntityInsert._insert_unique(entity_list, floor, entity_type)
-
-        elif entity_type in [BuildingEntity.ROOM.value, BuildingEntity.OPEN_SPACE.value]:
+        elif entity_type == BuildingEntity.FLOOR_SPACE.value:
             # add open space or room to list of rooms
+
             for space in entity:
                 EntityInsert._insert_unique(entity_list, space)
 
@@ -61,16 +59,6 @@ class EntityInsert:
             entity_list.append(entity)
 
     @staticmethod
-    def _insert_unique(entity_list, entity, entity_type=None):
-        if entity_type == BuildingEntity.FLOOR.value:
-            existing_entity = next(
-                (new_entity for new_entity in entity_list if new_entity.number == entity.number),
-                None
-            )
-        else:
-            existing_entity = next(
-                (new_entity for new_entity in entity_list if new_entity.name == entity.name),
-                None
-            )
-        if existing_entity is None:
+    def _insert_unique(entity_list, entity):
+        if not entity in entity_list:
             entity_list.append(entity)

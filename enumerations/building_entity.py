@@ -24,5 +24,6 @@ class BuildingEntity(Enum):
     SUBSYSTEM = "Subsystem"
     APPLIANCE = "Appliance"
     HVAC_COMPONENT = "HVACComponent"
+    FLOOR_SPACE = "FloorSpace"
 
 

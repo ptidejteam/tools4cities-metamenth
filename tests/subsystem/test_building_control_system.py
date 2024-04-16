@@ -27,6 +27,27 @@ from subsystem.hvac_components.cooling_tower import CoolingTower
 from subsystem.hvac_components.air_volume_box import AirVolumeBox
 from enumerations import AirVolumeType
 from subsystem.hvac_components.variable_frequency_drive import VariableFrequencyDrive
+from enumerations import ZoneType
+from enumerations import HVACType
+from datatypes.zone import Zone
+from subsystem.ventilation_system import VentilationSystem
+from enumerations import VentilationType
+from subsystem.thermal_storage import ThermalStorage
+from subsystem.radiant_slab import RadiantSlab
+from subsystem.baseboard_heater import BaseboardHeater
+from enumerations import RadiantSlabType
+from enumerations import HeatingType
+from subsystem.interfaces.abstract_ventilation_component import AbstractVentilationComponent
+from subsystem.hvac_components.heat_pump import HeatPump
+from enumerations import HeatSource
+from subsystem.hvac_components.condenser import Condenser
+from subsystem.hvac_components.compressor import Compressor
+from enumerations import RefrigerantType
+from enumerations import CoilMaterial
+from enumerations import CompressorType
+from datatypes.operational_schedule import OperationalSchedule
+from datetime import datetime
+from datetime import timedelta
 
 
 class TestBuildingControlSystem(BaseTest):
@@ -113,13 +134,29 @@ class TestBuildingControlSystem(BaseTest):
         self.assertIsInstance(building_control_system, AbstractSubsystem)
         self.assertEqual(building_control_system.hvac_system, None)
 
+    def test_heat_pump_serving_specific_spaces(self):
+        condenser = Condenser("PR.VNT.CD.01", RefrigerantType.R404A, CoilMaterial.COPPER)
+        compressor = Compressor("PR.VNT.CP.01", CompressorType.RECIPROCATING_SEMI_HERMETIC)
+        heat_exchanger = HeatExchanger("PR.VNT.HE.01", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
+        heat_pump = HeatPump("PR.VNT.HP.01", HeatSource.AQUIFER, condenser, compressor)
+        heat_pump.add_heat_exchanger(heat_exchanger)
+        heat_pump.add_spaces([self.room, self.floor, self.hall])
+
+        schedule = OperationalSchedule("WEEKDAYS", datetime.now(), datetime.now() + timedelta(days=5))
+        heat_pump.add_schedule(schedule)
+
+        self.assertEqual(heat_pump.get_schedules(), [schedule])
+        self.assertEqual(heat_pump.heat_exchangers, [heat_exchanger])
+        self.assertEqual(heat_pump.get_spaces({'name': self.hall.name}), [self.hall])
+        self.assertEqual(heat_pump.condenser, condenser)
+
     def test_building_control_system_with_hvac_system_without_ventilation(self):
         building_control_system = BuildingControlSystem("EV Control System")
         hvac_system = HVACSystem()
         building_control_system.hvac_system = hvac_system
         self.assertEqual(building_control_system.hvac_system, hvac_system)
         self.assertIsNotNone(building_control_system.hvac_system.UID)
-        self.assertEqual(building_control_system.hvac_system.ventilation_system, [])
+        self.assertEqual(building_control_system.hvac_system.ventilation_systems, [])
 
     def test_principal_duct_with_no_components(self):
         duct = Duct("PR.VNT", DuctType.AIR)
@@ -217,7 +254,7 @@ class TestBuildingControlSystem(BaseTest):
                          [self.temp_sensor, self.pressure_sensor])
         self.assertEqual(heat_exchanger_ducts[0].connections.get_source_entities()[0].meter, flow_meter)
         self.assertEqual(heat_exchanger_ducts[0].connections.get_source_entities()[0].get_transducers(),
-            [self.temp_sensor, self.pressure_sensor])
+                         [self.temp_sensor, self.pressure_sensor])
 
     def test_principal_duct_with_components_and_cooling_tower(self):
         principal_duct, _, _ = self._init_ducts()
@@ -238,3 +275,117 @@ class TestBuildingControlSystem(BaseTest):
         self.assertEqual(vnt_chiller.ducts[1].connections.is_loop, True)
         self.assertEqual(vnt_chiller.ducts[1].connections.get_source_entities(), [cooling_tower])
         self.assertEqual(vnt_chiller.ducts[0].connections.get_destination_entities(), [heat_exchanger])
+
+    def test_ventilation_system_with_supply_duct_for_specific_zone(self):
+        principal_duct, supply_air_duct, _ = self._init_ducts()
+
+        warm_zone = Zone("WARM_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
+        cold_zone = Zone("COLD_ZONE", ZoneType.HVAC, HVACType.INTERIOR)
+
+        supply_air_duct.add_zone(warm_zone, self.building)
+        supply_air_duct.add_zone(cold_zone, self.building)
+        supply_air_duct.connections.add_entity(DuctConnectionEntityType.DESTINATION, self.room)
+
+        self.room.add_zone(cold_zone, self.building)
+        self.hall.add_zone(warm_zone, self.building)
+
+        supp_duct = principal_duct.connections.get_destination_entities()[0]
+        room_zone = supp_duct.connections.get_destination_entities({'name': self.room.name})[0].get_zones()[0]
+
+        self.assertEqual(supply_air_duct, supp_duct)
+        self.assertEqual(supp_duct.get_zones(), [warm_zone, cold_zone])
+        self.assertEqual(room_zone, cold_zone)
+        self.assertEqual(self.building.get_zones(), [warm_zone, cold_zone])
+
+    def test_ventilation_system_with_principal_duct(self):
+        principal_duct, supply_air_duct, return_air_duct = self._init_ducts()
+        principal_duct, chiller, boiler, heat_exchanger, _, _ = self._connect_components(principal_duct)
+        ventilation_system = VentilationSystem(VentilationType.AIR_HANDLING_UNIT, principal_duct)
+
+        vnt_chiller = ventilation_system.principal_duct \
+            .get_heat_exchangers()[0].ducts[0].connections.get_source_entities()[0]
+        vnt_boiler = ventilation_system.principal_duct \
+            .get_heat_exchangers()[0].ducts[1].connections.get_source_entities()[0]
+
+        self.assertEqual(ventilation_system.principal_duct.get_heat_exchangers(), [heat_exchanger])
+        self.assertEqual(ventilation_system.principal_duct.connections.get_source_entities()[0], return_air_duct)
+        self.assertEqual(ventilation_system.principal_duct.connections.get_destination_entities()[0], supply_air_duct)
+        self.assertEqual(vnt_chiller, chiller)
+        self.assertEqual(vnt_boiler, boiler)
+        self.assertEqual(ventilation_system.get_components(), [])
+
+    def test_ventilation_system_with_components(self):
+        principal_duct, supply_air_duct, return_air_duct = self._init_ducts()
+        ventilation_system = VentilationSystem(VentilationType.AIR_HANDLING_UNIT, principal_duct)
+
+        supply_air_duct.connections.add_entity(DuctConnectionEntityType.DESTINATION, self.room)
+        supply_air_duct.connections.add_entity(DuctConnectionEntityType.DESTINATION, self.hall)
+
+        radiant_slab = RadiantSlab('PR.VNT.RS.01', RadiantSlabType.AIR_HEATED)
+        baseboard_heater = BaseboardHeater('PR.VNT.BH.01', HeatingType.ELECTRIC, PowerState.ON)
+        thermal_storage = ThermalStorage('PR.VNT.TS.01')
+
+        self.room.add_hvac_component(radiant_slab)
+        self.hall.add_hvac_component(baseboard_heater)
+
+        ventilation_system.add_component(radiant_slab)
+        ventilation_system.add_component(thermal_storage)
+        ventilation_system.add_component(baseboard_heater)
+
+        supp_duct_room_radiant_slab = supply_air_duct.connections.get_destination_entities(
+            {'name': self.room.name})[0].get_hvac_components({'name': radiant_slab.name})[0]
+
+        self.assertEqual(ventilation_system.get_components({'name': radiant_slab.name})[0], radiant_slab)
+        self.assertEqual(ventilation_system.get_components({'name': baseboard_heater.name})[0], baseboard_heater)
+        self.assertEqual(ventilation_system.get_components({'name': thermal_storage.name})[0], thermal_storage)
+        self.assertEqual(self.hall.get_hvac_components(), [baseboard_heater])
+        self.assertIsInstance(self.room.get_hvac_components()[0], AirVolumeBox)
+        self.assertEqual(self.room.get_hvac_components({'name': radiant_slab.name})[0], radiant_slab)
+        self.assertEqual(supp_duct_room_radiant_slab, radiant_slab)
+
+    def test_hvac_system_with_a_single_ventilation_system(self):
+        principal_duct, supply_air_duct, return_air_duct = self._init_ducts()
+        ventilation_system = VentilationSystem(VentilationType.AIR_HANDLING_UNIT, principal_duct)
+
+        radiant_slab = RadiantSlab('PR.VNT.RS.01', RadiantSlabType.AIR_HEATED)
+        baseboard_heater = BaseboardHeater('PR.VNT.BH.01', HeatingType.ELECTRIC, PowerState.ON)
+        thermal_storage = ThermalStorage('PR.VNT.TS.01')
+
+        ventilation_system.add_component(radiant_slab)
+        ventilation_system.add_component(thermal_storage)
+        ventilation_system.add_component(baseboard_heater)
+
+        hvac_system = HVACSystem()
+        hvac_system.add_ventilation_system(ventilation_system)
+
+        self.assertEqual(hvac_system.ventilation_systems, [ventilation_system])
+        self.assertEqual(hvac_system.ventilation_systems[0].get_components(),
+                         [radiant_slab, thermal_storage, baseboard_heater])
+        self.assertIsInstance(hvac_system.ventilation_systems[0].get_components({'name': thermal_storage.name})[0],
+                              AbstractVentilationComponent)
+
+    def test_building_with_hvac_control_system(self):
+        building_control_system = BuildingControlSystem("EV Control System")
+
+        principal_duct, supply_air_duct, return_air_duct = self._init_ducts()
+        principal_duct, chiller, boiler, heat_exchanger, chiller_heat_exchanger_tube, boiler_heat_exchanger_tube = \
+            self._connect_components(principal_duct)
+        ventilation_system = VentilationSystem(VentilationType.AIR_HANDLING_UNIT, principal_duct)
+
+        hvac_system = HVACSystem()
+        hvac_system.add_ventilation_system(ventilation_system)
+
+        building_control_system.hvac_system = hvac_system
+        self.building.add_control_system(building_control_system)
+        vent_sys = self.building.control_systems[0].hvac_system.ventilation_systems[0]
+
+        self.assertEqual(self.building.control_systems, [building_control_system])
+        self.assertEqual(self.building.control_systems[0].hvac_system, hvac_system)
+        self.assertEqual(vent_sys.ventilation_type, VentilationType.AIR_HANDLING_UNIT)
+        self.assertEqual(vent_sys.principal_duct, ventilation_system.principal_duct)
+        self.assertEqual(vent_sys.principal_duct, principal_duct)
+        self.assertEqual(vent_sys.principal_duct.connections.get_source_entities(), [return_air_duct])
+        self.assertEqual(vent_sys.principal_duct.connections.get_destination_entities(), [supply_air_duct])
+        self.assertEqual(vent_sys.principal_duct.connections.get_destination_entities()[0]
+                         .connections.get_destination_entities(), [self.floor])
+

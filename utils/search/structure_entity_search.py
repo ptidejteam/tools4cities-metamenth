@@ -80,12 +80,12 @@ class StructureEntitySearch:
         """
         if len(from_timestamp) == 10:  # Check if only date is provided
             from_timestamp += ' 00:00:00'  # Add default time of midnight
-        if len(to_timestamp) == 10:  # Check if only date is provided
-            to_timestamp += ' 23:59:59'
 
         if to_timestamp is None:
             to_tp = datetime.now().replace(microsecond=0)
         else:
+            if len(to_timestamp) == 10:  # Check if only date is provided
+                to_timestamp += ' 23:59:59'
             to_tp = Validate.parse_date(to_timestamp)
         from_tp = Validate.parse_date(from_timestamp)
         filtered_data = []

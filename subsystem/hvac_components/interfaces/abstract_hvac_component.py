@@ -9,6 +9,7 @@ from utils import StructureEntitySearch
 from utils import EntityRemover
 from utils import EntityInsert
 from datatypes.interfaces.abstract_dynamic_entity import AbstractDynamicEntity
+from enumerations import BuildingEntity
 
 
 class AbstractHVACComponent(AbstractDynamicEntity):
@@ -21,6 +22,7 @@ class AbstractHVACComponent(AbstractDynamicEntity):
         self._rated_device_measure = rated_device_measure
         self._operational_schedule: List[OperationalSchedule] = []
         self._operating_conditions: List[ContinuousMeasure] = []
+        self._spaces = []
 
         self.name = name
 
@@ -108,6 +110,31 @@ class AbstractHVACComponent(AbstractDynamicEntity):
         :return:
         """
         EntityRemover.remove_building_entity(self._operational_schedule, schedule)
+
+    def add_spaces(self, space: []):
+        """
+        Adds spaces served by this HVAC component
+        :param space: the space
+        :return:
+        """
+        EntityInsert.insert_building_entity(self._spaces, space, BuildingEntity.FLOOR_SPACE.value)
+        return self
+
+    def remove_space(self, space):
+        """
+        Removes a space: floor, room, open space from a hvac component
+        :param space: the space to remove
+        :return:
+        """
+        EntityRemover.remove_building_entity(self._spaces, space)
+
+    def get_spaces(self, search_terms: Dict = None) -> []:
+        """
+        Search spaces served by this component by attributes values
+        :param search_terms: a dictionary of attributes and their values
+        :return:
+        """
+        return StructureEntitySearch.search(self._spaces, search_terms)
 
     def __eq__(self, other):
         # subsystems are equal if they share the same name

@@ -58,7 +58,7 @@ class Building(Observable):
         self._meters: [Meter] = []
         self._weather_stations: List[WeatherStation] = []
         self._zones: List[Zone] = []
-        self._control_system: [BuildingControlSystem] = []
+        self._control_systems: [BuildingControlSystem] = []
         self.track_state = False
 
         # apply validation
@@ -205,12 +205,12 @@ class Building(Observable):
             raise ValueError('zones must be of type [Zone]')
 
     @property
-    def control_system(self):
-        return self._control_system.copy()
+    def control_systems(self):
+        return self._control_systems.copy()
 
     def add_control_system(self, control_system: BuildingControlSystem):
         if control_system:
-            self._control_system.append(control_system)
+            self._control_systems.append(control_system)
 
     @StateTrackDecorator
     def add_weather_station(self, weather_station: WeatherStation):

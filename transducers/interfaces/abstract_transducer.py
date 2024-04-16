@@ -73,7 +73,8 @@ class AbstractTransducer(ABC):
         """
         return StructureEntitySearch.search(self._data, search_terms)
 
-    def get_data_by_date(self, from_timestamp: str, to_timestamp: str = None) -> Union[List[SensorData], List[TriggerHistory]]:
+    def get_data_by_date(self, from_timestamp: str, to_timestamp: str = None) -> Union[List[SensorData],
+                                                                                       List[TriggerHistory]]:
         """
         searches transducer data based on provided timestamp
         :param from_timestamp: the start timestamp
@@ -81,6 +82,12 @@ class AbstractTransducer(ABC):
         :return: [SensorData|TriggerHistory]
         """
         return StructureEntitySearch.date_range_search(self._data, from_timestamp, to_timestamp)
+
+    def __eq__(self, other):
+        if isinstance(other, AbstractTransducer):
+            # Check for equality based on the 'name' attribute
+            return self.name == other.name
+        return False
 
     def __str__(self):
         return (f"Unit: {self.UID}, Name: {self.name}, Registry ID: {self.registry_id}, "

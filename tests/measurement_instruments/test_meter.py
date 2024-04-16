@@ -1,10 +1,10 @@
 from unittest import TestCase
-from measure_instruments import Meter
+from measure_instruments.meter import Meter
 from enumerations import MeasurementUnit
 from enumerations import MeterType
 from enumerations import MeterMeasureMode
 from enumerations import MeterAccumulationFrequency
-from measure_instruments import MeterMeasure
+from measure_instruments.meter import MeterMeasure
 
 
 class TestMeter(TestCase):
@@ -42,9 +42,9 @@ class TestMeter(TestCase):
         power_values = [2.5, 3.8, 9.7, 3.5]
         for power in power_values:
             self.meter.add_meter_measure(MeterMeasure(power))
-        self.assertEqual(len(self.meter.meter_measures), 4)
-        self.assertEqual(self.meter.meter_measures[0].value, 2.5)
-        self.assertIsNotNone(self.meter.meter_measures[0].UID)
+        self.assertEqual(len(self.meter.get_meter_measures()), 4)
+        self.assertEqual(self.meter.get_meter_measures()[0].value, 2.5)
+        self.assertIsNotNone(self.meter.get_meter_measures()[0].UID)
 
 
 

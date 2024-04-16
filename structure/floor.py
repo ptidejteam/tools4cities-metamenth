@@ -138,7 +138,7 @@ class Floor(AbstractSpace, ABC):
         Add one or multiple OpenSpaces to the floor.
         :param open_spaces: The open spaces to add to the floor.
         """
-        EntityInsert.insert_building_entity(self._open_spaces, open_spaces, BuildingEntity.OPEN_SPACE.value)
+        EntityInsert.insert_building_entity(self._open_spaces, open_spaces, BuildingEntity.FLOOR_SPACE.value)
         return self
 
     def add_rooms(self, rooms: List['Room']):
@@ -146,7 +146,7 @@ class Floor(AbstractSpace, ABC):
         Add one or multiple rooms to the floor.
         :param rooms: The open spaces to add to the floor.
         """
-        EntityInsert.insert_building_entity(self._rooms, rooms, BuildingEntity.ROOM.value)
+        EntityInsert.insert_building_entity(self._rooms, rooms, BuildingEntity.FLOOR_SPACE.value)
         return self
 
     def remove_open_space(self, open_space: OpenSpace):

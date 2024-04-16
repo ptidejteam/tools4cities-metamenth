@@ -126,7 +126,8 @@ class Zone:
         Adds floors or rooms to a zone
         :param spaces: the floors and/or rooms (Abstract spaces) to be added
         """
-        self._spaces.extend(spaces)
+        EntityInsert.insert_building_entity(self._spaces, spaces,
+                                            BuildingEntity.FLOOR_SPACE.value)
 
     def add_overlapping_zones(self, overlapping_zones: List['Zone']):
         """
