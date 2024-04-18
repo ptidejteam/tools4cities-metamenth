@@ -43,5 +43,13 @@ class RoomType(AbstractEnum):
     JANITOR_CLOSET = "JanitorCloset"
     PHOTO = "Photo"
     READING = "Reading"
+    COMPUTER_SERVICE = "ComputerServices"
+    COMMUNITY_SERVICE = "CommunityServices"
+    CONSULTATION = "Consultation"
+    SEMINAR = "Seminar"
+    SPECIALISED_CLASSROOM = "SpecialisedClassroom"
+    MAIL_ROOM = "MailRoom"
+    BOOKSTORE = "BookStore"
+    STUDY_ROOM = "StudyRoom"
     OTHER = "Other"
 
