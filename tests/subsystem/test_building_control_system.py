@@ -6,7 +6,7 @@ from subsystem.hvac_components.duct import Duct
 from enumerations import DuctType
 from enumerations import DuctSubType
 from subsystem.hvac_components.fan import Fan
-from enumerations import PowerState
+from measure_instruments.status_measure import StatusMeasure
 from subsystem.hvac_components.heat_exchanger import HeatExchanger
 from enumerations import HeatExchangerType
 from enumerations import HeatExchangerFlowType
@@ -48,6 +48,7 @@ from enumerations import CompressorType
 from datatypes.operational_schedule import OperationalSchedule
 from datetime import datetime
 from datetime import timedelta
+from enumerations import PowerState
 
 
 class TestBuildingControlSystem(BaseTest):
@@ -196,7 +197,7 @@ class TestBuildingControlSystem(BaseTest):
         duct, supply_air_duct, return_air_duct = self._init_ducts()
         vav_box = supply_air_duct.get_connected_air_volume_box()[0]
         self.assertEqual(vav_box.air_volume_type, AirVolumeType.VARIABLE_AIR_VOLUME)
-        self.assertEqual(vav_box.has_heater, False)
+        self.assertEqual(vav_box.has_heating_capability, False)
         self.assertIsInstance(vav_box.inlet_dampers[0], Damper)
         self.assertEqual(vav_box.inlet_dampers[0].damper_type, DamperType.MANUAL_VOLUME)
         self.assertEqual(self.room.get_hvac_components(), [vav_box])
@@ -343,6 +344,19 @@ class TestBuildingControlSystem(BaseTest):
         self.assertEqual(self.room.get_hvac_components({'name': radiant_slab.name})[0], radiant_slab)
         self.assertEqual(supp_duct_room_radiant_slab, radiant_slab)
 
+    def test_hvac_components_with_status_data(self):
+        principal_duct, supply_air_duct, return_air_duct = self._init_ducts()
+        principal_duct, chiller, boiler, heat_exchanger, _, _ = self._connect_components(principal_duct)
+        chiller.add_status_measure(StatusMeasure(PowerState.ON.value))
+        chiller.add_status_measure(StatusMeasure(PowerState.OFF.value))
+        boiler.add_status_measure(StatusMeasure(PowerState.OFF.value))
+        boiler.add_status_measure(StatusMeasure(PowerState.OFF.value))
+        heat_exchanger.add_status_measure(StatusMeasure(PowerState.OFF.value))
+        self.assertEqual(chiller.get_status_measure({'value': PowerState.ON.value})[0].value, PowerState.ON.value)
+        self.assertEqual(len(heat_exchanger.get_status_measure()), 1)
+        self.assertEqual(boiler.get_status_measure({'value': PowerState.ON.value}), [])
+        self.assertEqual(len(boiler.get_status_measure({'value': PowerState.OFF.value})), 2)
+
     def test_hvac_system_with_a_single_ventilation_system(self):
         principal_duct, supply_air_duct, return_air_duct = self._init_ducts()
         ventilation_system = VentilationSystem(VentilationType.AIR_HANDLING_UNIT, principal_duct)
@@ -388,4 +402,5 @@ class TestBuildingControlSystem(BaseTest):
         self.assertEqual(vent_sys.principal_duct.connections.get_destination_entities(), [supply_air_duct])
         self.assertEqual(vent_sys.principal_duct.connections.get_destination_entities()[0]
                          .connections.get_destination_entities(), [self.floor])
+
 

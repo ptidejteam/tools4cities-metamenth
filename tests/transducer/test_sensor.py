@@ -71,7 +71,6 @@ class TestSensor(TestCase):
                               SensorMeasureType.THERMO_COUPLE_TYPE_B, 10)
         self.assertEqual(smoke_sensor.data_frequency, 10)
         smoke_sensor.sensor_log_type = SensorLogType.CHANGE_OF_VALUE
-        print(smoke_sensor)
         self.assertEqual(smoke_sensor.sensor_log_type, SensorLogType.CHANGE_OF_VALUE)
 
         metadata = {'default_data_interval': 10, 'description': 'change of value based on peak threshold'}
