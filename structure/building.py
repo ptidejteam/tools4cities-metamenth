@@ -273,7 +273,7 @@ class Building(Observable):
         :param floors: the floors to add to this building
         :return:
         """
-        EntityInsert.insert_building_entity(self._floors, floors, BuildingEntity.FLOOR.value)
+        EntityInsert.insert_building_entity(self._floors, floors, BuildingEntity.FLOOR_SPACE.value)
         return self  # necessary for method chaining
 
     def remove_floor(self, floor: Floor):
