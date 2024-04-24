@@ -10,6 +10,7 @@ from utils import EntityRemover
 from utils import EntityInsert
 from datatypes.interfaces.abstract_dynamic_entity import AbstractDynamicEntity
 from enumerations import BuildingEntity
+from measure_instruments.status_measure import StatusMeasure
 
 
 class AbstractHVACComponent(AbstractDynamicEntity):
@@ -23,6 +24,7 @@ class AbstractHVACComponent(AbstractDynamicEntity):
         self._operational_schedule: List[OperationalSchedule] = []
         self._operating_conditions: List[ContinuousMeasure] = []
         self._spaces = []
+        self._status_measure: [StatusMeasure] = []
 
         self.name = name
 
@@ -135,6 +137,40 @@ class AbstractHVACComponent(AbstractDynamicEntity):
         :return:
         """
         return StructureEntitySearch.search(self._spaces, search_terms)
+
+    def add_status_measure(self, status: StatusMeasure):
+        """
+        Adds status of hvac component schedule to this building
+        :param status: the schedule
+        :return:
+        """
+        EntityInsert.insert_building_entity(self._status_measure, status)
+        return self
+
+    def remove_status_measure(self, status):
+        """
+        Removes a status measure from a hvac component
+        :param status: the status measure to remove
+        :return:
+        """
+        EntityRemover.remove_building_entity(self._status_measure, status)
+
+    def get_status_measure(self, search_terms: Dict = None) -> [StatusMeasure]:
+        """
+        Search data by attributes values
+        :param search_terms: a dictionary of attributes and their values
+        :return [StatusMeasure]:
+        """
+        return StructureEntitySearch.search(self._status_measure, search_terms)
+
+    def get_status_measure_by_date(self, from_timestamp: str, to_timestamp: str = None) -> [StatusMeasure]:
+        """
+        searches status data based on provided timestamp
+        :param from_timestamp: the start timestamp
+        :param to_timestamp: the end timestamp
+        :return: [StatusMeasure]
+        """
+        return StructureEntitySearch.date_range_search(self._status_measure, from_timestamp, to_timestamp)
 
     def __eq__(self, other):
         # subsystems are equal if they share the same name

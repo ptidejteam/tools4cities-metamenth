@@ -5,16 +5,18 @@ from subsystem.hvac_components.duct import Damper
 
 class AirVolumeBox(AbstractDuctConnectedComponent):
     def __init__(self, name: str, air_volume_type: AirVolumeType,
-                 has_heater: bool = False):
+                 has_heating_capability: bool = False, has_cooling_capability: bool = False):
         """
         Models an air volume box in a built environment
         :param name: the unique name of the air volume box
-        :param has_heater: indicates if the air volume box has heaters installed
+        :param has_heating_capability: indicates if the air volume box can heat air
+        :param has_cooling_capability: indicates if the air volume box can cool air
         """
         super().__init__(name)
         self._air_volume_type = None
         self._inlet_dampers: [Damper] = []
-        self._has_heater = has_heater
+        self._has_heating_capability = has_heating_capability
+        self._has_cooling_capability = has_cooling_capability
 
         self.air_volume_type = air_volume_type
 
@@ -29,12 +31,20 @@ class AirVolumeBox(AbstractDuctConnectedComponent):
         self._air_volume_type = value
 
     @property
-    def has_heater(self) -> bool:
-        return self._has_heater
+    def has_heating_capability(self) -> bool:
+        return self._has_heating_capability
 
-    @has_heater.setter
-    def has_heater(self, value: bool):
-       self._has_heater = value
+    @has_heating_capability.setter
+    def has_heating_capability(self, value: bool):
+       self._has_heating_capability = value
+
+    @property
+    def has_cooling_capability(self) -> bool:
+        return self._has_cooling_capability
+
+    @has_cooling_capability.setter
+    def has_cooling_capability(self, value: bool):
+        self._has_cooling_capability = value
 
     @property
     def inlet_dampers(self) -> [Damper]:
@@ -48,6 +58,7 @@ class AirVolumeBox(AbstractDuctConnectedComponent):
         return (
             f"AirVolumeBox ({super().__str__()}"
             f"Air Volume Type: {self.air_volume_type.value}, "
-            f"Inlet Dampers: {self.inlet_dampers}"
-            f"Has Heater: {self.has_heater})"
+            f"Inlet Dampers: {self.inlet_dampers}, "
+            f"Has Cooling Capability: {self._has_cooling_capability}, "
+            f"Has Heating Capability: {self.has_heating_capability})"
         )
