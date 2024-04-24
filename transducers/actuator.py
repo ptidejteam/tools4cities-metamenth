@@ -21,14 +21,12 @@ class Actuator(AbstractTransducer, ABC):
         :param set_point: the setpoint value of the actuator
         """
         super().__init__(name)
-        self._set_point = None
         self._trigger_output = trigger_output
         self._trigger_input = None
         self._actuation_interval = actuation_interval
 
         self.set_point = set_point
         self.trigger_input = trigger_input
-
 
     @property
     def trigger_output(self) -> object:
@@ -46,11 +44,7 @@ class Actuator(AbstractTransducer, ABC):
 
     @set_point.setter
     def set_point(self, value: AbstractMeasure):
-        if value is not None and self._trigger_input is not None:
-            if value.measurement_unit != self._trigger_input.unit:
-                raise ValueError('Input sensor measure: {} not matching set point measure: {}'
-                                 .format(value.measurement_unit, self._trigger_input.unit))
-        self._set_point = value
+        self.set_set_point(value, self._trigger_input)
 
     @property
     def actuation_interval(self) -> float:

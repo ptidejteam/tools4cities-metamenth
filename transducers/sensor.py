@@ -6,6 +6,7 @@ from enumerations import SensorMeasureType
 from misc import Validate
 from datatypes.interfaces.abstract_range_measure import AbstractRangeMeasure
 from enumerations import SensorLogType
+from datatypes.interfaces.abstract_measure import AbstractMeasure
 
 
 class Sensor(AbstractTransducer):
@@ -113,6 +114,14 @@ class Sensor(AbstractTransducer):
             self._sensor_log_type = value
         else:
             raise ValueError("measure must be of type SensorLogType")
+
+    @property
+    def set_point(self) -> AbstractMeasure:
+        return self._set_point
+
+    @set_point.setter
+    def set_point(self, value: AbstractMeasure):
+        self.set_set_point(value, self._unit)
 
     def __str__(self):
         sensor_data = "\n".join(str(data) for data in self._data)
