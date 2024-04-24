@@ -3,6 +3,7 @@ import uuid
 from abc import ABC
 from misc import Validate
 from enumerations import DataMeasurementType
+from typing import Union
 
 
 class AbstractDataMeasure(ABC):
@@ -14,9 +15,9 @@ class AbstractDataMeasure(ABC):
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, value: float, timestamp: str = None, measurement_type: DataMeasurementType = None):
+    def __init__(self, value: Union[float, str], timestamp: str = None, measurement_type: DataMeasurementType = None):
         """
-        :param value: The numerical value measured
+        :param value: The numerical/string value measured
         :param timestamp: the time of measurement
         :param measurement_type: the type of the measurment, e.g., electricity consumption
 
