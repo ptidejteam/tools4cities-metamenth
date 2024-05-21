@@ -3,16 +3,16 @@ from uuid import uuid4
 from datetime import datetime
 from enumerations import TriggerType
 from misc import Validate
+from measure_instruments.interfaces.abstract_data_measure import AbstractDataMeasure
 
 
-class TriggerHistory:
+class TriggerHistory(AbstractDataMeasure):
 
     def __init__(self, trigger_type: TriggerType, value: float = None, timestamp: str = None):
+        if value is None:
+            value = 0.0
+        super().__init__(value, timestamp)
         self.trigger_type = trigger_type
-        self.value = value
-        self.UID = field(default_factory=lambda: str(uuid4()))
-        self.timestamp: datetime = datetime.now().replace(microsecond=0) if timestamp is None \
-            else Validate.parse_date(timestamp)
 
     def __eq__(self, other):
         if isinstance(other, TriggerHistory):

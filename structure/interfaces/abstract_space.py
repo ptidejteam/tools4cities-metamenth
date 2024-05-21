@@ -1,14 +1,8 @@
 import uuid
 from datatypes.interfaces.abstract_measure import AbstractMeasure
 from misc import Validate
-from datatypes.operational_schedule import OperationalSchedule
-from typing import List
-from enumerations import BuildingEntity
-from utils import EntityRemover
-from utils import EntityInsert
-from utils import StructureEntitySearch
-from typing import Dict
 from datatypes.interfaces.abstract_zonal_entity import AbstractZonalEntity
+from datatypes.schedulable_entity import SchedulableEntity
 
 
 class AbstractSpace(AbstractZonalEntity):
@@ -25,7 +19,7 @@ class AbstractSpace(AbstractZonalEntity):
         self._UID = str(uuid.uuid4())
         self._area = None
         self._location = None
-        self._schedules: List[OperationalSchedule] = []
+        self._schedulable_entity = SchedulableEntity()
 
         # Apply validation
         self.area = area
@@ -54,55 +48,14 @@ class AbstractSpace(AbstractZonalEntity):
         self._location = Validate.validate_what3word(value)
 
     @property
-    def schedules(self):
-        raise AttributeError("Cannot get schedules")
+    def schedulable_entity(self) -> SchedulableEntity:
+        return self._schedulable_entity
 
-    @schedules.setter
-    def schedules(self, value: List[OperationalSchedule]):
-        if value is not None:
-            self._schedules = value
-        else:
-            raise ValueError('schedule must be of type [OperationalSchedule]')
-
-    def add_schedule(self, schedule: OperationalSchedule):
-        """
-        Adds a schedule to a space: floor, room or open space
-        :param schedule:
-        :return:
-        """
-        EntityInsert.insert_building_entity(self._schedules, schedule, BuildingEntity.SCHEDULE.value)
-
-    def remove_schedule(self, schedule):
-        """
-        Removes a schedule from a space
-        :param schedule: the schedule to remove
-        :return:
-        """
-        EntityRemover.remove_building_entity(self._schedules, schedule)
-
-    def get_schedule_by_name(self, name) -> OperationalSchedule:
-        """
-        Search schedules by name
-        :param name: the name of the schedule
-        :return:
-        """
-        return StructureEntitySearch.search_by_name(self._schedules, name)
-
-    def get_schedule_by_uid(self, uid) -> OperationalSchedule:
-        """
-        Search schedule by uid
-        :param uid: the unique identifier of the schedule
-        :return:
-        """
-        return StructureEntitySearch.search_by_id(self._schedules, uid)
-
-    def get_schedules(self, search_terms: Dict = None) -> [OperationalSchedule]:
-        """
-        Search schedules by attributes values
-        :param search_terms: a dictionary of attributes and their values
-        :return:
-        """
-        return StructureEntitySearch.search(self._schedules, search_terms)
+    @schedulable_entity.setter
+    def schedulable_entity(self, value: SchedulableEntity):
+        if value is None:
+            raise ValueError("schedules should be of type SchedulableEntity")
+        self._schedulable_entity = value
 
     def __str__(self):
         return (
@@ -110,5 +63,5 @@ class AbstractSpace(AbstractZonalEntity):
             f"Area: {self.area}, "
             f"Location: {self.location}, "
             f"Zones: {self._zones}, "
-            f"Operational Schedule: {self._schedules}, "
+            f"Operational Schedule: {self._schedulable_entity}, "
         )

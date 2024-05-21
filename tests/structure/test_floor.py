@@ -65,24 +65,24 @@ class TestFloor(BaseTest):
     def test_add_floor_recurring_operational_schedule(self):
         schedule = OperationalSchedule("WEEKDAYS", datetime.now(), datetime.now() + timedelta(days=5))
         floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, open_spaces=[self.hall])
-        floor.add_schedule(schedule)
-        self.assertEqual(floor.get_schedules(), [schedule])
-        self.assertEqual(floor.get_schedule_by_name(schedule.name).recurring, True)
+        floor.schedulable_entity.add_schedule(schedule)
+        self.assertEqual(floor.schedulable_entity.get_schedules(), [schedule])
+        self.assertEqual(floor.schedulable_entity.get_schedule_by_name(schedule.name).recurring, True)
 
     def test_add_floor_non_recurring_operational_schedule(self):
         schedule = OperationalSchedule("WEEKENDS", datetime.now(), datetime.now() + timedelta(days=2), recurring=False)
         floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, open_spaces=[self.hall])
-        floor.add_schedule(schedule)
-        self.assertEqual(floor.get_schedules(), [schedule])
-        self.assertEqual(floor.get_schedule_by_name(schedule.name).recurring, False)
+        floor.schedulable_entity.add_schedule(schedule)
+        self.assertEqual(floor.schedulable_entity.get_schedules(), [schedule])
+        self.assertEqual(floor.schedulable_entity.get_schedule_by_name(schedule.name).recurring, False)
 
     def test_add_existing_schedule_to_floor(self):
         schedule = OperationalSchedule("WEEKENDS", datetime.now(), datetime.now() + timedelta(days=2), recurring=False)
         floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, open_spaces=[self.hall])
-        floor.add_schedule(schedule)
-        floor.add_schedule(schedule)
-        self.assertEqual(floor.get_schedules(), [schedule])
-        self.assertEqual(len(floor.get_schedules()), 1)
+        floor.schedulable_entity.add_schedule(schedule)
+        floor.schedulable_entity.add_schedule(schedule)
+        self.assertEqual(floor.schedulable_entity.get_schedules(), [schedule])
+        self.assertEqual(len(floor.schedulable_entity.get_schedules()), 1)
 
     def test_get_room_by_uid(self):
         floor = Floor(area=self.area, number=1, floor_type=FloorType.REGULAR, rooms=[self.room])

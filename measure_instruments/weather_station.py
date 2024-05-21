@@ -52,7 +52,7 @@ class WeatherStation:
         """
         Search weather data by attributes values
         :param search_terms: a dictionary of attributes and their values
-        :return [MeterMeasure]:
+        :return [WeatherData]:
         """
         return StructureEntitySearch.search(self._weather_data, search_terms)
 
@@ -61,7 +61,7 @@ class WeatherStation:
         searches weather data based on provided timestamp
         :param from_timestamp: the start timestamp
         :param to_timestamp: the end timestamp
-        :return: [MeterMeasure]
+        :return: [WeatherData]
         """
         return StructureEntitySearch.date_range_search(self._weather_data, from_timestamp, to_timestamp)
 

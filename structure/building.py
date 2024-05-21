@@ -1,7 +1,6 @@
 from uuid import uuid4
 from enumerations import BuildingType
 from datatypes.address import Address
-from datatypes.operational_schedule import OperationalSchedule
 from typing import List
 from .floor import Floor
 from .room import Room
@@ -24,6 +23,7 @@ from misc import StateTrackDecorator
 from utils import StructureEntitySearch
 from enumerations import MeterType
 from subsystem.building_control_system import BuildingControlSystem
+from datatypes.schedulable_entity import SchedulableEntity
 
 
 class Building(Observable):
@@ -52,7 +52,7 @@ class Building(Observable):
         self._internal_mass = None
         self._address = None
         self._building_type = None
-        self._schedules: List[OperationalSchedule] = []
+        self._schedulable_entity = SchedulableEntity()
         self._envelope: Envelope = Optional[None]
         self._floors = []
         self._meters: [Meter] = []
@@ -212,6 +212,16 @@ class Building(Observable):
         if control_system:
             self._control_systems.append(control_system)
 
+    @property
+    def schedulable_entity(self) -> SchedulableEntity:
+        return self._schedulable_entity
+
+    @schedulable_entity.setter
+    def schedulable_entity(self, value: SchedulableEntity):
+        if value is None:
+            raise ValueError("schedules should be of type SchedulableEntity")
+        self._schedulable_entity = value
+
     @StateTrackDecorator
     def add_weather_station(self, weather_station: WeatherStation):
         """
@@ -247,25 +257,6 @@ class Building(Observable):
         :return:
         """
         EntityRemover.remove_building_entity(self._meters, meter)
-
-    @StateTrackDecorator
-    def add_schedule(self, schedule: OperationalSchedule):
-        """
-        Adds an operational schedule to this building
-        :param schedule: the schedule
-        :return:
-        """
-        EntityInsert.insert_building_entity(self._schedules, schedule)
-        return self
-
-    @StateTrackDecorator
-    def remove_schedule(self, schedule: OperationalSchedule):
-        """
-        Removes an operational schedule from this building
-        :param schedule: the schedule
-        :return:
-        """
-        EntityRemover.remove_building_entity(self._schedules, schedule)
 
     def add_floors(self, floors: List[Floor]):
         """
@@ -380,30 +371,6 @@ class Building(Observable):
         """
         return StructureEntitySearch.search(self._zones, search_terms)
 
-    def get_schedule_by_name(self, name) -> OperationalSchedule:
-        """
-        Search schedules by name
-        :param name: the name of the schedule
-        :return:
-        """
-        return StructureEntitySearch.search_by_name(self._schedules, name)
-
-    def get_schedule_by_uid(self, uid) -> OperationalSchedule:
-        """
-        Search schedule by uid
-        :param uid: the unique identifier of the schedule
-        :return:
-        """
-        return StructureEntitySearch.search_by_id(self._schedules, uid)
-
-    def get_schedules(self, search_terms: Dict = None) -> [OperationalSchedule]:
-        """
-        Search schedules by attributes values
-        :param search_terms: a dictionary of attributes and their values
-        :return:
-        """
-        return StructureEntitySearch.search(self._schedules, search_terms)
-
     @StateTrackDecorator
     def add_room(self, floor_uid: str, name: str, area: AbstractMeasure,
                  room_type: RoomType,
@@ -442,7 +409,7 @@ class Building(Observable):
     def __str__(self):
         floors_info = "\n".join([f"  - Floor {floor.number}: {floor}" for floor in self._floors])
         weather_stations_info = "\n".join([f"  - {station}" for station in self._weather_stations])
-        schedules_info = "\n".join([f"  - {schedule}" for schedule in self._schedules])
+        schedules_info = "\n".join([f"  - {schedule}" for schedule in self._schedulable_entity])
         meter_info = "\n".join([f"  - {meter}" for meter in self._meters])
 
         return (f"Building("
@@ -455,7 +422,7 @@ class Building(Observable):
                 f"Building Type: {self.building_type}, "
                 f"Floor Count: {len(self._floors)}, "
                 f"Weather Stations Count: {len(self._weather_stations)}, "
-                f"Schedules Count: {len(self._schedules)}, "
+                f"Schedules Count: {len(self._schedulable_entity)}, "
                 f"Floors:\n{floors_info}, "
                 f"Weather Stations:\n{weather_stations_info}, "
                 f"Schedules:\n{schedules_info}, "

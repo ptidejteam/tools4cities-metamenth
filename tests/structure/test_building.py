@@ -193,38 +193,39 @@ class TestBuilding(BaseTest):
         first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
         building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
                             BuildingType.RESIDENTIAL, [first_floor])
-        self.assertEqual(building.get_schedules(), [])
+        self.assertEqual(building.schedulable_entity.get_schedules(), [])
 
     def test_add_operational_schedule_to_building(self):
         first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
         building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
                             BuildingType.RESIDENTIAL, [first_floor])
         schedule = OperationalSchedule("WEEKDAYS", datetime.now(), datetime.now() + timedelta(days=5))
-        building.add_schedule(schedule)
-        self.assertEqual(building.get_schedules(), [schedule])
-        self.assertEqual(building.get_schedule_by_uid(schedule.UID).name, "WEEKDAYS")
-        self.assertEqual(building.get_schedule_by_name(schedule.name).recurring, True)
+        building.schedulable_entity.add_schedule(schedule)
+        self.assertEqual(building.schedulable_entity.get_schedules(), [schedule])
+        self.assertEqual(building.schedulable_entity.get_schedule_by_uid(schedule.UID).name, "WEEKDAYS")
+        self.assertEqual(building.schedulable_entity.get_schedule_by_name(schedule.name).recurring, True)
 
     def test_add_building_floor_with_different_schedule(self):
         schedule = OperationalSchedule("WEEKDAYS", datetime.now(), datetime.now() + timedelta(days=5))
         floor_schedule = OperationalSchedule("WEEKEND", datetime.now(), datetime.now() + timedelta(days=2))
-        self.building.add_schedule(schedule)
-        self.building.get_floor_by_number(1).add_schedule(floor_schedule)
-        self.assertEqual(self.building.get_schedules(), [schedule])
-        self.assertEqual(self.building.get_floor_by_number(1).get_schedules(), [floor_schedule])
-        self.assertNotEqual(self.building.get_schedules(), self.building.get_floor_by_number(1).get_schedules())
+        self.building.schedulable_entity.add_schedule(schedule)
+        self.building.get_floor_by_number(1).schedulable_entity.add_schedule(floor_schedule)
+        self.assertEqual(self.building.schedulable_entity.get_schedules(), [schedule])
+        self.assertEqual(self.building.get_floor_by_number(1).schedulable_entity.get_schedules(), [floor_schedule])
+        self.assertNotEqual(self.building.schedulable_entity.get_schedules(),
+                            self.building.get_floor_by_number(1).schedulable_entity.get_schedules())
 
     def test_remove_operational_schedule_to_building(self):
         first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])
         building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
                             BuildingType.RESIDENTIAL, [first_floor])
         schedule = OperationalSchedule("WEEKDAYS", datetime.now(), datetime.now() + timedelta(days=5))
-        building.add_schedule(schedule)
-        self.assertEqual(building.get_schedules(), [schedule])
+        building.schedulable_entity.add_schedule(schedule)
+        self.assertEqual(building.schedulable_entity.get_schedules(), [schedule])
 
-        building.remove_schedule(schedule)
-        self.assertEqual(building.get_schedules(), [])
-        self.assertEqual(len(building.get_schedules()), 0)
+        building.schedulable_entity.remove_schedule(schedule)
+        self.assertEqual(building.schedulable_entity.get_schedules(), [])
+        self.assertEqual(len(building.schedulable_entity.get_schedules()), 0)
 
     def test_add_zone_to_building_and_floor(self):
         first_floor = Floor(self.floor_area, 1, FloorType.REGULAR, rooms=[self.room])

@@ -43,9 +43,9 @@ class AbstractTransducer(ABC):
 
     def set_set_point(self, value: AbstractMeasure, measure: MeasurementUnit):
         if value is not None and measure is not None:
-            if value.measurement_unit != measure.unit:
+            if value.measurement_unit.value != measure.value:
                 raise ValueError('(Input) sensor measure: {} not matching set point measure: {}'
-                                 .format(value.measurement_unit, measure.unit))
+                                 .format(value.measurement_unit.value, measure.value))
         self._set_point = value
 
     def add_data(self, data: Union[List[TriggerHistory], List[SensorData]]):

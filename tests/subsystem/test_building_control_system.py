@@ -144,9 +144,9 @@ class TestBuildingControlSystem(BaseTest):
         heat_pump.add_spaces([self.room, self.floor, self.hall])
 
         schedule = OperationalSchedule("WEEKDAYS", datetime.now(), datetime.now() + timedelta(days=5))
-        heat_pump.add_schedule(schedule)
+        heat_pump.schedulable_entity.add_schedule(schedule)
 
-        self.assertEqual(heat_pump.get_schedules(), [schedule])
+        self.assertEqual(heat_pump.schedulable_entity.get_schedules(), [schedule])
         self.assertEqual(heat_pump.heat_exchangers, [heat_exchanger])
         self.assertEqual(heat_pump.get_spaces({'name': self.hall.name}), [self.hall])
         self.assertEqual(heat_pump.condenser, condenser)

@@ -1,6 +1,5 @@
 from uuid import uuid4
 from datatypes.rated_device_measure import RatedDeviceMeasure
-from datatypes.operational_schedule import OperationalSchedule
 from typing import List
 from typing import Dict
 from datatypes.continuous_measure import ContinuousMeasure
@@ -11,6 +10,7 @@ from utils import EntityInsert
 from datatypes.interfaces.abstract_dynamic_entity import AbstractDynamicEntity
 from enumerations import BuildingEntity
 from measure_instruments.status_measure import StatusMeasure
+from datatypes.schedulable_entity import SchedulableEntity
 
 
 class AbstractHVACComponent(AbstractDynamicEntity):
@@ -21,7 +21,7 @@ class AbstractHVACComponent(AbstractDynamicEntity):
         self._name = None
         self._meter = meter
         self._rated_device_measure = rated_device_measure
-        self._operational_schedule: List[OperationalSchedule] = []
+        self._schedulable_entity = SchedulableEntity()
         self._operating_conditions: List[ContinuousMeasure] = []
         self._spaces = []
         self._status_measure: [StatusMeasure] = []
@@ -69,49 +69,14 @@ class AbstractHVACComponent(AbstractDynamicEntity):
             self._operating_conditions.extend(value)
 
     @property
-    def operational_schedule(self):
-        raise AttributeError("Cannot get operational schedules")
+    def schedulable_entity(self) -> SchedulableEntity:
+        return self._schedulable_entity
 
-    def get_schedule_by_name(self, name) -> OperationalSchedule:
-        """
-        Search schedules by name
-        :param name: the name of the schedule
-        :return:
-        """
-        return StructureEntitySearch.search_by_name(self._operational_schedule, name)
-
-    def get_schedule_by_uid(self, uid) -> OperationalSchedule:
-        """
-        Search schedule by uid
-        :param uid: the unique identifier of the schedule
-        :return:
-        """
-        return StructureEntitySearch.search_by_id(self._operational_schedule, uid)
-
-    def get_schedules(self, search_terms: Dict = None) -> [OperationalSchedule]:
-        """
-        Search schedules by attributes values
-        :param search_terms: a dictionary of attributes and their values
-        :return:
-        """
-        return StructureEntitySearch.search(self._operational_schedule, search_terms)
-
-    def add_schedule(self, schedule: OperationalSchedule):
-        """
-        Adds an operational schedule to this building
-        :param schedule: the schedule
-        :return:
-        """
-        EntityInsert.insert_building_entity(self._operational_schedule, schedule)
-        return self
-
-    def remove_schedule(self, schedule: OperationalSchedule):
-        """
-        Removes an operational schedule from this building
-        :param schedule: the schedule
-        :return:
-        """
-        EntityRemover.remove_building_entity(self._operational_schedule, schedule)
+    @schedulable_entity.setter
+    def schedulable_entity(self, value: SchedulableEntity):
+        if value is None:
+            raise ValueError("schedules should be of type SchedulableEntity")
+        self._schedulable_entity = value
 
     def add_spaces(self, space: []):
         """
@@ -185,6 +150,6 @@ class AbstractHVACComponent(AbstractDynamicEntity):
             f"Name: {self.name}, "
             f"Meter: {self.meter}, "
             f"Rated Device Measure: {self.rated_device_measure}, "
-            f"Operational Schedule: {self._operational_schedule}, "
+            f"Operational Schedule: {self._schedulable_entity}, "
             f"Operating Conditions: {self.operating_conditions}, "
         )
