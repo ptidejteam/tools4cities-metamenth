@@ -3,6 +3,7 @@ from datatypes.interfaces.abstract_measure import AbstractMeasure
 from misc import Validate
 from datatypes.interfaces.abstract_zonal_entity import AbstractZonalEntity
 from datatypes.schedulable_entity import SchedulableEntity
+from structure.envelope import Envelope
 
 
 class AbstractSpace(AbstractZonalEntity):
@@ -20,6 +21,7 @@ class AbstractSpace(AbstractZonalEntity):
         self._area = None
         self._location = None
         self._schedulable_entity = SchedulableEntity()
+        self._envelope = None
 
         # Apply validation
         self.area = area
@@ -57,11 +59,20 @@ class AbstractSpace(AbstractZonalEntity):
             raise ValueError("schedules should be of type SchedulableEntity")
         self._schedulable_entity = value
 
+    @property
+    def envelope(self) -> Envelope:
+        return self._envelope
+
+    @envelope.setter
+    def envelope(self, value: Envelope):
+        self._envelope = value
+
     def __str__(self):
         return (
             f"UID: {self.UID}, "
             f"Area: {self.area}, "
             f"Location: {self.location}, "
             f"Zones: {self._zones}, "
+            f"Envelope: {self._envelope}, "
             f"Operational Schedule: {self._schedulable_entity}, "
         )

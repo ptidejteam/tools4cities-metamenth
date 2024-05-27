@@ -1,6 +1,7 @@
 from enumerations import MeasurementUnit
 import uuid
 from datatypes.schedulable_entity import SchedulableEntity
+from datatypes.binary_measure import BinaryMeasure
 
 
 class AbstractEnergySystem:
@@ -13,7 +14,7 @@ class AbstractEnergySystem:
         self._manufacturer = None
         self._manufacturing_year = None
         self._schedulable_entity = SchedulableEntity()
-
+        self._capacity = None
         self.name = name
         self.inverter = inverter
         self.unit = unit
@@ -92,6 +93,14 @@ class AbstractEnergySystem:
             raise ValueError("schedules should be of type SchedulableEntity")
         self._schedulable_entity = value
 
+    @property
+    def capacity(self) -> BinaryMeasure:
+        return self._capacity
+
+    @capacity.setter
+    def capacity(self, value: BinaryMeasure):
+        self._capacity = value
+
     def __eq__(self, other):
         if isinstance(other, AbstractEnergySystem):
             return self.name == other.name
@@ -104,6 +113,7 @@ class AbstractEnergySystem:
             f"Inverter: {self.inverter}, "
             f"Unit: {self.unit}, "
             f"Model: {self.model}, "
+            f"Capacity: {self.capacity}, "
             f"Manufacturer: {self.manufacturer}, "
             f"Manufacturing Year: {self.manufacturing_year}, "
             f"Operational Schedule: {self._schedulable_entity}, "

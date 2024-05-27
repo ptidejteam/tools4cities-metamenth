@@ -38,3 +38,6 @@ from .heat_source import HeatSource
 from .chiller_type import ChillerType
 from .circulation_pump_type import CirculationPumpType
 from .air_volume_type import AirVolumeType
+from .cell_type import CellType
+from .solar_pv_type import SolarPVType
+from .wind_turbine_type import WindTurbineType

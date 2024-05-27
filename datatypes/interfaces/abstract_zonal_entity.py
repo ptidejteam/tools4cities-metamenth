@@ -1,5 +1,4 @@
 from abc import ABC
-from uuid import uuid4
 from utils import EntityInsert
 from utils import EntityRemover
 from utils import StructureEntitySearch
@@ -12,12 +11,7 @@ class AbstractZonalEntity(ABC):
     def __init__(self):
         """
         """
-        self._UID = str(uuid4())
         self._zones = []
-
-    @property
-    def UID(self) -> str:
-        return self._UID
 
     @property
     def zones(self):
