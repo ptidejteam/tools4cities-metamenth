@@ -38,5 +38,5 @@ class WindMill(RenewableEnergySystem):
             f"WindMill("
             f"{super().__str__()}, "
             f"Number of Turbines: {self.number_of_turbines}, "
-            f"Turbine Type: {self.turbine_type})"
+            f"Turbine Type: {self.turbine_type.value})"
         )

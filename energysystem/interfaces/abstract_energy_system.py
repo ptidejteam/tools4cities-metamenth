@@ -15,6 +15,7 @@ class AbstractEnergySystem:
         self._manufacturing_year = None
         self._schedulable_entity = SchedulableEntity()
         self._capacity = None
+        
         self.name = name
         self.inverter = inverter
         self.unit = unit

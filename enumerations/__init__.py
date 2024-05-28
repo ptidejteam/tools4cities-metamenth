@@ -41,3 +41,8 @@ from .air_volume_type import AirVolumeType
 from .cell_type import CellType
 from .solar_pv_type import SolarPVType
 from .wind_turbine_type import WindTurbineType
+from .engine_type import EngineType
+from .engine_sub_type import EngineSubType
+from .engine_mode import EngineMode
+from .energy_source import EnergySource
+from .capacitor_tech import CapacitorTech

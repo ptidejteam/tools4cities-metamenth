@@ -57,8 +57,8 @@ class SolarPV(RenewableEnergySystem):
         return (
             f"SolarPV("
             f"{super().__str__()}, "
-            f"Solar PV Type: {self.solar_pv_type}, "
-            f"Cell Type: {self.cell_type}, "
+            f"Solar PV Type: {self.solar_pv_type.value}, "
+            f"Cell Type: {self.cell_type.value}, "
             f"Thermal Capacity: {self.thermal_capacity}, "
             f"Module Area: {self.module_area})"
         )
