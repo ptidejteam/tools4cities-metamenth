@@ -46,3 +46,5 @@ from .engine_sub_type import EngineSubType
 from .engine_mode import EngineMode
 from .energy_source import EnergySource
 from .capacitor_tech import CapacitorTech
+from .battery_tech import BatteryTech
+from .v2g_mode import V2GMode

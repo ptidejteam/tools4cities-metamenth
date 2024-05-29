@@ -5,15 +5,21 @@ from enumerations import EnergySource
 from utils import EntityInsert
 from utils import StructureEntitySearch
 from enumerations import BuildingEntity
+from enumerations import BatteryTech
+from enumerations import CapacitorTech
+from typing import Union
 
 
 class ImmobileStorageEnergySystem(AbstractEnergySystem):
-    def __init__(self, name: str, inverter: bool, unit: MeasurementUnit, energy_source: EnergySource):
+    def __init__(self, name: str, inverter: bool, unit: MeasurementUnit, energy_source: EnergySource,
+                 tech: Union[BatteryTech, CapacitorTech]):
         super().__init__(name, inverter, unit)
         self._energy_source = None
+        self._technology = None
         self._renewable_sources: [RenewableEnergySystem] = []
 
         self.energy_source = energy_source
+        self.technology = tech
 
     @property
     def energy_source(self) -> EnergySource:
@@ -24,6 +30,16 @@ class ImmobileStorageEnergySystem(AbstractEnergySystem):
         if value is None:
             raise ValueError("energy_source should be of type EnergySource")
         self._energy_source = value
+
+    @property
+    def technology(self) -> Union[BatteryTech, CapacitorTech]:
+        return self._technology
+
+    @technology.setter
+    def technology(self, value: Union[BatteryTech, CapacitorTech]):
+        if value is None:
+            raise ValueError("technology should be of type CapacitorTech or BatteryTech")
+        self._technology = value
 
     def add_renewable_energy_source(self, renewable_energy_source: RenewableEnergySystem):
         """
@@ -43,8 +59,8 @@ class ImmobileStorageEnergySystem(AbstractEnergySystem):
 
     def __str__(self):
         return (
-            f"ImmobileStorageEnergySystem("
             f"{super().__str__()}, "
             f"Energy Source: {self.energy_source.value}, "
-            f"Renewal Sources Mode: {self._renewable_sources})"
+            f"Technology: {self.technology.value}, "
+            f"Renewal Sources: {self._renewable_sources}"
         )
