@@ -14,6 +14,9 @@ from subsystem.appliance import Appliance
 from enumerations import SensorLogType
 from enumerations import ApplianceType
 from enumerations import ApplianceCategory
+from subsystem.hvac_components.damper import Damper
+from enumerations import DamperType
+from transducers.actuator import Actuator
 
 
 class TestRoom(BaseTest):
@@ -89,6 +92,23 @@ class TestRoom(BaseTest):
         self.assertEqual(self.room.get_transducer_by_name(temp_sensor.name).measure, SensorMeasure.TEMPERATURE)
         self.assertEqual(self.room.get_transducer_by_name(co2_sensor.name).data_frequency, co2_sensor.data_frequency)
 
+    def test_classroom_with_pressure_sensors(self):
+        pr_sensor = Sensor("PR Sensor", SensorMeasure.PRESSURE,
+                           MeasurementUnit.PASCAL, SensorMeasureType.PT_100, 5)
+        try:
+            self.room.add_transducer(pr_sensor)
+        except ValueError as err:
+            self.assertIn("Space sensors must be one of the following", err.__str__())
+
+    def test_classroom_with_actuator(self):
+        damper = Damper("PR.VNT.DP.01", DamperType.BACK_DRAFT, 35)
+        actuator = Actuator("DAMPER.ACT", damper)
+
+        try:
+            self.room.add_transducer(actuator)
+        except ValueError as err:
+            self.assertEqual("Actuators cannot be added to rooms directly", err.__str__())
+
     def test_add_existing_sensor_with_the_same_name(self):
         co2_sensor = Sensor("Co2_Sensor", SensorMeasure.CARBON_DIOXIDE,
                             MeasurementUnit.PARTS_PER_MILLION, SensorMeasureType.PT_100, 5)
@@ -152,5 +172,3 @@ class TestRoom(BaseTest):
 
         self.assertEqual(len(self.room.get_appliances()), 1)
         self.assertEqual(self.room.get_appliances(), [thermostat])
-
-

@@ -11,7 +11,11 @@ from enumerations import BuildingEntity
 from subsystem.appliance import Appliance
 from subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
 from subsystem.interfaces.abstract_ventilation_component import AbstractVentilationComponent
+from transducers.interfaces.abstract_transducer import AbstractTransducer
+from transducers.sensor import Sensor
+from transducers.actuator import Actuator
 from typing import Union
+from enumerations import SensorMeasure
 
 
 class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
@@ -62,6 +66,22 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
                 raise ValueError("what3words location of meter should be the same as space")
         self._meter = value
 
+    def add_transducer(self, new_transducer: AbstractTransducer):
+        """
+        Adds sensors and/or actuators to entities (rooms, open spaces, equipment, etc.)
+        :param new_transducer: a transducers to be added to this space
+        :return:
+        """
+        if isinstance(new_transducer, Sensor):
+            allowed_room_sensors = [SensorMeasure.OCCUPANCY, SensorMeasure.CARBON_DIOXIDE, SensorMeasure.DAYLIGHT,
+                                    SensorMeasure.TEMPERATURE]
+            if new_transducer.measure in allowed_room_sensors:
+                super().add_transducer(new_transducer)
+            else:
+                raise ValueError(f'Space sensors must be one of the following: {allowed_room_sensors}')
+        elif isinstance(new_transducer, Actuator):
+            raise ValueError(f'Actuators cannot be added to rooms directly')
+
     def add_adjacent_space(self, space: 'AbstractFloorSpace'):
         """
         specifies (adds) which spaces (room and open spaces) are adjacent to other spaces
@@ -111,7 +131,7 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
         EntityRemover.remove_building_entity(self._hvac_components, hvac_component)
 
     def get_hvac_components(self, search_terms: Dict = None) -> Union[List[AbstractHVACComponent],
-                                                                      List[AbstractVentilationComponent]]:
+    List[AbstractVentilationComponent]]:
         """
         Search appliances by attributes values
         :param search_terms: a dictionary of attributes and their values
