@@ -11,7 +11,7 @@ class WeatherData:
 
         """
         self._UID = str(uuid4())  # Generating a unique identifier
-        self._timestamp = datetime.now() if timestamp is None else Validate.parse_date(timestamp)
+        self._timestamp = datetime.now().replace(microsecond=0) if timestamp is None else Validate.parse_date(timestamp)
         self._data = None
 
         self.data = data
