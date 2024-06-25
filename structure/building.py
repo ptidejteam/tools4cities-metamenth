@@ -409,7 +409,7 @@ class Building(Observable):
     def __str__(self):
         floors_info = "\n".join([f"  - Floor {floor.number}: {floor}" for floor in self._floors])
         weather_stations_info = "\n".join([f"  - {station}" for station in self._weather_stations])
-        schedules_info = "\n".join([f"  - {schedule}" for schedule in self._schedulable_entity])
+        schedules_info = "\n".join([f"  - {schedule}" for schedule in self._schedulable_entity.get_schedules()])
         meter_info = "\n".join([f"  - {meter}" for meter in self._meters])
 
         return (f"Building("

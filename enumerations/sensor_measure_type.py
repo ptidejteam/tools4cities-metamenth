@@ -17,3 +17,4 @@ class SensorMeasureType(Enum):
     PT_100 = "PT100"
     PIEZO_RESISTIVE_PRESSURE = "PiezoResistivePressure"
     ANALOGUE_PRESSURE = "AnaloguePressure"
+    PASSIVE_INFRARED = "PassiveInfrared"

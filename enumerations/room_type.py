@@ -21,6 +21,7 @@ class RoomType(AbstractEnum):
     COMPUTER_LAB = "ComputerLab"
     LAUNDRY = "Laundry"
     GARAGE = "Garage"
+    INDOOR_PARKING = "IndoorParking"
     DATA_CENTER = "DataCenter"
     MECHANICAL = "Mechanical"
     CLASSROOM = "Classroom"

@@ -48,3 +48,7 @@ from .energy_source import EnergySource
 from .capacitor_tech import CapacitorTech
 from .battery_tech import BatteryTech
 from .v2g_mode import V2GMode
+from .ats_transition_type import ATSTransitionType
+from .ats_power_source_type import ATSPowerSourceType
+from .ats_operation_mode import ATSOperationMode
+from .ats_switching_mechanism import ATSSwitchingMechanism

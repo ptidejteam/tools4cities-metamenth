@@ -4,7 +4,7 @@ from structure.interfaces.abstract_floor_space import AbstractFloorSpace
 from enumerations import RoomType
 
 
-class Room(AbstractFloorSpace, ABC):
+class Room(AbstractFloorSpace):
     """
     Defines rooms on a floor of a building
 

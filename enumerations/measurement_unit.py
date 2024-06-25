@@ -24,6 +24,7 @@ class MeasurementUnit(AbstractEnum):
     CUBIC_METERS_PER_HOUR = "m3/h"
     CUBIC_FEET_PER_MINUTE = "ft3/min"
     MILLI_AMPERE = "mA"
+    MICRO_AMPERE = "uA"
     AMPERE = "A"
     VOLT = "V"
     WATTS = "W"

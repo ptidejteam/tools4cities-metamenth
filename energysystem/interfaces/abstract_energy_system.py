@@ -2,37 +2,20 @@ from enumerations import MeasurementUnit
 import uuid
 from datatypes.schedulable_entity import SchedulableEntity
 from datatypes.binary_measure import BinaryMeasure
+from abc import ABC
+from energysystem.interfaces.abstract_common_energy_system import AbstractCommonEnergySystem
 
 
-class AbstractEnergySystem:
+class AbstractEnergySystem(AbstractCommonEnergySystem):
     def __init__(self, name: str, inverter: bool, unit: MeasurementUnit):
-        self._UID = str(uuid.uuid4())
-        self._name = None
+        super().__init__(name)
         self._inverter = None
         self._unit = None
-        self._model = None
-        self._manufacturer = None
         self._manufacturing_year = None
-        self._schedulable_entity = SchedulableEntity()
         self._capacity = None
-        
-        self.name = name
+
         self.inverter = inverter
         self.unit = unit
-
-    @property
-    def UID(self) -> str:
-        return self._UID
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @name.setter
-    def name(self, value: str):
-        if value is None:
-            raise ValueError("name should be of type str")
-        self._name = value
 
     @property
     def inverter(self) -> bool:
@@ -55,26 +38,6 @@ class AbstractEnergySystem:
         self._unit = value
 
     @property
-    def model(self) -> str:
-        return self._model
-
-    @model.setter
-    def model(self, value: str):
-        if value is None:
-            raise ValueError("model should be of type str")
-        self._model = value
-
-    @property
-    def manufacturer(self) -> str:
-        return self._manufacturer
-
-    @manufacturer.setter
-    def manufacturer(self, value: str):
-        if value is None:
-            raise ValueError("manufacturer should be of type str")
-        self._manufacturer = value
-
-    @property
     def manufacturing_year(self) -> int:
         return self._manufacturing_year
 
@@ -85,16 +48,6 @@ class AbstractEnergySystem:
         self._manufacturing_year = value
 
     @property
-    def schedulable_entity(self) -> SchedulableEntity:
-        return self._schedulable_entity
-
-    @schedulable_entity.setter
-    def schedulable_entity(self, value: SchedulableEntity):
-        if value is None:
-            raise ValueError("schedules should be of type SchedulableEntity")
-        self._schedulable_entity = value
-
-    @property
     def capacity(self) -> BinaryMeasure:
         return self._capacity
 
@@ -102,20 +55,11 @@ class AbstractEnergySystem:
     def capacity(self, value: BinaryMeasure):
         self._capacity = value
 
-    def __eq__(self, other):
-        if isinstance(other, AbstractEnergySystem):
-            return self.name == other.name
-        return False
-
     def __str__(self):
         return (
-            f"UID: {self.UID}, "
-            f"Name: {self.name}, "
+            f"{super().__str__()}"
             f"Inverter: {self.inverter}, "
             f"Unit: {self.unit}, "
-            f"Model: {self.model}, "
             f"Capacity: {self.capacity}, "
-            f"Manufacturer: {self.manufacturer}, "
             f"Manufacturing Year: {self.manufacturing_year}, "
-            f"Operational Schedule: {self._schedulable_entity}, "
         )
