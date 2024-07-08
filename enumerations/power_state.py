@@ -15,5 +15,6 @@ class PowerState(AbstractEnum):
     INTERMITTENT = "Intermittent"
     BOOST = "Boost"
     NIGHT_MODE = "NightMode"
+    NONE = "None"
     OTHER = "Other"
 

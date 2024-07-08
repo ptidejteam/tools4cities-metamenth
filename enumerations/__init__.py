@@ -52,3 +52,5 @@ from .ats_transition_type import ATSTransitionType
 from .ats_power_source_type import ATSPowerSourceType
 from .ats_operation_mode import ATSOperationMode
 from .ats_switching_mechanism import ATSSwitchingMechanism
+from .ups_phase import UPSPhase
+from .operation_type import OperationType

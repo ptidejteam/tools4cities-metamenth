@@ -1,15 +1,14 @@
-import uuid
 from enumerations import MeterType
 from enumerations import MeasurementUnit
 from enumerations import MeterMeasureMode
 from measure_instruments.meter_measure import MeterMeasure
 from enumerations import MeterAccumulationFrequency
-from misc import Validate
 from typing import Dict
 from utils import StructureEntitySearch
+from measure_instruments.interfaces.abstract_reader import AbstractReader
 
 
-class Meter:
+class Meter(AbstractReader):
     """
     A representation of a meter
 
@@ -17,9 +16,8 @@ class Meter:
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, meter_location: str, measurement_frequency: float,
-                 measurement_unit: MeasurementUnit, meter_type: MeterType,
-                 measure_mode: MeterMeasureMode, data_accumulated: bool = False,
+    def __init__(self, meter_location: str, measurement_frequency: float, measurement_unit: MeasurementUnit,
+                 meter_type: MeterType, measure_mode: MeterMeasureMode, data_accumulated: bool = False,
                  accumulation_frequency: MeterAccumulationFrequency = MeterAccumulationFrequency.NONE,
                  manufacturer: str = None):
         """
@@ -34,13 +32,11 @@ class Meter:
         :param data_accumulated: indicate whether the data is accumulate or not
         :param accumulation_frequency: the frequency at which data is accumulated
         """
-        self._UID = str(uuid.uuid4())
-        self._meter_location = Validate.validate_what3word(meter_location)
+        super().__init__(measurement_unit, meter_location, manufacturer)
         self._manufacturer = None
         self._measurement_frequency = None
         self._meter_type = None
         self._meter_measures: [MeterMeasure] = []
-        self._measurement_unit = None
         self._measure_mode = None
         self._data_accumulated = data_accumulated
         self._accumulation_frequency = MeterAccumulationFrequency.NONE
@@ -48,30 +44,9 @@ class Meter:
         # Apply validation
         self.manufacturer = manufacturer
         self.measurement_frequency = measurement_frequency
-        self.measurement_unit = measurement_unit
         self.meter_type = meter_type
         self.measure_mode = measure_mode
         self.accumulation_frequency = accumulation_frequency
-
-    @property
-    def meter_location(self):
-        return self._meter_location
-
-    @meter_location.setter
-    def meter_location(self, value):
-        self._meter_location = Validate.validate_what3word(value)
-
-    @property
-    def UID(self):
-        return self._UID
-
-    @property
-    def manufacturer(self) -> str:
-        return self._manufacturer
-
-    @manufacturer.setter
-    def manufacturer(self, value: str):
-        self._manufacturer = value
 
     @property
     def measurement_frequency(self) -> float:
@@ -121,17 +96,6 @@ class Meter:
             raise ValueError("data_accumulated must be a boolean")
 
     @property
-    def measurement_unit(self) -> MeasurementUnit:
-        return self._measurement_unit
-
-    @measurement_unit.setter
-    def measurement_unit(self, value: MeasurementUnit):
-        if value is not None:
-            self._measurement_unit = value
-        else:
-            raise ValueError("Measurement unit must be of type MeasurementUnit")
-
-    @property
     def meter_type(self) -> MeterType:
         return self._meter_type
 
@@ -150,7 +114,7 @@ class Meter:
         """
         return StructureEntitySearch.search(self._meter_measures, search_terms)
 
-    def get_meter_measure_by_date(self, from_timestamp: str, to_timestamp: str = None) ->[MeterMeasure]:
+    def get_meter_measure_by_date(self, from_timestamp: str, to_timestamp: str = None) -> [MeterMeasure]:
         """
         searches meter recordings based on provided timestamp
         :param from_timestamp: the start timestamp
@@ -166,25 +130,19 @@ class Meter:
         """
         self._meter_measures.append(meter_measure)
 
-    def __eq__(self, other):
-        # Meters are equal if they share the same UID
-        if isinstance(other, Meter):
-            # Check for equality based on the 'UID' attribute
-            return self.UID == other.UID and self.meter_type == other.meter_type \
-                   and self.manufacturer == other.manufacturer and self.measure_mode == other.measure_mode \
-                   and self.accumulation_frequency == other.accumulation_frequency
-        return False
-
     def __str__(self):
         """
         :return: A formatted string representing the meter.
         """
-        meter_details = (f"Meter (UID: {self.UID}, Location: {self.meter_location}, "
-                         f"Manufacturer: {self.manufacturer}, Frequency: {self.measurement_frequency}, "
-                         f"Unit: {self.measurement_unit.value}, Type: {self.meter_type.value}, "
-                         f"Measure Mode: {self.measure_mode.value}, Data Accumulated: {self.data_accumulated}, "
-                         f"Accumulation Frequency: {self.accumulation_frequency.value})")
-
         measurements = "\n".join(str(measure) for measure in self.get_meter_measures())
 
-        return f"{meter_details}\nMeasurements:\n{measurements}"
+        return (
+            f"Meter("
+            f"{super().__str__()} "
+            f"Frequency: {self.measurement_frequency}, "
+            f"Measure Mode: {self.measure_mode.value}, "
+            f"Data Accumulated: {self.data_accumulated}, "
+            f"Accumulation Frequency: {self.accumulation_frequency.value}, "
+            f"Type: {self.meter_type.value}, "
+            f"Measurements: {measurements})"
+        )

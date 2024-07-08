@@ -16,6 +16,7 @@ from transducers.sensor import Sensor
 from transducers.actuator import Actuator
 from typing import Union
 from enumerations import SensorMeasure
+from energysystem.interfaces.abstract_common_energy_system import AbstractCommonEnergySystem
 
 
 class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
@@ -41,6 +42,7 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
         self._meter = meter
         self._appliances: List[Appliance] = []
         self._hvac_components: Union[List[AbstractHVACComponent], List[AbstractVentilationComponent]] = []
+        self._energy_systems: [AbstractCommonEnergySystem] = []
         # apply validation through setters
         self.name = name
 
@@ -74,7 +76,7 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
         """
         if isinstance(new_transducer, Sensor):
             allowed_room_sensors = [SensorMeasure.OCCUPANCY, SensorMeasure.CARBON_DIOXIDE, SensorMeasure.DAYLIGHT,
-                                    SensorMeasure.TEMPERATURE]
+                                    SensorMeasure.TEMPERATURE, SensorMeasure.HUMIDITY]
             if new_transducer.measure in allowed_room_sensors:
                 super().add_transducer(new_transducer)
             else:
@@ -187,6 +189,30 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
         """
         return StructureEntitySearch.search(self._appliances, search_terms)
 
+    def add_energy_system(self, energy_system: AbstractCommonEnergySystem):
+        """
+        adds energy system to floor spaces
+        :param energy_system: the energy system to add
+        :return:
+        """
+        EntityInsert.insert_building_entity(self._energy_systems, energy_system, BuildingEntity.HVAC_COMPONENT.value)
+
+    def remove_energy_system(self, energy_system: AbstractCommonEnergySystem):
+        """
+        Removes energy system from a space (room and open space)
+        :param energy_system: the energy system to remove
+        :return:
+        """
+        EntityRemover.remove_building_entity(self._energy_systems, energy_system)
+
+    def get_energy_systems(self, search_terms: Dict = None) -> AbstractCommonEnergySystem:
+        """
+        Search energy systems by attribute values
+        :param search_terms: a dictionary of attributes and their values
+        :return:
+        """
+        return StructureEntitySearch.search(self._energy_systems, search_terms)
+
     def __eq__(self, other):
         # spaces on a floor are equal if they share the same name
         if isinstance(other, AbstractFloorSpace):
@@ -199,6 +225,7 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
         appliances_info = "\n".join([f" - Appliance: {appliance}" for appliance in self._appliances])
         spaces_info = "\n".join([f" - Adjacent Space: {space}" for space in self._adjacent_spaces])
         hvac_component_info = "\n".join([f" - HVAC Components: {component}" for component in self._hvac_components])
+        energy_system_info = "\n".join([f" - Energy Systems: {system}" for system in self._energy_systems])
 
         return (
             f"{super().__str__()}"
@@ -206,6 +233,7 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
             f"Meter: {self.meter}, "
             f"Adjacent Spaces: {spaces_info}, "
             f"Transducers: {transducers_info}, "
-            f"HVAC Components: {hvac_component_info}"
+            f"HVAC Components: {hvac_component_info}, "
+            f"Energy Systems: {energy_system_info}, "
             f"Appliances: {appliances_info}\n"
         )
