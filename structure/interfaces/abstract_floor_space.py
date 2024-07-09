@@ -3,7 +3,7 @@ from .abstract_space import AbstractSpace
 from datatypes.interfaces.abstract_measure import AbstractMeasure
 from utils import EntityRemover
 from utils import EntityInsert
-from measure_instruments.meter import Meter
+from measure_instruments.interfaces.abstract_reader import AbstractReader
 from utils import StructureEntitySearch
 from typing import Dict
 from datatypes.interfaces.abstract_dynamic_entity import AbstractDynamicEntity
@@ -27,7 +27,7 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, area: AbstractMeasure, name: str, location: str = None, meter: Meter = None):
+    def __init__(self, area: AbstractMeasure, name: str, location: str = None, meter: AbstractReader = None):
         """
         Models spaces on a building's floor
         :param area: the area of the space
@@ -58,11 +58,11 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
             raise ValueError("name must be a string")
 
     @property
-    def meter(self) -> Meter:
+    def meter(self) -> AbstractReader:
         return self._meter
 
     @meter.setter
-    def meter(self, value: Meter):
+    def meter(self, value: AbstractReader):
         if value:
             if value.meter_location != self.location:
                 raise ValueError("what3words location of meter should be the same as space")

@@ -12,20 +12,23 @@ class ElectricVehicleConnectivity(AbstractDataMeasure):
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, value: float, start_time: str, end_time: str, operation_type: OperationType):
+    def __init__(self, value: float, start_time: str, end_time: str, operation_type: OperationType, vehicle_id: str):
         """
         :param value: The numerical value measured
         :param start_time: the start timestamp for charging/discharging
         :param end_time: the end timestamp of charging/discharging
         :param operation_type: either charging or discharging
+        :param vehicle_id: the id of the vehicle to charged or discharged
 
         """
         super().__init__(value, start_time)
         self._end_time = None
         self._operation_type = None
+        self._vehicle_uid = None
 
         self.end_time = end_time
         self.operation_type = operation_type
+        self.vehicle_uid = vehicle_id
 
     @property
     def end_time(self) -> str:
@@ -46,4 +49,14 @@ class ElectricVehicleConnectivity(AbstractDataMeasure):
         if value is None:
             raise ValueError('operation_type must be of type OperationType')
         self._operation_type = value
+
+    @property
+    def vehicle_uid(self) -> str:
+        return self._vehicle_uid
+
+    @vehicle_uid.setter
+    def vehicle_uid(self, value: str):
+        if value is None:
+            raise ValueError('vehicle_uid must be of type str')
+        self._vehicle_uid = value
 

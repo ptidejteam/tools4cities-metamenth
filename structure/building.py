@@ -9,6 +9,7 @@ from .envelope import Envelope
 from typing import Optional
 from measure_instruments.weather_station import WeatherStation
 from measure_instruments.meter import Meter
+from measure_instruments.interfaces.abstract_reader import AbstractReader
 from utils import EntityRemover
 from utils import EntityInsert
 from enumerations import BuildingEntity
@@ -55,7 +56,7 @@ class Building(Observable):
         self._schedulable_entity = SchedulableEntity()
         self._envelope: Envelope = Optional[None]
         self._floors = []
-        self._meters: [Meter] = []
+        self._meters: [AbstractReader] = []
         self._weather_stations: List[WeatherStation] = []
         self._zones: List[Zone] = []
         self._control_systems: [BuildingControlSystem] = []
@@ -171,7 +172,7 @@ class Building(Observable):
         raise AttributeError("Cannot get meters")
 
     @meters.setter
-    def meters(self, value: List[Meter]):
+    def meters(self, value: List[AbstractReader]):
         if value is not None:
             self._meters = value
         else:
@@ -241,7 +242,7 @@ class Building(Observable):
         """
         EntityRemover.remove_building_entity(self._weather_stations, weather_station)
 
-    def add_meter(self, meter: Meter):
+    def add_meter(self, meter: AbstractReader):
         """
         Adds a meter to a building
         :param meter: a meter to measure some phenomena e.g. energy consumption
@@ -250,7 +251,7 @@ class Building(Observable):
         EntityInsert.insert_building_entity(self._meters, meter)
         return self
 
-    def remove_meter(self, meter: Meter):
+    def remove_meter(self, meter: AbstractReader):
         """
         Adds a meter to a building
         :param meter: a meter to measure some phenomena e.g. energy consumption
@@ -339,7 +340,7 @@ class Building(Observable):
         """
         return StructureEntitySearch.search(self._meters, {'meter_type': meter_type})
 
-    def get_meters(self, search_terms: Dict = None) -> [Meter]:
+    def get_meters(self, search_terms: Dict = None) -> [AbstractReader]:
         """
         Returns a meter based on some attributes and their values
         :param search_terms: attributes and value key pairs
@@ -422,7 +423,7 @@ class Building(Observable):
                 f"Building Type: {self.building_type}, "
                 f"Floor Count: {len(self._floors)}, "
                 f"Weather Stations Count: {len(self._weather_stations)}, "
-                f"Schedules Count: {len(self._schedulable_entity)}, "
+                f"Schedules: {len(self._schedulable_entity.get_schedules())}, "
                 f"Floors:\n{floors_info}, "
                 f"Weather Stations:\n{weather_stations_info}, "
                 f"Schedules:\n{schedules_info}, "
