@@ -1,11 +1,10 @@
-from enumerations import MeterType
 from enumerations import MeasurementUnit
-from enumerations import MeterMeasureMode
-from measure_instruments.meter_measure import MeterMeasure
-from enumerations import MeterAccumulationFrequency
-from typing import Dict
-from utils import StructureEntitySearch
 from measure_instruments.interfaces.abstract_reader import AbstractReader
+from measure_instruments.electric_vehicle_connectivity import ElectricVehicleConnectivity
+from utils import EntityInsert
+from utils import StructureEntitySearch
+from typing import Dict
+from enumerations import BuildingEntity
 
 
 class EVChargingMeter(AbstractReader):
@@ -26,6 +25,31 @@ class EVChargingMeter(AbstractReader):
         :param measurement_unit: The measurement unit of the meter data.
         """
         super().__init__(measurement_unit, meter_location, manufacturer)
+        self._vehicle_connectivity: [ElectricVehicleConnectivity] = []
+
+    def get_connectivity_data(self, search_terms: Dict = None) -> [ElectricVehicleConnectivity]:
+        """
+        Search meter recordings by attributes values
+        :param search_terms: a dictionary of attributes and their values
+        :return [ElectricVehicleConnectivity]:
+        """
+        return StructureEntitySearch.search(self._vehicle_connectivity, search_terms)
+
+    def get_connectivity_data_by_date(self, from_timestamp: str, to_timestamp: str = None) -> [ElectricVehicleConnectivity]:
+        """
+        searches meter recordings based on provided timestamp
+        :param from_timestamp: the start timestamp
+        :param to_timestamp: the end timestamp
+        :return: [ElectricVehicleConnectivity]
+        """
+        return StructureEntitySearch.date_range_search(self._vehicle_connectivity, from_timestamp, to_timestamp)
+
+    def add_meter_measure(self, connectivity_data: ElectricVehicleConnectivity):
+        """
+        Add vehicle connectivity for this meter
+        :param connectivity_data: the recorded electric vehicle charging or discharging by the meter.
+        """
+        EntityInsert.insert_building_entity(self._vehicle_connectivity, connectivity_data, BuildingEntity.SCHEDULE.value)
 
     def __str__(self):
         """
