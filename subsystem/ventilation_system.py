@@ -6,6 +6,8 @@ from utils import EntityRemover
 from utils import EntityInsert
 from utils import StructureEntitySearch
 from typing import Dict
+from typing import Union
+from energysystem.engine import Engine
 
 
 class VentilationSystem:
@@ -18,8 +20,7 @@ class VentilationSystem:
         self._UID = str(uuid4())
         self._ventilation_type = None
         self._principal_duct = None
-        # TODO: include engine to components
-        self._components: [AbstractVentilationComponent] = []
+        self._components: [Union[AbstractVentilationComponent, Engine]] = []
 
         self.ventilation_type = ventilation_type
         self.principal_duct = principal_duct

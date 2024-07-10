@@ -5,6 +5,10 @@ from enumerations import MeterType
 from enumerations import MeterMeasureMode
 from enumerations import MeterAccumulationFrequency
 from measure_instruments.meter import MeterMeasure
+from measure_instruments.ev_charging_meter import EVChargingMeter
+from measure_instruments.electric_vehicle_connectivity import ElectricVehicleConnectivity
+from enumerations import OperationType
+from uuid import uuid4
 
 
 class TestMeter(TestCase):
@@ -45,6 +49,29 @@ class TestMeter(TestCase):
         self.assertEqual(len(self.meter.get_meter_measures()), 4)
         self.assertEqual(self.meter.get_meter_measures()[0].value, 2.5)
         self.assertIsNotNone(self.meter.get_meter_measures()[0].UID)
+
+    def test_ev_charging_meter_with_data(self):
+        ev_charging_meter = EVChargingMeter("huz.cab.err", MeasurementUnit.KILOWATTS)
+        charging_data_one = ElectricVehicleConnectivity(1.5, "2024-06-15 16:00:00",
+                                                        "2024-06-15 18:00:00", OperationType.CHARGING,
+                                                        str(uuid4()))
+        charging_data_two = ElectricVehicleConnectivity(2.8, "2024-06-15 13:00:00",
+                                                        "2024-06-15 14:00:00", OperationType.CHARGING,
+                                                        str(uuid4()))
+        discharging_data = ElectricVehicleConnectivity(0.8, "2024-07-09 19:00:00",
+                                                       "2024-07-09 20:00:00", OperationType.DISCHARGING,
+                                                       str(uuid4()))
+
+        ev_charging_meter.add_meter_measure(charging_data_one)
+        ev_charging_meter.add_meter_measure(charging_data_two)
+        ev_charging_meter.add_meter_measure(discharging_data)
+
+        self.assertEqual(ev_charging_meter.measurement_unit, MeasurementUnit.KILOWATTS)
+        self.assertEqual(len(ev_charging_meter.get_connectivity_data()), 3)
+        self.assertEqual(len(ev_charging_meter.get_connectivity_data({
+            'operation_type': OperationType.DISCHARGING.value})), 1)
+        self.assertEqual(ev_charging_meter.get_connectivity_data({'operation_type': OperationType.DISCHARGING.value})[0],
+                         discharging_data)
 
 
 

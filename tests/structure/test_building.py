@@ -22,6 +22,10 @@ from enumerations import CoverType
 from enumerations import RoomType
 from observers.structure_state_change_logger import StructureStateChangeLogger
 from enumerations import MeterMeasureMode
+from measure_instruments.ev_charging_meter import EVChargingMeter
+from measure_instruments.electric_vehicle_connectivity import ElectricVehicleConnectivity
+from uuid import uuid4
+from enumerations import OperationType
 
 
 class TestBuilding(BaseTest):
@@ -352,14 +356,33 @@ class TestBuilding(BaseTest):
                              manufacturer="Honeywell",
                              measurement_frequency=5,
                              measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
-                             meter_type=MeterType.CHARGE_DISCHARGE, measure_mode=MeterMeasureMode.MANUAL)
+                             meter_type=MeterType.POWER, measure_mode=MeterMeasureMode.MANUAL)
+
+        ev_charging_meter = EVChargingMeter("huz.cab.err", MeasurementUnit.KILOWATTS)
+        charging_data_one = ElectricVehicleConnectivity(1.5, "2024-06-15 16:00:00",
+                                                        "2024-06-15 18:00:00", OperationType.CHARGING,
+                                                        str(uuid4()))
+        charging_data_two = ElectricVehicleConnectivity(2.8, "2024-06-15 13:00:00",
+                                                        "2024-06-15 14:00:00", OperationType.CHARGING,
+                                                        str(uuid4()))
+        discharging_data = ElectricVehicleConnectivity(0.8, "2024-07-09 19:00:00",
+                                                       "2024-07-09 20:00:00", OperationType.DISCHARGING,
+                                                       str(uuid4()))
+
+        ev_charging_meter.add_meter_measure(charging_data_one)
+        ev_charging_meter.add_meter_measure(charging_data_two)
+        ev_charging_meter.add_meter_measure(discharging_data)
 
         self.building.add_meter(first_meter)
         self.building.add_meter(second_meter)
-        self.assertEqual(self.building.get_meters(), [first_meter, second_meter])
+        self.building.add_meter(ev_charging_meter)
+
+        self.assertEqual(self.building.get_meters(), [first_meter, second_meter, ev_charging_meter])
         self.assertEqual(self.building.get_meter_by_uid(first_meter.UID).meter_type, MeterType.ELECTRICITY)
-        self.assertEqual(self.building.get_meter_by_uid(second_meter.UID).meter_type, MeterType.CHARGE_DISCHARGE)
+        self.assertEqual(self.building.get_meter_by_uid(second_meter.UID).meter_type, MeterType.POWER)
         self.assertNotEqual(self.building.get_meter_by_uid(second_meter.UID), first_meter)
+        self.assertEqual(self.building.get_meter_by_uid(ev_charging_meter.UID), ev_charging_meter)
+        self.assertEqual(len(self.building.get_meter_by_uid(ev_charging_meter.UID).get_connectivity_data()), 3)
 
     def test_remove_meters_to_building(self):
         first_meter = Meter(meter_location="huz.cab.err",
@@ -372,13 +395,13 @@ class TestBuilding(BaseTest):
                              manufacturer="Honeywell",
                              measurement_frequency=5,
                              measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
-                             meter_type=MeterType.CHARGE_DISCHARGE, measure_mode=MeterMeasureMode.MANUAL)
+                             meter_type=MeterType.POWER, measure_mode=MeterMeasureMode.MANUAL)
         self.building.add_meter(first_meter)
         self.building.add_meter(second_meter)
         self.building.remove_meter(first_meter)
 
         self.assertEqual(self.building.get_meters(), [second_meter])
-        self.assertEqual(self.building.get_meter_by_uid(second_meter.UID).meter_type, MeterType.CHARGE_DISCHARGE)
+        self.assertEqual(self.building.get_meter_by_uid(second_meter.UID).meter_type, MeterType.POWER)
 
     def test_get_meter_by_uid(self):
         first_meter = Meter(meter_location="huz.cab.err",
@@ -391,7 +414,7 @@ class TestBuilding(BaseTest):
                              manufacturer="Honeywell",
                              measurement_frequency=5,
                              measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
-                             meter_type=MeterType.CHARGE_DISCHARGE, measure_mode=MeterMeasureMode.MANUAL)
+                             meter_type=MeterType.POWER, measure_mode=MeterMeasureMode.MANUAL)
         self.building.add_meter(first_meter)
         self.building.add_meter(second_meter)
 
@@ -408,7 +431,7 @@ class TestBuilding(BaseTest):
                              manufacturer="Honeywell",
                              measurement_frequency=5,
                              measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
-                             meter_type=MeterType.CHARGE_DISCHARGE, measure_mode=MeterMeasureMode.MANUAL)
+                             meter_type=MeterType.POWER, measure_mode=MeterMeasureMode.MANUAL)
         self.building.add_meter(first_meter)
         self.building.add_meter(second_meter)
         self.assertEqual(self.building.get_meter_by_type(second_meter.meter_type.value), [second_meter])
@@ -424,7 +447,7 @@ class TestBuilding(BaseTest):
                              manufacturer="Honeywell",
                              measurement_frequency=5,
                              measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
-                             meter_type=MeterType.CHARGE_DISCHARGE, measure_mode=MeterMeasureMode.MANUAL)
+                             meter_type=MeterType.POWER, measure_mode=MeterMeasureMode.MANUAL)
         self.building.add_meter(first_meter)
         self.building.add_meter(second_meter)
         meters = self.building.get_meters({'manufacturer': 'Honeywell', 'meter_type': MeterType.ELECTRICITY.value})

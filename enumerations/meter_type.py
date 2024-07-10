@@ -9,7 +9,6 @@ class MeterType(AbstractEnum):
     Email: peteryefi@gmail.com
     """
     ELECTRICITY = "Electricity"
-    CHARGE_DISCHARGE = "ChargeDischarge"
     POWER = "Power"
     FLOW = "Flow"
     HEAT = "Heat"

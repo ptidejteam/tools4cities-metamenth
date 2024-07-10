@@ -9,7 +9,7 @@ class EngineType(AbstractEnum):
     Email: peteryefi@gmail.com
     """
     FUEL_CELL = "FuelCell"
-    STERLING = "Sterling"
+    STIRLING = "Stirling"
     INTERNAL_COMBUSTION = "InternalCombustion"
     MICRO_TURBINE = "MicroTurbine"
     ELECTROLYSER = "Electrolyser"

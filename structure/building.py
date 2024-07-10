@@ -324,7 +324,7 @@ class Building(Observable):
         """
         return StructureEntitySearch.search(self._weather_stations, search_term)
 
-    def get_meter_by_uid(self, uid: str) -> Meter:
+    def get_meter_by_uid(self, uid: str) -> AbstractReader:
         """
         Returns a meter based on uid
         :param uid: the uid of the meter

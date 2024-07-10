@@ -10,6 +10,6 @@ class EngineMode(AbstractEnum):
     """
     HEATING = "Heating"
     ELECTRICITY = "Electricity"
-    COGENERATION = "CoGeneration"
+    CO_GENERATION = "CoGeneration"
     FUEL = "Fuel"
     OTHER = "Other"

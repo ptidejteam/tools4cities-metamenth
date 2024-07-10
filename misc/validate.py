@@ -2,6 +2,8 @@ from typing import Dict
 from enumerations import SensorMeasure
 from enumerations import MeasurementUnit
 from datetime import datetime
+from enumerations import EngineType
+from enumerations import EngineSubType
 
 
 class Validate:
@@ -131,6 +133,41 @@ class Validate:
                 return True
         elif sensor_measure == SensorMeasure.OTHER.value:
             return True
+        return False
+
+    @staticmethod
+    def validate_engine_fuel(self, engine_type: str, engine_sub_type: str) -> bool:
+        """
+        Validates engine type and fuel used by such engine types
+        """
+        if engine_type == EngineType.FUEL_CELL.value:
+            if engine_sub_type in [EngineSubType.HYDROGEN.value]:
+                return True
+        elif engine_type == EngineType.STIRLING.value:
+            if engine_sub_type in [EngineSubType.NATURAL_GAS.value, EngineSubType.PROPANE.value,
+                                   EngineSubType.BIO_DIESEL.value, EngineSubType.GEO_THERMAL.value,
+                                   EngineSubType.ETHANOL.value]:
+                return True
+        elif engine_type == EngineType.INTERNAL_COMBUSTION.value:
+            if engine_sub_type in [EngineSubType.GASOLINE.value, EngineSubType.NATURAL_GAS.value,
+                                   EngineSubType.ETHANOL.value, EngineSubType.DIESEL.value,
+                                   EngineSubType.BIO_DIESEL.value, EngineSubType.JETFUEL.value]:
+                return True
+        elif engine_type == EngineType.STEAM.value:
+            if engine_sub_type in [EngineSubType.OIL.value, EngineSubType.PEAT.value, EngineSubType.WOOD.value,
+                                   EngineSubType.CHARCOAL.value, EngineSubType.COAL.value,
+                                   EngineSubType.NATURAL_GAS.value, EngineSubType.BIOMASS.value,
+                                   EngineSubType.GEO_THERMAL.value]:
+                return True
+        elif engine_type == EngineType.ELECTROLYSER.value:
+            if engine_sub_type is None:
+                return True
+
+        elif engine_type == EngineType.MICRO_TURBINE.value:
+            if engine_sub_type in [EngineSubType.NATURAL_GAS.value, EngineSubType.DIESEL.value,
+                                   EngineSubType.PROPANE.value, EngineSubType.BIO_DIESEL, EngineSubType.HYDROGEN.value,
+                                   EngineSubType.JETFUEL.value]:
+                return True
         return False
 
 
