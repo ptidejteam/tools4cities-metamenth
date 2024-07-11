@@ -26,6 +26,8 @@ from measure_instruments.ev_charging_meter import EVChargingMeter
 from measure_instruments.electric_vehicle_connectivity import ElectricVehicleConnectivity
 from uuid import uuid4
 from enumerations import OperationType
+from energysystem.storage_system.electric_vehicle import ElectricVehicle
+from enumerations import V2GMode
 
 
 class TestBuilding(BaseTest):
@@ -358,16 +360,20 @@ class TestBuilding(BaseTest):
                              measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
                              meter_type=MeterType.POWER, measure_mode=MeterMeasureMode.MANUAL)
 
+        ev = ElectricVehicle("EV", False, MeasurementUnit.KILOWATTS_PER_HOUR)
+        ev.v2g_mode = V2GMode.PEAK_SHAVING
+        ev.v2g_capability = True
+
         ev_charging_meter = EVChargingMeter("huz.cab.err", MeasurementUnit.KILOWATTS)
         charging_data_one = ElectricVehicleConnectivity(1.5, "2024-06-15 16:00:00",
                                                         "2024-06-15 18:00:00", OperationType.CHARGING,
-                                                        str(uuid4()))
+                                                        ev.UID)
         charging_data_two = ElectricVehicleConnectivity(2.8, "2024-06-15 13:00:00",
                                                         "2024-06-15 14:00:00", OperationType.CHARGING,
-                                                        str(uuid4()))
+                                                        ev.UID)
         discharging_data = ElectricVehicleConnectivity(0.8, "2024-07-09 19:00:00",
                                                        "2024-07-09 20:00:00", OperationType.DISCHARGING,
-                                                       str(uuid4()))
+                                                       ev.UID)
 
         ev_charging_meter.add_meter_measure(charging_data_one)
         ev_charging_meter.add_meter_measure(charging_data_two)
@@ -383,6 +389,7 @@ class TestBuilding(BaseTest):
         self.assertNotEqual(self.building.get_meter_by_uid(second_meter.UID), first_meter)
         self.assertEqual(self.building.get_meter_by_uid(ev_charging_meter.UID), ev_charging_meter)
         self.assertEqual(len(self.building.get_meter_by_uid(ev_charging_meter.UID).get_connectivity_data()), 3)
+        self.assertEqual(self.building.get_meter_by_uid(ev_charging_meter.UID).get_connectivity_data()[0].vehicle_uid, ev.UID)
 
     def test_remove_meters_to_building(self):
         first_meter = Meter(meter_location="huz.cab.err",

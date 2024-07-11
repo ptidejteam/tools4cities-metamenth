@@ -57,6 +57,7 @@ class MeasurementUnit(AbstractEnum):
     SQUARE_FEET = "ft2"
     RELATIVE_HUMIDITY = "%RH"
     REVOLUTIONS_PER_MINUTE = "RMP"
+    MEGAWATTS = "MW"
 
 
 

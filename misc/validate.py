@@ -136,7 +136,7 @@ class Validate:
         return False
 
     @staticmethod
-    def validate_engine_fuel(self, engine_type: str, engine_sub_type: str) -> bool:
+    def validate_engine_fuel(engine_type: str, engine_sub_type: str) -> bool:
         """
         Validates engine type and fuel used by such engine types
         """

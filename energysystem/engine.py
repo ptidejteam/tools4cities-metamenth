@@ -3,6 +3,7 @@ from enumerations import MeasurementUnit
 from enumerations import EngineType
 from enumerations import EngineMode
 from enumerations import EngineSubType
+from misc import Validate
 
 
 class Engine(NonRenewableEnergySystem):
@@ -36,7 +37,11 @@ class Engine(NonRenewableEnergySystem):
     def engine_sub_type(self, value: EngineSubType):
         if value is None:
             raise ValueError("engine_sub_type should be of type EngineSubType")
-        self._engine_sub_type = value
+        else:
+            if Validate.validate_engine_fuel(self.engine_type.value, value.value):
+                self._engine_sub_type = value
+            else:
+                raise ValueError(f'{value} is an invalid value for {self.engine_type}')
 
     @property
     def engine_mode(self) -> EngineMode:

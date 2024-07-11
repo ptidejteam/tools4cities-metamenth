@@ -17,6 +17,20 @@ from enumerations import ApplianceCategory
 from subsystem.hvac_components.damper import Damper
 from enumerations import DamperType
 from transducers.actuator import Actuator
+from energysystem.electricals.uninterruptible_power_supply import UninterruptiblePowerSupply
+from enumerations import UPSPhase
+from enumerations import PowerState
+from energysystem.storage_system.battery import Battery
+from enumerations import BatteryTech
+from enumerations import EnergySource
+from energysystem.electricals.alternator import Alternator
+from energysystem.electricals.automatic_transfer_switch import AutomaticTransferSwitch
+from misc import MeasureFactory
+from enumerations import RecordingType
+from datatypes.measure import Measure
+from datetime import datetime
+from datetime import timedelta
+from datatypes.operational_schedule import OperationalSchedule
 
 
 class TestRoom(BaseTest):
@@ -172,3 +186,37 @@ class TestRoom(BaseTest):
 
         self.assertEqual(len(self.room.get_appliances()), 1)
         self.assertEqual(self.room.get_appliances(), [thermostat])
+
+    def test_room_with_ups(self):
+        ups = UninterruptiblePowerSupply("UPS", PowerState.ON, UPSPhase.THREE)
+        battery = Battery("Battery", True, MeasurementUnit.KILOWATTS_PER_HOUR, EnergySource.GRID,
+                          BatteryTech.NICKEL)
+        ups.add_storage_system(battery)
+        ups.noise_filtering = True
+        ups.surge_suppression = True
+        self.room.add_energy_system(ups)
+
+        self.assertEqual(self.room.get_energy_systems({'name': 'UPS'}), [ups])
+        self.assertEqual(self.room.get_energy_systems({'name': 'UPS'})[0].get_storage_system_by_name(battery.name),
+                         battery)
+
+        ups.remove_storage_system(battery)
+        self.assertIsNone(ups.get_storage_system_by_name(battery.name))
+
+    def test_room_with_ats_and_alternator(self):
+        ats = AutomaticTransferSwitch("ATS", PowerState.ON)
+        power_rating = MeasureFactory.create_measure(RecordingType.BINARY.value,
+                                      Measure(MeasurementUnit.WATTS, 10000))
+        alternator = Alternator("Alternator")
+        alternator.power_rating = power_rating
+        schedule = OperationalSchedule("WEEKENDS", datetime.now(), datetime.now() + timedelta(days=2))
+        alternator.schedulable_entity.add_schedule(schedule)
+        self.room.add_energy_system(ats)
+        self.room.add_energy_system(alternator)
+        self.assertEqual(self.room.get_energy_systems(), [ats, alternator])
+        self.assertEqual(self.room.get_energy_systems({'name': alternator.name}), [alternator])
+        self.assertEqual(self.room.get_energy_systems({'name': alternator.name})[0].power_rating, power_rating)
+        self.assertEqual(self.room.get_energy_systems({'name': alternator.name})[0].schedulable_entity.get_schedule_by_name("WEEKENDS"), schedule)
+
+        self.room.remove_energy_system(ats)
+        self.assertEqual(self.room.get_energy_systems(), [alternator])
