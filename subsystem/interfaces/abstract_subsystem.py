@@ -1,7 +1,8 @@
 from uuid import uuid4
+from abc import ABC
 
 
-class AbstractSubsystem:
+class AbstractSubsystem(ABC):
     def __init__(self, name: str):
         """
         Defines parent class of all subsystems

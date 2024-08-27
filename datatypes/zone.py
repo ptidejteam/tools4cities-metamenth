@@ -193,7 +193,7 @@ class Zone:
         """
         return StructureSearch.search_by_id(self._spaces, uid)
 
-    def get_spaces(self, search_terms: Dict = None) -> ['Zone']:
+    def get_spaces(self, search_terms: Dict = None) -> ['AbstractSpace']:
         """
         Search spaces by attributes values
         :param search_terms: a dictionary of attributes and their values

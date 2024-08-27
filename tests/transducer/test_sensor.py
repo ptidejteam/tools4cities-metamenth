@@ -158,7 +158,7 @@ class TestSensor(TestCase):
             sensor_data.append(SensorData(data))
             sleep(0.5)
         co2_sensor.add_data(sensor_data)
-        returned_data = co2_sensor.get_data_by_date(str(sensor_data[10].timestamp))
+        returned_data = co2_sensor.get_data_by_date(str(sensor_data[10].timestamp), str(sensor_data[19].timestamp))
         self.assertGreater(returned_data[0].timestamp, sensor_data[0].timestamp)
         self.assertEqual(len(returned_data), 10)
 

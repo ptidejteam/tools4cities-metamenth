@@ -144,7 +144,7 @@ class Duct(AbstractDynamicEntity, AbstractZonalEntity):
         """
         EntityRemover.remove_building_entity(self._dampers, damper)
 
-    def get_heat_exchangers(self, search_terms: Dict = None):
+    def get_heat_exchangers(self, search_terms: Dict = None) -> [HeatExchanger]:
         """
         Search source entities by attribute values
         :param search_terms: a dictionary of attributes and their values
@@ -152,7 +152,7 @@ class Duct(AbstractDynamicEntity, AbstractZonalEntity):
         """
         return StructureEntitySearch.search(self._heat_exchangers, search_terms)
 
-    def get_dampers(self, search_terms: Dict = None):
+    def get_dampers(self, search_terms: Dict = None) -> [Damper]:
         """
         Search source entities by attribute values
         :param search_terms: a dictionary of attributes and their values
@@ -160,7 +160,7 @@ class Duct(AbstractDynamicEntity, AbstractZonalEntity):
         """
         return StructureEntitySearch.search(self._dampers, search_terms)
 
-    def get_fans(self, search_terms: Dict = None):
+    def get_fans(self, search_terms: Dict = None) -> [Fan]:
         """
         Search source entities by attribute values
         :param search_terms: a dictionary of attributes and their values

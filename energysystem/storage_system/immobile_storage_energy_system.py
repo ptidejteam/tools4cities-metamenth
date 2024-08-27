@@ -3,6 +3,7 @@ from energysystem.renewable_energy_system import RenewableEnergySystem
 from enumerations import MeasurementUnit
 from enumerations import EnergySource
 from utils import EntityInsert
+from utils import EntityRemover
 from utils import StructureEntitySearch
 from enumerations import BuildingEntity
 from enumerations import BatteryTech
@@ -56,6 +57,13 @@ class ImmobileStorageEnergySystem(AbstractEnergySystem):
         :return:
         """
         return StructureEntitySearch.search_by_name(self._renewable_sources, name)
+
+    def remove_renewable_energy_source(self, renewable_energy_source: RenewableEnergySystem):
+        """
+        removes renewable energy source from storage system
+        :param renewable_energy_source: The renewable energy source
+        """
+        EntityRemover.remove_building_entity(self._renewable_sources, renewable_energy_source)
 
     def __str__(self):
         return (

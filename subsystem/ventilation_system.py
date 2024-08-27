@@ -8,6 +8,7 @@ from utils import StructureEntitySearch
 from typing import Dict
 from typing import Union
 from energysystem.engine import Engine
+from typing import List
 
 
 class VentilationSystem:
@@ -51,7 +52,7 @@ class VentilationSystem:
         else:
             raise ValueError("principal_duct should be of type Duct")
 
-    def get_components(self, search_terms: Dict = None) -> [AbstractVentilationComponent]:
+    def get_components(self, search_terms: Dict = None) -> Union[List[AbstractVentilationComponent], List[Engine]]:
         """
         Search ventilation components by attributes values
         :param search_terms: a dictionary of attributes and their values
@@ -59,7 +60,7 @@ class VentilationSystem:
         """
         return StructureEntitySearch.search(self._components, search_terms)
 
-    def add_component(self, component: AbstractVentilationComponent):
+    def add_component(self, component: Union[AbstractVentilationComponent, Engine]):
         """
         Adds a ventilation component to the ventilation system
         :param component: the component to add
@@ -68,7 +69,7 @@ class VentilationSystem:
         EntityInsert.insert_building_entity(self._components, component)
         return self
 
-    def remove_component(self, component: AbstractVentilationComponent):
+    def remove_component(self, component: Union[AbstractVentilationComponent, Engine]):
         """
         Removes a ventilation component from the ventilation system
         :param component: the component to remove

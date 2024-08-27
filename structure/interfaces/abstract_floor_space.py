@@ -205,7 +205,7 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
         """
         EntityRemover.remove_building_entity(self._energy_systems, energy_system)
 
-    def get_energy_systems(self, search_terms: Dict = None) -> AbstractCommonEnergySystem:
+    def get_energy_systems(self, search_terms: Dict = None) -> [AbstractCommonEnergySystem]:
         """
         Search energy systems by attribute values
         :param search_terms: a dictionary of attributes and their values

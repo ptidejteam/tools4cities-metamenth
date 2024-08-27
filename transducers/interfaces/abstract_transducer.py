@@ -24,7 +24,6 @@ class AbstractTransducer(ABC):
         Describes a transducers (in a building)
         :param name: the unique name of the transducers
         :param registry_id: the registry id of the transducers
-        :param set_point: the set point associated with the data this sensor measures
         :param input_voltage_range: the input voltage range of the transducers
         :param input_current_range: the input current range of the transducers
         :param output_current_range: the output current range of the transducers
@@ -58,7 +57,7 @@ class AbstractTransducer(ABC):
 
     def add_meta_data(self, key, value):
         """
-        Adds meta data to transducers
+        Adds metadata to transducers
         :param key: the key part of the metadata
         :param value: the value part of the metadata
         :return:
@@ -67,7 +66,7 @@ class AbstractTransducer(ABC):
 
     def remove_meta_data(self, key):
         """
-        removes meta data to transducers
+        removes metadata to transducers
         :param key: the key part of the metadata
         :return:
         """
