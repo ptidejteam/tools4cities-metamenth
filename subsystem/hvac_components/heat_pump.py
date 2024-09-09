@@ -73,6 +73,6 @@ class HeatPump(AbstractDuctConnectedComponent):
             f"Heat Source: {self.heat_source.value}, "
             f"Condenser: {self.condenser}, "
             f"Compressor: {self.compressor}, "
-            f"Heat Exchangers: {self.heat_exchanger}"
+            f"Heat Exchangers: {self._heat_exchangers}"
             f"Manufacturer : {self.manufacturer})"
         )
