@@ -24,10 +24,11 @@ from observers.structure_state_change_logger import StructureStateChangeLogger
 from enumerations import MeterMeasureMode
 from measure_instruments.ev_charging_meter import EVChargingMeter
 from measure_instruments.electric_vehicle_connectivity import ElectricVehicleConnectivity
-from uuid import uuid4
 from enumerations import OperationType
 from energysystem.storage_system.electric_vehicle import ElectricVehicle
 from enumerations import V2GMode
+from visitors.sensor_search_visitor import SensorSearchVisitor
+from enumerations import SensorMeasure
 
 
 class TestBuilding(BaseTest):
@@ -542,3 +543,22 @@ class TestBuilding(BaseTest):
         self.building.add_weather_station(WeatherStation('Station Two', location="zzz.cob.huz"))
 
         self.assertEqual(structure_change_logger.state_log, [])
+
+    def test_sensor_search_visitor_on_building(self):
+        self.hall.add_transducer(self.presence_sensor)
+        self.hall.add_transducer(self.temp_sensor)
+        second_floor = Floor(self.floor_area, 2, FloorType.ROOFTOP, rooms=[self.hall])
+        building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
+                            BuildingType.RESIDENTIAL, [self.floor, second_floor])
+
+        cooling_zone = Zone("HVAC_COOLING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
+        heating_zone = Zone("HVAC_HEATING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
+
+        building.get_floor_by_uid(self.floor.UID).add_zone(cooling_zone, building)
+        building.get_floor_by_uid(second_floor.UID).add_zone(heating_zone, building)
+
+        sensor_search = SensorSearchVisitor(sensor_criteria={'measure': [SensorMeasure.TEMPERATURE.value, SensorMeasure.OCCUPANCY.value], 'data_frequency': 900})
+        building.accept(sensor_search)
+        self.assertEqual(len(sensor_search.found_sensors), 1)
+        self.assertEqual(sensor_search.found_sensors[0].measure, SensorMeasure.TEMPERATURE)
+

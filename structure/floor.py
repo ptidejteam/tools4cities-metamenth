@@ -14,7 +14,7 @@ from typing import Dict
 from typing import List
 
 
-class Floor(AbstractSpace, ABC):
+class Floor(AbstractSpace):
     """
     A floor on a building
 
@@ -213,6 +213,14 @@ class Floor(AbstractSpace, ABC):
         :return:
         """
         return StructureSearch.search(self._open_spaces, search_term)
+
+    def accept(self, visitor):
+        """
+        visitor method to accept
+        visit operation for the current floor
+        :param visitor: the visitor object
+        """
+        visitor.visit_floor(self)
 
     def __eq__(self, other):
         # floors are equal if they share the same number

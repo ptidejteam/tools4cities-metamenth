@@ -208,6 +208,15 @@ class Zone:
             return self.name == other.name
         return False
 
+    def accept(self, visitor):
+        """
+        visitor method to accept
+        visit operation for all spaces in a zone
+        :param visitor: the visitor object
+        """
+        for space in self._spaces:
+            space.accept(visitor)
+
     def __str__(self):
 
         zone_details = (

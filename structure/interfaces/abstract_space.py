@@ -67,6 +67,9 @@ class AbstractSpace(AbstractZonalEntity):
     def envelope(self, value: Envelope):
         self._envelope = value
 
+    def accept(self, visitor):
+        pass
+
     def __str__(self):
         return (
             f"UID: {self.UID}, "

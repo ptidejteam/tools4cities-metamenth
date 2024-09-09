@@ -33,5 +33,13 @@ class OpenSpace(AbstractFloorSpace):
             raise ValueError('space_type must be of type OpenSpaceType')
         self._space_type = value
 
+    def accept(self, visitor):
+        """
+        visitor method to accept
+        visit operation for the current open space
+        :param visitor: the visitor object
+        """
+        visitor.visit_open_space(self)
+
     def __str__(self):
         return f"OpenSpace ({super().__str__()} Space Type: {self.space_type.value})"

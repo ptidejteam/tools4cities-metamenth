@@ -47,6 +47,7 @@ class Building(Observable):
         """
         super().__init__()
         self._UID = str(uuid4())
+        self._name = None
         self._construction_year = None
         self._height = None
         self._floor_area = None
@@ -74,6 +75,14 @@ class Building(Observable):
     @property
     def UID(self) -> str:
         return self._UID
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
 
     @property
     def construction_year(self) -> int:
@@ -406,6 +415,15 @@ class Building(Observable):
             raise ValueError("Cannot add open space without a floor")
         self.get_floor_by_uid(floor_uid).add_open_spaces([OpenSpace(name, area, space_type, location)])
         return self  # Return self for method chaining
+
+    def accept(self, visitor):
+        """
+        visitor method to accept
+        visit operation to building floors
+        :param visitor: the visitor object
+        """
+        for floor in self._floors:
+            floor.accept(visitor)
 
     def __str__(self):
         floors_info = "\n".join([f"  - Floor {floor.number}: {floor}" for floor in self._floors])

@@ -66,19 +66,16 @@ class BaseTest(TestCase):
 
         # Thermostat
         self.thermostat = Appliance("Thermostat", [ApplianceCategory.OFFICE, ApplianceCategory.SMART],
-                               ApplianceType.THERMOSTAT)
-
-        presence_sensor = Sensor("PRESENCE.SENSOR", SensorMeasure.OCCUPANCY, MeasurementUnit.PRESENCE,
-                                 SensorMeasureType.THERMO_COUPLE_TYPE_A, 0, sensor_log_type=SensorLogType.POLLING)
-        temp_sensor = Sensor("TEMPERATURE.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
-                             SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
-
-        self.thermostat.add_transducer(presence_sensor)
-        self.thermostat.add_transducer(temp_sensor)
+                                    ApplianceType.THERMOSTAT)
+        self.temp_sensor = Sensor("TEMPERATURE.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                                  SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+        self.presence_sensor = Sensor("PRESENCE.SENSOR", SensorMeasure.OCCUPANCY, MeasurementUnit.PRESENCE,
+                                      SensorMeasureType.THERMO_COUPLE_TYPE_A, 0, sensor_log_type=SensorLogType.POLLING)
+        self.thermostat.add_transducer(self.presence_sensor)
+        self.thermostat.add_transducer(self.temp_sensor)
 
         # Smart Camera
         self.smart_camera = Appliance("Smart Camera", [ApplianceCategory.OFFICE, ApplianceCategory.SMART],
-                                 ApplianceType.CAMERA)
-        presence_sensor = Sensor("PRESENCE.SENSOR", SensorMeasure.OCCUPANCY, MeasurementUnit.PRESENCE,
-                                 SensorMeasureType.THERMO_COUPLE_TYPE_A, 0, sensor_log_type=SensorLogType.POLLING)
-        self.smart_camera.add_transducer(presence_sensor)
+                                      ApplianceType.CAMERA)
+
+        self.smart_camera.add_transducer(self.presence_sensor)

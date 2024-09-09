@@ -44,6 +44,14 @@ class Room(AbstractFloorSpace):
         else:
             raise ValueError("room_type must be of type RoomType")
 
+    def accept(self, visitor):
+        """
+        visitor method to accept
+        visit operation for the current room
+        :param visitor: the visitor object
+        """
+        visitor.visit_room(self)
+
     def __str__(self):
         room_details = (
             f"Room ({super().__str__()} Room, "
