@@ -29,7 +29,7 @@ from enumerations import AirVolumeType
 from subsystem.hvac_components.variable_frequency_drive import VariableFrequencyDrive
 from enumerations import ZoneType
 from enumerations import HVACType
-from datatypes.zone import Zone
+from virtual.zone import Zone
 from subsystem.ventilation_system import VentilationSystem
 from enumerations import VentilationType
 from subsystem.thermal_storage import ThermalStorage

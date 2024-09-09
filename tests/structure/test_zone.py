@@ -7,7 +7,7 @@ from structure.open_space import OpenSpace
 from enumerations import OpenSpaceType
 from enumerations import RoomType
 from structure.room import Room
-from datatypes.zone import Zone
+from virtual.zone import Zone
 from enumerations import ZoneType
 from enumerations import HVACType
 from structure.floor import Floor

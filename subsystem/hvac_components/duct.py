@@ -2,7 +2,7 @@ from uuid import uuid4
 from enumerations import DuctType
 from enumerations import DuctSubType
 from datatypes.interfaces.abstract_dynamic_entity import AbstractDynamicEntity
-from datatypes.interfaces.abstract_zonal_entity import AbstractZonalEntity
+from virtual.interfaces.abstract_zonal_entity import AbstractZonalEntity
 from subsystem.hvac_components.damper import Damper
 from subsystem.hvac_components.fan import Fan
 from subsystem.hvac_components.heat_exchanger import HeatExchanger

@@ -14,7 +14,7 @@ from utils import EntityRemover
 from utils import EntityInsert
 from enumerations import BuildingEntity
 from datatypes.interfaces.abstract_measure import AbstractMeasure
-from datatypes.zone import Zone
+from virtual.zone import Zone
 from utils import StructureSearch
 from typing import Dict
 from enumerations import RoomType

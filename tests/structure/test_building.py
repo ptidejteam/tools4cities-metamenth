@@ -7,7 +7,7 @@ from datetime import datetime
 from datetime import timedelta
 from enumerations import BuildingType
 import copy
-from datatypes.zone import Zone
+from virtual.zone import Zone
 from enumerations import ZoneType
 from enumerations import HVACType
 from measure_instruments.meter import Meter

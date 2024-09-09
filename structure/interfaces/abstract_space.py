@@ -1,7 +1,7 @@
 import uuid
 from datatypes.interfaces.abstract_measure import AbstractMeasure
 from misc import Validate
-from datatypes.interfaces.abstract_zonal_entity import AbstractZonalEntity
+from virtual.interfaces.abstract_zonal_entity import AbstractZonalEntity
 from datatypes.schedulable_entity import SchedulableEntity
 from structure.envelope import Envelope
 
