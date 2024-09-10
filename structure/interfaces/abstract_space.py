@@ -70,6 +70,9 @@ class AbstractSpace(AbstractZonalEntity):
     def accept(self, visitor):
         pass
 
+    def get(self, attribute):
+        return getattr(self, attribute, None)
+
     def __str__(self):
         return (
             f"UID: {self.UID}, "

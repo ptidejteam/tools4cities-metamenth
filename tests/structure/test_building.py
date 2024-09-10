@@ -334,7 +334,7 @@ class TestBuilding(BaseTest):
         self.assertEqual(building.zones, [cooling_zone, heating_zone])
         self.assertEqual(
             building.get_floor_by_number(1).get_room_by_name(self.room.name)
-                .get_zone_by_name(cooling_zone.name).get_overlapping_zones(),
+            .get_zone_by_name(cooling_zone.name).get_overlapping_zones(),
             [heating_zone]
         )
         self.assertEqual(building.get_zone_by_name(cooling_zone.name).get_spaces(),
@@ -390,7 +390,8 @@ class TestBuilding(BaseTest):
         self.assertNotEqual(self.building.get_meter_by_uid(second_meter.UID), first_meter)
         self.assertEqual(self.building.get_meter_by_uid(ev_charging_meter.UID), ev_charging_meter)
         self.assertEqual(len(self.building.get_meter_by_uid(ev_charging_meter.UID).get_connectivity_data()), 3)
-        self.assertEqual(self.building.get_meter_by_uid(ev_charging_meter.UID).get_connectivity_data()[0].vehicle_uid, ev.UID)
+        self.assertEqual(self.building.get_meter_by_uid(ev_charging_meter.UID).get_connectivity_data()[0].vehicle_uid,
+                         ev.UID)
 
     def test_remove_meters_to_building(self):
         first_meter = Meter(meter_location="huz.cab.err",
@@ -557,8 +558,12 @@ class TestBuilding(BaseTest):
         building.get_floor_by_uid(self.floor.UID).add_zone(cooling_zone, building)
         building.get_floor_by_uid(second_floor.UID).add_zone(heating_zone, building)
 
-        sensor_search = SensorSearchVisitor(sensor_criteria={'measure': [SensorMeasure.TEMPERATURE.value, SensorMeasure.OCCUPANCY.value], 'data_frequency': 900})
+        sensor_search = SensorSearchVisitor(sensor_criteria={
+            'measure': [SensorMeasure.TEMPERATURE.value, SensorMeasure.OCCUPANCY.value],
+            'data_frequency': 900
+        },
+            floor_criteria={'number': [1, 2]}, room_criteria={'room_type': RoomType.BEDROOM.value},
+            open_space_criteria={'space_type': OpenSpaceType.HALL.value})
         building.accept(sensor_search)
         self.assertEqual(len(sensor_search.found_sensors), 1)
         self.assertEqual(sensor_search.found_sensors[0].measure, SensorMeasure.TEMPERATURE)
-
