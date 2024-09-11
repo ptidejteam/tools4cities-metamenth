@@ -19,14 +19,22 @@ class SensorSearchVisitor(AbstractSpaceVisitor):
     def visit_room(self, room):
         if self._match_criteria(room, self._room_criteria):
             print(f'Visiting room: {room.name}')
-            for sensor in room.get_transducers():
-                if self._match_criteria(sensor, self._sensor_criteria):
-                    self.found_sensors.append(sensor)
+            self._search_sensors(room)
 
     def visit_open_space(self, open_space):
         if self._match_criteria(open_space, self._open_space_criteria):
             print(f'Visiting open space: {open_space.name}')
-            for sensor in open_space.get_transducers():
+            self._search_sensors(open_space)
+
+    def _search_sensors(self, space):
+        # search for space sensors
+        for sensor in space.get_transducers():
+            if self._match_criteria(sensor, self._sensor_criteria):
+                self.found_sensors.append(sensor)
+
+        # search for HVAC component sensors
+        for hvac_component in space.get_hvac_components():
+            for sensor in hvac_component.get_transducers():
                 if self._match_criteria(sensor, self._sensor_criteria):
                     self.found_sensors.append(sensor)
 

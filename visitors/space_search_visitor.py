@@ -2,7 +2,7 @@ from visitors.interfaces.abstract_space_visitor import AbstractSpaceVisitor
 from typing import Dict
 
 
-class SensorSearchVisitor(AbstractSpaceVisitor):
+class SpaceSearchVisitor(AbstractSpaceVisitor):
     """
     A concrete visitor that searches for sensors in
     building spaces or zones

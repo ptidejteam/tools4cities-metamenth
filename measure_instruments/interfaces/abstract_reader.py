@@ -57,6 +57,9 @@ class AbstractReader(ABC):
     def manufacturer(self, value: str):
         self._manufacturer = value
 
+    def get(self, attribute):
+        return getattr(self, attribute, None)
+
     def __eq__(self, other):
         # Meters are equal if they share the same UID
         if isinstance(other, AbstractReader):

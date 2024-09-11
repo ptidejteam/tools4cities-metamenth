@@ -28,7 +28,12 @@ from enumerations import OperationType
 from energysystem.storage_system.electric_vehicle import ElectricVehicle
 from enumerations import V2GMode
 from visitors.sensor_search_visitor import SensorSearchVisitor
+from visitors.space_search_visitor import SpaceSearchVisitor
+from visitors.meter_search_visitor import MeterSearchVisitor
 from enumerations import SensorMeasure
+from enumerations import BoilerCategory
+from enumerations import PowerState
+from subsystem.hvac_components.boiler import Boiler
 
 
 class TestBuilding(BaseTest):
@@ -555,6 +560,10 @@ class TestBuilding(BaseTest):
         cooling_zone = Zone("HVAC_COOLING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
         heating_zone = Zone("HVAC_HEATING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
 
+        boiler = Boiler('PR.VNT.BL.01', BoilerCategory.NATURAL_GAS, PowerState.ON)
+        boiler.add_transducer(self.temp_sensor)
+        self.room.add_hvac_component(boiler)
+
         building.get_floor_by_uid(self.floor.UID).add_zone(cooling_zone, building)
         building.get_floor_by_uid(second_floor.UID).add_zone(heating_zone, building)
 
@@ -565,5 +574,58 @@ class TestBuilding(BaseTest):
             floor_criteria={'number': [1, 2]}, room_criteria={'room_type': RoomType.BEDROOM.value},
             open_space_criteria={'space_type': OpenSpaceType.HALL.value})
         building.accept(sensor_search)
-        self.assertEqual(len(sensor_search.found_sensors), 1)
+        self.assertEqual(len(sensor_search.found_sensors), 2)
         self.assertEqual(sensor_search.found_sensors[0].measure, SensorMeasure.TEMPERATURE)
+
+    def test_space_search_visitor_on_building(self):
+        self.hall.add_transducer(self.presence_sensor)
+        self.hall.add_transducer(self.temp_sensor)
+        second_floor = Floor(self.floor_area, 2, FloorType.ROOFTOP, rooms=[self.hall])
+        building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
+                            BuildingType.RESIDENTIAL, [self.floor, second_floor])
+
+        cooling_zone = Zone("HVAC_COOLING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
+        heating_zone = Zone("HVAC_HEATING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
+
+        building.get_floor_by_uid(self.floor.UID).add_zone(cooling_zone, building)
+        building.get_floor_by_uid(second_floor.UID).add_zone(heating_zone, building)
+
+        space_search = SpaceSearchVisitor(
+            floor_criteria={'number': 1}, room_criteria={'room_type': RoomType.BEDROOM.value},
+            open_space_criteria={'space_type': OpenSpaceType.HALL.value})
+        building.accept(space_search)
+        self.assertEqual(len(space_search.found_spaces), 3)
+        self.assertEqual(space_search.found_spaces[0], self.floor)
+
+    def test_meter_search_visitor_on_building(self):
+        self.hall.add_transducer(self.presence_sensor)
+        self.hall.add_transducer(self.temp_sensor)
+        second_floor = Floor(self.floor_area, 2, FloorType.ROOFTOP, rooms=[self.hall])
+        building = Building(2009, self.height, self.floor_area, self.internal_mass, self.address,
+                            BuildingType.RESIDENTIAL, [self.floor, second_floor])
+
+        electricity_meter = Meter(meter_location="huz.cab.err",
+                                  manufacturer="Honeywell",
+                                  measurement_frequency=5,
+                                  measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
+                                  meter_type=MeterType.ELECTRICITY, measure_mode=MeterMeasureMode.AUTOMATIC)
+
+        water_flow_meter = Meter(meter_location="huz.cab.err",
+                                 manufacturer="Honeywell",
+                                 measurement_frequency=5,
+                                 measurement_unit=MeasurementUnit.LITERS_PER_SECOND,
+                                 meter_type=MeterType.FLOW, measure_mode=MeterMeasureMode.AUTOMATIC)
+
+        boiler = Boiler('PR.VNT.BL.01', BoilerCategory.NATURAL_GAS, PowerState.ON)
+        boiler.meter = water_flow_meter
+        self.hall.add_hvac_component(boiler)
+        building.add_meter(electricity_meter)
+
+        meter_search = MeterSearchVisitor(
+            floor_criteria={'number': [1, 2]},
+            meter_criteria={'meter_type': [MeterType.FLOW.value, MeterType.ELECTRICITY.value]})
+
+        building.accept(meter_search)
+
+        self.assertEqual(len(meter_search.found_meters), 2)
+        self.assertEqual(meter_search.found_meters[0], MeterType.FLOW)

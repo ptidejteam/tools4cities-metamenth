@@ -144,6 +144,9 @@ class AbstractHVACComponent(AbstractDynamicEntity):
             return self.name == other.name
         return False
 
+    def get(self, attribute):
+        return getattr(self, attribute, None)
+
     def __str__(self):
         return (
             f"UID: {self.UID}, "

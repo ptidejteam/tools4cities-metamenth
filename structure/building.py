@@ -422,8 +422,7 @@ class Building(Observable):
         visit operation to building floors
         :param visitor: the visitor object
         """
-        for floor in self._floors:
-            floor.accept(visitor)
+        visitor.visit_building(self)
 
     def __str__(self):
         floors_info = "\n".join([f"  - Floor {floor.number}: {floor}" for floor in self._floors])

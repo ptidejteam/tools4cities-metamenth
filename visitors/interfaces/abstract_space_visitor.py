@@ -56,17 +56,22 @@ class AbstractSpaceVisitor:
         if not criteria:
             return True
 
-        for key, value in criteria.items():
-            att_value = entity.get(key)
-            if isinstance(att_value, AbstractEnum):
-                att_value = att_value.value
+        try:
+            for key, value in criteria.items():
+                att_value = entity.get(key)
+                if isinstance(att_value, AbstractEnum):
+                    att_value = att_value.value
 
-            if isinstance(value, list):
-                # for list search criteria
-                if att_value not in value:
-                    return False
-            else:
-                # For single-value criteria
-                if att_value != value:
-                    return False
+                if isinstance(value, list):
+                    # for list search criteria
+                    if att_value not in value:
+                        return False
+                else:
+                    # For single-value criteria
+                    if att_value != value:
+                        return False
+        except AttributeError:
+            # handle attribute errors for None types
+            pass
+
         return True
