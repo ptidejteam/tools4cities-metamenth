@@ -7,7 +7,6 @@ from enumerations import BuildingEntity
 from utils import EntityInsert
 from utils import EntityRemover
 from utils import StructureEntitySearch
-from measure_instruments.meter import Meter
 
 
 class UninterruptiblePowerSupply(AbstractElectrical):
@@ -17,7 +16,6 @@ class UninterruptiblePowerSupply(AbstractElectrical):
         self._noise_filtering = False
         self._surge_suppression = False
         self._power_rating = None
-        self._meter = None
         self._storage_systems: [] = [ImmobileStorageEnergySystem]
 
         self.phase = phase
@@ -56,14 +54,6 @@ class UninterruptiblePowerSupply(AbstractElectrical):
     def power_rating(self, value: BinaryMeasure):
         self._power_rating = value
 
-    @property
-    def meter(self) -> Meter:
-        return self._meter
-
-    @meter.setter
-    def meter(self, value: Meter):
-        self._meter = value
-
     def add_storage_system(self, storage_system: ImmobileStorageEnergySystem):
         """
         adds storage system to UPS
@@ -93,7 +83,6 @@ class UninterruptiblePowerSupply(AbstractElectrical):
             f"UninterruptiblePowerSupply("
             f"{super().__str__()}"
             f"Phase: {self.phase}, "
-            f"Meter: {self.meter}, "
             f"Noise Filtering: {self.noise_filtering}, "
             f"Surge Suppression: {self.surge_suppression}, "
             f"Power Rating: {self.power_rating})"

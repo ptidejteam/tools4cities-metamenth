@@ -1,14 +1,17 @@
 import uuid
 from datatypes.schedulable_entity import SchedulableEntity
-from abc import ABC
+from datatypes.interfaces.abstract_dynamic_entity import AbstractDynamicEntity
+from measure_instruments.meter import Meter
 
 
-class AbstractCommonEnergySystem(ABC):
+class AbstractCommonEnergySystem(AbstractDynamicEntity):
     def __init__(self, name: str):
+        super().__init__()
         self._UID = str(uuid.uuid4())
         self._name = None
         self._model = None
         self._manufacturer = None
+        self._meter = None
         self._schedulable_entity = SchedulableEntity()
 
         self.name = name
@@ -53,6 +56,14 @@ class AbstractCommonEnergySystem(ABC):
             raise ValueError("schedules should be of type SchedulableEntity")
         self._schedulable_entity = value
 
+    @property
+    def meter(self) -> Meter:
+        return self._meter
+
+    @meter.setter
+    def meter(self, value: Meter):
+        self._meter = value
+
     def __eq__(self, other):
         if isinstance(other, AbstractCommonEnergySystem):
             return self.name == other.name
@@ -64,5 +75,6 @@ class AbstractCommonEnergySystem(ABC):
             f"Name: {self.name}, "
             f"Manufacturer: {self.manufacturer}, "
             f"Manufacturing Year: {self.model}, "
+            f"Meter: {self.meter}, "
             f"Operational Schedule: {self._schedulable_entity}, "
         )
