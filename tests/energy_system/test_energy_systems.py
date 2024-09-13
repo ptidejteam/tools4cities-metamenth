@@ -1,6 +1,6 @@
 from unittest import TestCase
 from energysystem.engine import Engine
-from enumerations import MeasurementUnit
+from enumerations import MeterMeasureMode
 from enumerations import EngineType
 from enumerations import EngineSubType
 from enumerations import EngineMode
@@ -22,6 +22,16 @@ from energysystem.storage_system.electric_vehicle import ElectricVehicle
 from energysystem.storage_system.super_capacitor import SuperCapacitor
 from enumerations import V2GMode
 from enumerations import CapacitorTech
+from transducers.sensor import Sensor
+from enumerations import SensorMeasure
+from enumerations import SensorMeasureType
+from enumerations import SensorLogType
+from measure_instruments.meter import Meter
+from enumerations import MeasurementUnit
+from enumerations import MeterType
+from energysystem.electricals.uninterruptible_power_supply import UninterruptiblePowerSupply
+from enumerations import PowerState
+from enumerations import UPSPhase
 
 
 class TestEnergySystems(TestCase):
@@ -57,9 +67,18 @@ class TestEnergySystems(TestCase):
         thermal_capacity = MeasureFactory.create_measure(RecordingType.BINARY.value,
                                                          Measure(MeasurementUnit.JOULES_PER_KELVIN, 2.3))
         solar_pv.thermal_capacity = thermal_capacity
+        temp_sensor = Sensor("TEMPERATURE.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                             SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+        voltage_sensor = Sensor("VOLTAGE.SENSOR", SensorMeasure.VOLTAGE, MeasurementUnit.VOLT,
+                                SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+        solar_pv.add_transducer(temp_sensor)
+        solar_pv.add_transducer(voltage_sensor)
+
         self.assertIsNone(solar_pv.module_area)
         self.assertEqual(solar_pv.thermal_capacity, thermal_capacity)
         self.assertEqual(solar_pv.solar_pv_type, SolarPVType.BUILDING_INTEGRATED_PHOTOVOLTAIC)
+        self.assertEqual(len(solar_pv.get_transducers()), 2)
+        self.assertEqual(solar_pv.get_transducer_by_uid(voltage_sensor.UID), voltage_sensor)
 
     def test_create_wind_mill_with_schedule(self):
         wind_mill = WindMill("Wind Mill", True, MeasurementUnit.MEGAWATTS, 4,
@@ -72,9 +91,18 @@ class TestEnergySystems(TestCase):
         wind_mill.model = "V90-2.0 MW"
         wind_mill.capacity = MeasureFactory.create_measure(RecordingType.BINARY.value,
                                                            Measure(MeasurementUnit.MEGAWATTS, 2))
+
+        electricity_meter = Meter(meter_location="huz.cab.err",
+                                  manufacturer="Honeywell",
+                                  measurement_frequency=5,
+                                  measurement_unit=MeasurementUnit.KILOWATTS_PER_HOUR,
+                                  meter_type=MeterType.ELECTRICITY, measure_mode=MeterMeasureMode.AUTOMATIC)
+        wind_mill.meter = electricity_meter
+
         self.assertEqual(wind_mill.capacity.value, 2)
         self.assertEqual(wind_mill.schedulable_entity.get_schedule_by_name("WEEKDAYS"), schedule)
         self.assertEqual(wind_mill.model, "V90-2.0 MW")
+        self.assertEqual(wind_mill.meter, electricity_meter)
 
     def test_battery_storage_with_renewable_source(self):
         battery = Battery("Battery", True, MeasurementUnit.KILOWATTS_PER_HOUR, EnergySource.Renewable,
@@ -114,3 +142,17 @@ class TestEnergySystems(TestCase):
         self.assertIsNone(sc.capacity)
         self.assertEqual(sc.technology, CapacitorTech.LITHIUM_IRON)
 
+    def test_uninterruptible_power_supply_with_sensor_and_meter(self):
+        ups = UninterruptiblePowerSupply("UPS.01", PowerState.ON, UPSPhase.SINGLE)
+        voltage_meter = Meter(meter_location="huz.cab.err",
+                              manufacturer="Honeywell",
+                              measurement_frequency=5,
+                              measurement_unit=MeasurementUnit.VOLT,
+                              meter_type=MeterType.POWER, measure_mode=MeterMeasureMode.AUTOMATIC)
+        voltage_sensor = Sensor("VOLTAGE.SENSOR", SensorMeasure.VOLTAGE, MeasurementUnit.VOLT,
+                                SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+        ups.meter = voltage_meter
+        ups.add_transducer(voltage_sensor)
+        self.assertEqual(ups.power_rating, None)
+        self.assertEqual(ups.get_transducers(), [voltage_sensor])
+        self.assertEqual(ups.meter, voltage_meter)

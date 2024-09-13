@@ -10,9 +10,6 @@ import copy
 from virtual.zone import Zone
 from enumerations import ZoneType
 from enumerations import HVACType
-from measure_instruments.meter import Meter
-from enumerations import MeasurementUnit
-from enumerations import MeterType
 from measure_instruments.weather_station import WeatherStation
 from tests.structure.base_test import BaseTest
 from enumerations import MaterialType
@@ -30,10 +27,18 @@ from enumerations import V2GMode
 from visitors.sensor_search_visitor import SensorSearchVisitor
 from visitors.space_search_visitor import SpaceSearchVisitor
 from visitors.meter_search_visitor import MeterSearchVisitor
-from enumerations import SensorMeasure
 from enumerations import BoilerCategory
-from enumerations import PowerState
 from subsystem.hvac_components.boiler import Boiler
+from subsystem.appliance import Appliance
+from enumerations import ApplianceType
+from enumerations import ApplianceCategory
+from enumerations import SensorMeasure
+from measure_instruments.meter import Meter
+from enumerations import MeasurementUnit
+from enumerations import MeterType
+from energysystem.electricals.uninterruptible_power_supply import UninterruptiblePowerSupply
+from enumerations import PowerState
+from enumerations import UPSPhase
 
 
 class TestBuilding(BaseTest):
@@ -564,6 +569,11 @@ class TestBuilding(BaseTest):
         boiler.add_transducer(self.temp_sensor)
         self.room.add_hvac_component(boiler)
 
+        smart_camera = Appliance("Smart Camera", [ApplianceCategory.OFFICE, ApplianceCategory.SMART],
+                                 ApplianceType.CAMERA)
+        smart_camera.add_transducer(self.presence_sensor)
+        self.room.add_appliance(smart_camera)
+
         building.get_floor_by_uid(self.floor.UID).add_zone(cooling_zone, building)
         building.get_floor_by_uid(second_floor.UID).add_zone(heating_zone, building)
 
@@ -616,16 +626,27 @@ class TestBuilding(BaseTest):
                                  measurement_unit=MeasurementUnit.LITERS_PER_SECOND,
                                  meter_type=MeterType.FLOW, measure_mode=MeterMeasureMode.AUTOMATIC)
 
+        ups = UninterruptiblePowerSupply("UPS.01", PowerState.ON, UPSPhase.SINGLE)
+        voltage_meter = Meter(meter_location="huz.cab.err",
+                              manufacturer="Honeywell",
+                              measurement_frequency=5,
+                              measurement_unit=MeasurementUnit.VOLT,
+                              meter_type=MeterType.POWER, measure_mode=MeterMeasureMode.AUTOMATIC)
+
+        ups.meter = voltage_meter
+
         boiler = Boiler('PR.VNT.BL.01', BoilerCategory.NATURAL_GAS, PowerState.ON)
         boiler.meter = water_flow_meter
         self.hall.add_hvac_component(boiler)
-        building.add_meter(electricity_meter)
+        self.room.add_energy_system(ups)
 
+        building.add_meter(electricity_meter)
+        meter_types = [MeterType.FLOW.value, MeterType.ELECTRICITY.value, MeterType.POWER.value]
         meter_search = MeterSearchVisitor(
             floor_criteria={'number': [1, 2]},
-            meter_criteria={'meter_type': [MeterType.FLOW.value, MeterType.ELECTRICITY.value]})
+            meter_criteria={'meter_type': meter_types})
 
         building.accept(meter_search)
 
-        self.assertEqual(len(meter_search.found_meters), 2)
-        self.assertEqual(meter_search.found_meters[0], MeterType.FLOW)
+        self.assertEqual(len(meter_search.found_meters), 3)
+        self.assertEqual(meter_search.found_meters[2].meter_type, MeterType.FLOW)
