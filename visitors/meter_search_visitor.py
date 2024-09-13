@@ -42,8 +42,13 @@ class MeterSearchVisitor(AbstractSpaceVisitor):
             if space.meter:
                 self.found_meters.append(space.meter)
 
-            # search HVAC components in open space for meters
-            for hvac_component in space.get_hvac_components():
-                if self._match_criteria(hvac_component.meter, self._meter_criteria):
-                    if hvac_component.meter:
-                        self.found_meters.append(hvac_component.meter)
+            # search HVAC components for meters
+            self._search_entities(space.get_hvac_components())
+            # search energy systems for meters
+            self._search_entities(space.get_energy_systems())
+
+    def _search_entities(self, entities):
+        for entity in entities:
+            if self._match_criteria(entity.meter, self._meter_criteria):
+                if entity.meter:
+                    self.found_meters.append(entity.meter)

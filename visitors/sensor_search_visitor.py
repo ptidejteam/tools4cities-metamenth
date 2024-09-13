@@ -33,8 +33,15 @@ class SensorSearchVisitor(AbstractSpaceVisitor):
                 self.found_sensors.append(sensor)
 
         # search for HVAC component sensors
-        for hvac_component in space.get_hvac_components():
-            for sensor in hvac_component.get_transducers():
+        self._search_entities(space.get_hvac_components())
+        # search appliances for sensors
+        self._search_entities(space.get_appliances())
+        # search energy systems for sensors
+        self._search_entities(space.get_energy_systems())
+
+    def _search_entities(self, entities):
+        for entity in entities:
+            for sensor in entity.get_transducers():
                 if self._match_criteria(sensor, self._sensor_criteria):
                     self.found_sensors.append(sensor)
 
