@@ -4,7 +4,7 @@
 PROJECT_DIR=$(dirname "$(readlink -f "$0")")
 TEST_DIR="$PROJECT_DIR/tests/"
 
-TEST_DIRS="measurement_instruments structure transducer subsystem energy_system"
+TEST_DIRS="energy_system measurement_instruments structure transducer subsystem visitors"
 
 # Run the tests and generate coverage report
 for dir in $TEST_DIRS; do
