@@ -15,13 +15,12 @@ class MeterSearchVisitor(AbstractSpaceVisitor):
         """
         super().__init__(zone_criteria, floor_criteria, room_criteria, open_space_criteria)
         self._meter_criteria = meter_criteria
-        self.found_meters = []
 
     def visit_building(self, building):
         print(f'Visiting building: {building.address}')
         for meter in building.get_meters():
-            if self._match_criteria(meter, self._room_criteria):
-                self.found_meters.append(meter)
+            if self._match_criteria(meter, self._meter_criteria):
+                self.found_entities.append(meter)
 
         for floor in building.get_floors():
             floor.accept(self)
@@ -40,7 +39,7 @@ class MeterSearchVisitor(AbstractSpaceVisitor):
         if self._match_criteria(space.meter, self._meter_criteria):
             # compare meter in open space to search criteria
             if space.meter:
-                self.found_meters.append(space.meter)
+                self.found_entities.append(space.meter)
 
             # search HVAC components for meters
             self._search_entities(space.get_hvac_components())
@@ -51,4 +50,4 @@ class MeterSearchVisitor(AbstractSpaceVisitor):
         for entity in entities:
             if self._match_criteria(entity.meter, self._meter_criteria):
                 if entity.meter:
-                    self.found_meters.append(entity.meter)
+                    self.found_entities.append(entity.meter)

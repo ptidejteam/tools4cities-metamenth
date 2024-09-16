@@ -11,14 +11,13 @@ class SpaceSearchVisitor(AbstractSpaceVisitor):
     def __init__(self, zone_criteria: Dict = None, floor_criteria: Dict = None,
                  room_criteria: Dict = None, open_space_criteria: Dict = None):
         super().__init__(zone_criteria, floor_criteria, room_criteria, open_space_criteria)
-        self.found_spaces = []
 
     def visit_floor(self, floor):
         """
         override visit floor from AbstractSpace Visitor
         """
         if self._match_criteria(floor, self._floor_criteria):
-            self.found_spaces.append(floor)
+            self.found_entities.append(floor)
 
         for room in floor.get_rooms():
             room.accept(self)
@@ -28,8 +27,8 @@ class SpaceSearchVisitor(AbstractSpaceVisitor):
 
     def visit_room(self, room):
         if self._match_criteria(room, self._room_criteria):
-            self.found_spaces.append(room)
+            self.found_entities.append(room)
 
     def visit_open_space(self, open_space):
         if self._match_criteria(open_space, self._open_space_criteria):
-            self.found_spaces.append(open_space)
+            self.found_entities.append(open_space)

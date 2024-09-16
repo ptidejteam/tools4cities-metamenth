@@ -20,26 +20,21 @@ class AbstractSpaceVisitor:
         self._floor_criteria = floor_criteria
         self._room_criteria = room_criteria
         self._open_space_criteria = open_space_criteria
+        self.found_entities = []
 
     def visit_building(self, building):
         print(f'Visiting building: {building.address}')
         for floor in building.get_floors():
             floor.accept(self)
 
-    def visit_zone(self, zone):
-        if self._match_criteria(zone, self._zone_criteria):
-            print(f'Visiting zone: {zone.name}')
-            for space in zone.get_spaces():
-                space.accept(self)
-
     def visit_floor(self, floor):
         if self._match_criteria(floor, self._floor_criteria):
             print(f'Visiting floor: {floor.number}')
-        for room in floor.get_rooms():
-            room.accept(self)
+            for room in floor.get_rooms():
+                room.accept(self)
 
-        for open_space in floor.get_open_spaces():
-            open_space.accept(self)
+            for open_space in floor.get_open_spaces():
+                open_space.accept(self)
 
     def visit_room(self, room):
         pass
@@ -61,11 +56,19 @@ class AbstractSpaceVisitor:
                 att_value = entity.get(key)
                 if isinstance(att_value, AbstractEnum):
                     att_value = att_value.value
-
                 if isinstance(value, list):
                     # for list search criteria
-                    if att_value not in value:
-                        return False
+                    if isinstance(att_value, list):
+                        match_found = False
+                        for i in range(len(att_value)):
+                            for j in range(len(value)):
+                                if att_value[i] == value[j]:
+                                    match_found = True
+                        return match_found
+
+                    else:
+                        if att_value not in value:
+                            return False
                 else:
                     # For single-value criteria
                     if att_value != value:

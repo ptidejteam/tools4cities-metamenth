@@ -14,7 +14,6 @@ class SensorSearchVisitor(AbstractSpaceVisitor):
         """
         super().__init__(zone_criteria, floor_criteria, room_criteria, open_space_criteria)
         self._sensor_criteria = sensor_criteria
-        self.found_sensors = []
 
     def visit_room(self, room):
         if self._match_criteria(room, self._room_criteria):
@@ -30,7 +29,7 @@ class SensorSearchVisitor(AbstractSpaceVisitor):
         # search for space sensors
         for sensor in space.get_transducers():
             if self._match_criteria(sensor, self._sensor_criteria):
-                self.found_sensors.append(sensor)
+                self.found_entities.append(sensor)
 
         # search for HVAC component sensors
         self._search_entities(space.get_hvac_components())
@@ -43,5 +42,5 @@ class SensorSearchVisitor(AbstractSpaceVisitor):
         for entity in entities:
             for sensor in entity.get_transducers():
                 if self._match_criteria(sensor, self._sensor_criteria):
-                    self.found_sensors.append(sensor)
+                    self.found_entities.append(sensor)
 
