@@ -32,7 +32,7 @@ from .radiant_slab_type import RadiantSlabType
 from .heating_type import HeatingType
 from .compressor_type import CompressorType
 from .boiler_category import BoilerCategory
-from .refrigerant_type import RefrigerantType
+from .refrigerant_types import RefrigerantTypes
 from .coil_material import CoilMaterial
 from .heat_source import HeatSource
 from .chiller_type import ChillerType

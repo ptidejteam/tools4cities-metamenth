@@ -8,22 +8,25 @@ class SpaceSearchVisitor(AbstractSpaceVisitor):
     building spaces or zones
     """
 
-    def __init__(self, zone_criteria: Dict = None, floor_criteria: Dict = None,
-                 room_criteria: Dict = None, open_space_criteria: Dict = None):
-        super().__init__(zone_criteria, floor_criteria, room_criteria, open_space_criteria)
+    def __init__(self, floor_criteria: Dict = None,
+                 room_criteria: Dict = None, open_space_criteria: Dict = None, include_floor: bool = True):
+        super().__init__(floor_criteria, room_criteria, open_space_criteria)
+        self._include_floor = include_floor
 
     def visit_floor(self, floor):
         """
         override visit floor from AbstractSpace Visitor
         """
         if self._match_criteria(floor, self._floor_criteria):
-            self.found_entities.append(floor)
+            print(f'Visiting floor: {floor.number}')
+            if self._include_floor:
+                self.found_entities.append(floor)
 
-        for room in floor.get_rooms():
-            room.accept(self)
+            for room in floor.get_rooms():
+                room.accept(self)
 
-        for open_space in floor.get_open_spaces():
-            open_space.accept(self)
+            for open_space in floor.get_open_spaces():
+                open_space.accept(self)
 
     def visit_room(self, room):
         if self._match_criteria(room, self._room_criteria):

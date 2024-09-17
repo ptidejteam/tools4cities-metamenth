@@ -10,6 +10,7 @@ class PowerState(AbstractEnum):
     """
     ON = "On"
     OFF = "Off"
+    STANDBY = "StandBy"
     OUT_OF_SERVICE = "OutOfService"
     VARIABLE_SPEED = "VariableSpeed"
     INTERMITTENT = "Intermittent"

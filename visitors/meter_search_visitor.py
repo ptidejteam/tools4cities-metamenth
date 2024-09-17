@@ -8,12 +8,12 @@ class MeterSearchVisitor(AbstractSpaceVisitor):
     building spaces or zones
     """
 
-    def __init__(self, meter_criteria: Dict, zone_criteria: Dict = None, floor_criteria: Dict = None,
+    def __init__(self, meter_criteria: Dict, floor_criteria: Dict = None,
                  room_criteria: Dict = None, open_space_criteria: Dict = None):
         """
         :param meter_criteria: the search criteria for meters
         """
-        super().__init__(zone_criteria, floor_criteria, room_criteria, open_space_criteria)
+        super().__init__(floor_criteria, room_criteria, open_space_criteria)
         self._meter_criteria = meter_criteria
 
     def visit_building(self, building):

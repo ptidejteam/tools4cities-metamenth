@@ -8,15 +8,14 @@ class AbstractSpaceVisitor:
     spaces in buildings
     """
 
-    def __init__(self, zone_criteria: Dict, floor_criteria: Dict,
+    def __init__(self, floor_criteria: Dict,
                  room_criteria: Dict, open_space_criteria: Dict):
         """
-        :param zone_criteria: criteria to filter down sensor search to specific zones
         :param floor_criteria: criteria to filter down sensor search to specific floors
         :param room_criteria: criteria to filter down sensor search to specific rooms
         :param open_space_criteria: criteria to filter down sensor search to specific open spaces
         """
-        self._zone_criteria = zone_criteria
+
         self._floor_criteria = floor_criteria
         self._room_criteria = room_criteria
         self._open_space_criteria = open_space_criteria

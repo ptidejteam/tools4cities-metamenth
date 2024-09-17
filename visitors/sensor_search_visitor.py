@@ -7,12 +7,12 @@ class SensorSearchVisitor(AbstractSpaceVisitor):
     A concrete visitor that searches for sensors in
     building spaces or zones
     """
-    def __init__(self, sensor_criteria: Dict, zone_criteria: Dict = None, floor_criteria: Dict = None,
+    def __init__(self, sensor_criteria: Dict, floor_criteria: Dict = None,
                  room_criteria: Dict = None, open_space_criteria: Dict = None):
         """
         :param sensor_criteria: the search criteria for sensors
         """
-        super().__init__(zone_criteria, floor_criteria, room_criteria, open_space_criteria)
+        super().__init__(floor_criteria, room_criteria, open_space_criteria)
         self._sensor_criteria = sensor_criteria
 
     def visit_room(self, room):

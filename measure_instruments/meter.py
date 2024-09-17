@@ -33,7 +33,6 @@ class Meter(AbstractReader):
         :param accumulation_frequency: the frequency at which data is accumulated
         """
         super().__init__(measurement_unit, meter_location, manufacturer)
-        self._manufacturer = None
         self._measurement_frequency = None
         self._meter_type = None
         self._meter_measures: [MeterMeasure] = []
@@ -42,7 +41,6 @@ class Meter(AbstractReader):
         self._accumulation_frequency = MeterAccumulationFrequency.NONE
 
         # Apply validation
-        self.manufacturer = manufacturer
         self.measurement_frequency = measurement_frequency
         self.meter_type = meter_type
         self.measure_mode = measure_mode

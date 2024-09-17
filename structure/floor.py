@@ -192,7 +192,7 @@ class Floor(AbstractSpace):
 
     def get_room_by_name(self, name: str) -> Room:
         """
-        Retrieves a room given the name
+        Retrieves a room given its name
         :param name: the name of the room
         :return:
         """
