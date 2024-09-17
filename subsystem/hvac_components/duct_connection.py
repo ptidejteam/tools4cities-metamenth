@@ -12,6 +12,7 @@ class DuctConnection:
     def __init__(self):
         self._source_entities = []
         self._destination_entities = []
+        # TODO: Validate which entities are allowed inside a duct
         self._inside_entities = []
         self._is_loop = False
 
