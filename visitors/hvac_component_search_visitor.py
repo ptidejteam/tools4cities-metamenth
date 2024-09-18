@@ -1,6 +1,7 @@
 from visitors.interfaces.abstract_space_visitor import AbstractSpaceVisitor
 from typing import Dict
 from subsystem.hvac_components.duct import Duct
+from subsystem.hvac_components.air_volume_box import AirVolumeBox
 import itertools
 
 
@@ -46,8 +47,13 @@ class HVACComponentSearchVisitor(AbstractSpaceVisitor):
                 ):
                     if component_class == duct_entity.__class__.__name__:
                         self._add_hvac_component(duct_entity)
+            elif isinstance(hvac_component, AirVolumeBox):
+                # check if what we are looking for is/are inlet dampers in air volume box
+                if hvac_component.inlet_dampers:
+                    if hvac_component.inlet_dampers[0].__class__.__name__ == component_class:
+                        for damper in hvac_component.inlet_dampers:
+                            self._add_hvac_component(damper)
 
     def _add_hvac_component(self, entity):
-        del self._hvac_component_criteria['component_class']
         if self._match_criteria(entity, self._hvac_component_criteria):
             self.found_entities.append(entity)

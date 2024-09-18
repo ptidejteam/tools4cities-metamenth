@@ -52,6 +52,8 @@ class AbstractSpaceVisitor:
 
         try:
             for key, value in criteria.items():
+                if key == 'component_class':
+                    continue
                 att_value = entity.get(key)
                 if isinstance(att_value, AbstractEnum):
                     att_value = att_value.value
