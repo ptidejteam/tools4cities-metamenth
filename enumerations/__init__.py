@@ -32,7 +32,7 @@ from .radiant_slab_type import RadiantSlabType
 from .heating_type import HeatingType
 from .compressor_type import CompressorType
 from .boiler_category import BoilerCategory
-from .refrigerant_types import RefrigerantTypes
+from .refrigerant_type import RefrigerantType
 from .coil_material import CoilMaterial
 from .heat_source import HeatSource
 from .chiller_type import ChillerType
@@ -54,3 +54,4 @@ from .ats_operation_mode import ATSOperationMode
 from .ats_switching_mechanism import ATSSwitchingMechanism
 from .ups_phase import UPSPhase
 from .operation_type import OperationType
+from .filter_type import FilterType

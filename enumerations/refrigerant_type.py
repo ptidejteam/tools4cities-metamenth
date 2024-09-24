@@ -1,7 +1,7 @@
 from enumerations.abstract_enum import AbstractEnum
 
 
-class RefrigerantTypes(AbstractEnum):
+class RefrigerantType(AbstractEnum):
     R134A = "R-134a"
     R410A = "R-410A"
     R22 = "R-22"

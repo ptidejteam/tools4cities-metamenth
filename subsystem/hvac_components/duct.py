@@ -14,6 +14,7 @@ from enumerations import BuildingEntity
 from typing import Dict
 from utils import StructureEntitySearch
 from subsystem.hvac_components.air_volume_box import AirVolumeBox
+from subsystem.hvac_components.filter import Filter
 
 
 class Duct(AbstractDynamicEntity, AbstractZonalEntity):
@@ -30,6 +31,7 @@ class Duct(AbstractDynamicEntity, AbstractZonalEntity):
         self._fans: List[Fan] = []
         self._dampers: List[Damper] = []
         self._connected_air_volume_box: [AirVolumeBox] = []
+        self._filters: [Filter] = []
 
         self.name = name
         self.duct_type = duct_type
@@ -85,7 +87,32 @@ class Duct(AbstractDynamicEntity, AbstractZonalEntity):
         :param new_heat_exchanger: a heat exchanger to be added to this duct
         :return:
         """
-        EntityInsert.insert_building_entity(self._heat_exchangers, new_heat_exchanger, BuildingEntity.HVAC_COMPONENT.value)
+        EntityInsert.insert_building_entity(self._heat_exchangers, new_heat_exchanger,
+                                            BuildingEntity.HVAC_COMPONENT.value)
+
+    def add_filter(self, new_filter: Filter):
+        """
+        Adds filters to duct
+        :param new_filter: a heat exchanger to be added to this duct
+        :return:
+        """
+        EntityInsert.insert_building_entity(self._filters, new_filter, BuildingEntity.HVAC_COMPONENT.value)
+
+    def remove_filter(self, hvac_filter: Filter):
+        """
+        Removes a filter from a duct
+        :param hvac_filter: the filter to remove
+        :return:
+        """
+        EntityRemover.remove_building_entity(self._filters, hvac_filter)
+
+    def get_filters(self, search_terms: Dict = None) -> [Filter]:
+        """
+        Search filters by attribute values
+        :param search_terms: a dictionary of attributes and their values
+        :return:
+        """
+        return StructureEntitySearch.search(self._filters, search_terms)
 
     def add_fan(self, new_fan: Fan):
         """
@@ -146,7 +173,7 @@ class Duct(AbstractDynamicEntity, AbstractZonalEntity):
 
     def get_heat_exchangers(self, search_terms: Dict = None) -> [HeatExchanger]:
         """
-        Search source entities by attribute values
+        Search heat exchangers by attribute values
         :param search_terms: a dictionary of attributes and their values
         :return:
         """
@@ -154,7 +181,7 @@ class Duct(AbstractDynamicEntity, AbstractZonalEntity):
 
     def get_dampers(self, search_terms: Dict = None) -> [Damper]:
         """
-        Search source entities by attribute values
+        Search dampers by attribute values
         :param search_terms: a dictionary of attributes and their values
         :return:
         """
@@ -162,15 +189,15 @@ class Duct(AbstractDynamicEntity, AbstractZonalEntity):
 
     def get_fans(self, search_terms: Dict = None) -> [Fan]:
         """
-        Search source entities by attribute values
+        Search fans by attribute values
         :param search_terms: a dictionary of attributes and their values
         :return:
         """
         return StructureEntitySearch.search(self._fans, search_terms)
 
-    def get_connected_air_volume_box(self, search_terms: Dict = None) -> [AirVolumeBox]:
+    def get_connected_air_volume_boxes(self, search_terms: Dict = None) -> [AirVolumeBox]:
         """
-        Search source entities by attribute values
+        Search air volume boxes by attribute values
         :param search_terms: a dictionary of attributes and their values
         :return:
         """
@@ -193,6 +220,7 @@ class Duct(AbstractDynamicEntity, AbstractZonalEntity):
             f"Fans: {self._fans}, "
             f"Heat Exchangers: {self._heat_exchangers}, "
             f"Dampers: {self._dampers}, "
-            f"Air Volume Box: {self._connected_air_volume_box}"
+            f"Air Volume Box: {self._connected_air_volume_box}, "
+            f"Filters: {self._filters}, "
             f"Connection: {self.connections})"
         )

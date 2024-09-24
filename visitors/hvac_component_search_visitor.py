@@ -42,7 +42,7 @@ class HVACComponentSearchVisitor(AbstractSpaceVisitor):
                 for duct_entity in itertools.chain(
                         hvac_component.get_heat_exchangers(),
                         hvac_component.get_fans(),
-                        hvac_component.get_connected_air_volume_box(),
+                        hvac_component.get_connected_air_volume_boxes(),
                         hvac_component.get_dampers()
                 ):
                     if component_class == duct_entity.__class__.__name__:

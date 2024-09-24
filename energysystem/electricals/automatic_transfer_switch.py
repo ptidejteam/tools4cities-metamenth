@@ -1,5 +1,9 @@
 from energysystem.interfaces.abstract_electrical import AbstractElectrical
 from enumerations import PowerState
+from enumerations import ATSPowerSourceType
+from enumerations import ATSOperationMode
+from enumerations import ATSTransitionType
+from enumerations import ATSSwitchingMechanism
 
 
 class AutomaticTransferSwitch(AbstractElectrical):
@@ -11,35 +15,35 @@ class AutomaticTransferSwitch(AbstractElectrical):
         self._switching_mechanism = None
 
     @property
-    def power_source_type(self):
+    def power_source_type(self) -> ATSPowerSourceType:
         return self._power_source_type
 
     @power_source_type.setter
-    def power_source_type(self, value):
+    def power_source_type(self, value: ATSPowerSourceType):
         self._power_source_type = value
 
     @property
-    def transition_type(self):
+    def transition_type(self) -> ATSTransitionType:
         return self._transition_type
 
     @transition_type.setter
-    def transition_type(self, value):
+    def transition_type(self, value: ATSTransitionType):
         self._transition_type = value
 
     @property
-    def operation_mode(self):
+    def operation_mode(self) -> ATSOperationMode:
         return self._operation_mode
 
     @operation_mode.setter
-    def operation_mode(self, value):
+    def operation_mode(self, value: ATSOperationMode):
         self._operation_mode = value
 
     @property
-    def switching_mechanism(self):
+    def switching_mechanism(self) -> ATSSwitchingMechanism:
         return self._switching_mechanism
 
     @switching_mechanism.setter
-    def switching_mechanism(self, value):
+    def switching_mechanism(self, value: ATSSwitchingMechanism):
         self._switching_mechanism = value
 
     def __str__(self):

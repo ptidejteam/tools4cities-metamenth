@@ -195,7 +195,7 @@ class TestBuildingControlSystem(BaseTest):
 
     def test_principal_duct_with_supply_air_having_vav_box(self):
         duct, supply_air_duct, return_air_duct = self._init_ducts()
-        vav_box = supply_air_duct.get_connected_air_volume_box()[0]
+        vav_box = supply_air_duct.get_connected_air_volume_boxes()[0]
         self.assertEqual(vav_box.air_volume_type, AirVolumeType.VARIABLE_AIR_VOLUME)
         self.assertEqual(vav_box.has_heating_capability, False)
         self.assertIsInstance(vav_box.inlet_dampers[0], Damper)

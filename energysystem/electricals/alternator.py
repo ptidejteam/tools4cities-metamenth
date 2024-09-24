@@ -19,7 +19,7 @@ class Alternator(AbstractElectrical):
 
     def __str__(self):
         return (
-            f"UninterruptiblePowerSupply("
+            f"Alternator("
             f"{super().__str__()}"
             f"Power Rating: {self.power_rating})"
         )
