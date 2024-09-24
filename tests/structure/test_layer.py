@@ -6,6 +6,7 @@ from misc import MeasureFactory
 from enumerations import RecordingType
 from datatypes.measure import Measure
 from enumerations import MeasurementUnit
+from enumerations import LayerRoughness
 
 
 class TestLayer(TestCase):
@@ -26,13 +27,15 @@ class TestLayer(TestCase):
             density=density_measure,
             heat_capacity=self.hc_measure,
             thermal_transmittance=tt_measure,
-            thermal_resistance=tr_measure
+            thermal_resistance=tr_measure,
+            thermal_absorptance=0.8,
+            solar_absorptance=0.6
         )
 
         height = MeasureFactory.create_measure(RecordingType.BINARY.value, Measure(MeasurementUnit.METERS, 20))
         length = MeasureFactory.create_measure(RecordingType.BINARY.value, Measure(MeasurementUnit.METERS, 15))
         width = MeasureFactory.create_measure(RecordingType.BINARY.value, Measure(MeasurementUnit.METERS, 3))
-        self.layer = Layer(height, length, width, self.ex_material)
+        self.layer = Layer(height, length, width, self.ex_material, LayerRoughness.ROUGH)
 
     def test_layer_with_external_material(self):
         self.assertEqual(self.layer.has_air_barrier, False)

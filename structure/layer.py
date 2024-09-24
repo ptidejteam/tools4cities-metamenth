@@ -1,6 +1,7 @@
 import uuid
 from datatypes.interfaces.abstract_measure import AbstractMeasure
 from structure.material import Material
+from enumerations import LayerRoughness
 
 
 class Layer:
@@ -16,6 +17,7 @@ class Layer:
         length: AbstractMeasure,
         thickness: AbstractMeasure,
         material: Material,
+        roughness: LayerRoughness,
         has_vapour_barrier: bool = False,
         has_air_barrier: bool = False,
 
@@ -25,6 +27,7 @@ class Layer:
         self._length = None
         self._thickness = None
         self._material = None
+        self._roughness = None
         self._has_vapour_barrier = has_vapour_barrier
         self._has_air_barrier = has_air_barrier
 
@@ -33,6 +36,7 @@ class Layer:
         self.length = length
         self.thickness = thickness
         self.material = material
+        self.roughness = roughness
 
     @property
     def UID(self) -> str:
@@ -79,6 +83,16 @@ class Layer:
         self._material = value
 
     @property
+    def roughness(self) -> LayerRoughness:
+        return self._roughness
+
+    @roughness.setter
+    def roughness(self, value: LayerRoughness):
+        if value is None:
+            raise ValueError("roughness must be of MaterialRoughness type")
+        self._roughness = value
+
+    @property
     def has_vapour_barrier(self) -> bool:
         return self._has_vapour_barrier
 
@@ -102,6 +116,7 @@ class Layer:
             f"Height: {self.height.value} {self.height.measurement_unit}, "
             f"Length: {self.length.value} {self.length.measurement_unit}, "
             f"Thickness: {self.thickness.value} {self.thickness.measurement_unit}, "
+            f"Roughness: {self.roughness.value}, "
             f"Vapour Barrier: {self.has_vapour_barrier}, "
             f"Air Barrier: {self.has_air_barrier}, "
             f"{material_str})"

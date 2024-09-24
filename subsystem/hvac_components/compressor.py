@@ -5,7 +5,7 @@ from enumerations import CompressorType
 class Compressor(AbstractDuctConnectedComponent):
     def __init__(self, name: str, compressor_type: CompressorType):
         """
-        Models a compressor in an hvac system
+        Models a compressor in hvac system
         :param name: the unique name of the compressor
         :param compressor_type: the type of compressor
         """

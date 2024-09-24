@@ -1,6 +1,7 @@
 from subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
 from enumerations import FilterType
 from datatypes.binary_measure import BinaryMeasure
+from misc import Validate
 
 
 class Filter(AbstractHVACComponent):
@@ -60,10 +61,7 @@ class Filter(AbstractHVACComponent):
 
     @efficiency.setter
     def efficiency(self, value: int):
-        if 16 > value > 1:
-            self._efficiency = value
-        else:
-            raise ValueError('efficiency must be an integer from 1 to 16')
+        self._efficiency = Validate.validate_number_range(value, (1, 16))
 
     def __str__(self):
         return (

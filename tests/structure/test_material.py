@@ -33,8 +33,8 @@ class TestMaterial(TestCase):
     def test_valid_material(self):
 
         tr_measure = MeasureFactory.create_measure(RecordingType.BINARY.value,
-                                                        Measure(MeasurementUnit.SQUARE_METERS_KELVIN_PER_WATTS,
-                                                                2.3))
+                                                   Measure(MeasurementUnit.SQUARE_METERS_KELVIN_PER_WATTS,
+                                                           2.3))
         self.material = Material(
             description="Material for the external wall of a building",
             material_type=MaterialType.EX_WALL_BRICK,
@@ -50,6 +50,24 @@ class TestMaterial(TestCase):
         self.assertEqual(self.material.thermal_transmittance, self.tt_measure)
         self.assertEqual(self.material.material_type, MaterialType.EX_WALL_BRICK)
         self.assertEqual(self.material.thermal_resistance, tr_measure)
+        self.assertEqual(self.material.visible_absorptance, None)
+
+    def test_material_with_invalid_absorptance(self):
+
+        tr_measure = MeasureFactory.create_measure(RecordingType.BINARY.value,
+                                                   Measure(MeasurementUnit.SQUARE_METERS_KELVIN_PER_WATTS, 2.3))
+        try:
+            self.material = Material(
+                description="Material for the external wall of a building",
+                material_type=MaterialType.EX_WALL_BRICK,
+                density=self.density_measure,
+                heat_capacity=self.hc_measure,
+                thermal_transmittance=self.tt_measure,
+                thermal_resistance=tr_measure,
+                thermal_absorptance=2.5
+            )
+        except ValueError as err:
+            self.assertEqual(err.__str__(), "2.5 must be a number between 0 and 1.")
 
     def test_material_with_none_thermal_resistance(self):
         try:
@@ -63,4 +81,4 @@ class TestMaterial(TestCase):
             )
 
         except ValueError as err:
-            self.assertEqual(err.__str__(), "thermal_resistance is/are mandatory")
+            self.assertEqual(err.__str__(), "thermal_resistance must be of type BinaryMeasure")

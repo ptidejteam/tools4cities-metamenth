@@ -22,6 +22,7 @@ from enumerations import SensorLogType
 from transducers.sensor import Sensor
 from enumerations import SensorMeasure
 from enumerations import SensorMeasureType
+from enumerations import LayerRoughness
 
 
 class BaseTest(TestCase):
@@ -62,7 +63,7 @@ class BaseTest(TestCase):
         self.height = MeasureFactory.create_measure(RecordingType.BINARY.value, Measure(MeasurementUnit.METERS, 20))
         self.length = MeasureFactory.create_measure(RecordingType.BINARY.value, Measure(MeasurementUnit.METERS, 15))
         self.width = MeasureFactory.create_measure(RecordingType.BINARY.value, Measure(MeasurementUnit.METERS, 3))
-        self.layer = Layer(self.height, self.length, self.width, self.ex_material)
+        self.layer = Layer(self.height, self.length, self.width, self.ex_material, LayerRoughness.MEDIUM_ROUGH)
 
         # Thermostat
         self.thermostat = Appliance("Thermostat", [ApplianceCategory.OFFICE, ApplianceCategory.SMART],

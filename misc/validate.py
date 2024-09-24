@@ -33,12 +33,15 @@ class Validate:
             raise ValueError("Location should be a string of three words delimited with two periods.")
 
     @staticmethod
-    def validate_solar_heat_gain_coefficient(value: float) -> float:
-        if value is not None:
-            if 0 <= value <= 1:
-                return value
-            else:
-                raise ValueError("Solar Heat Gain Coefficient must be a float between 0 and 1.")
+    def validate_number_range(value: float, number_range: tuple) -> float:
+        try:
+            if value is not None:
+                if number_range[0] <= value <= number_range[1]:
+                    return value
+                else:
+                    raise ValueError(f"{value} must be a number between {number_range[0]} and {number_range[1]}.")
+        except IndexError:
+            print(f"{number_range} must be a tuple with just two values")
 
     @staticmethod
     def validate_none(attributes: Dict):
