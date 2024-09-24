@@ -3,6 +3,7 @@ from subsystem.building_control_system import BuildingControlSystem
 from subsystem.interfaces.abstract_subsystem import AbstractSubsystem
 from subsystem.hvac_system import HVACSystem
 from subsystem.hvac_components.duct import Duct
+from subsystem.hvac_components.filter import Filter
 from enumerations import DuctType
 from enumerations import DuctSubType
 from subsystem.hvac_components.fan import Fan
@@ -49,6 +50,8 @@ from datatypes.operational_schedule import OperationalSchedule
 from datetime import datetime
 from datetime import timedelta
 from enumerations import PowerState
+from measure_instruments.damper_position import DamperPosition
+from enumerations import FilterType
 
 
 class TestBuildingControlSystem(BaseTest):
@@ -172,6 +175,61 @@ class TestBuildingControlSystem(BaseTest):
         self.assertEqual(duct.get_transducer_by_name("TEMP.SENSOR"), self.temp_sensor)
         self.assertEqual(duct.get_transducers(), [self.presence_sensor, self.temp_sensor])
 
+    def test_add_filters_to_duct(self):
+        duct = Duct("PR.VNT", DuctType.AIR)
+        duct.duct_sub_type = DuctSubType.FRESH_AIR
+        filter_one = Filter("FLT.VNT", FilterType.ELECTROSTATIC)
+        filter_two = Filter("FLT.VNT.02", FilterType.FIBREGLASS)
+        duct.add_filter(filter_one)
+        duct.add_filter(filter_two)
+
+        self.assertEqual(duct.connections, None)
+        self.assertEqual(duct.get_heat_exchangers(), [])
+        self.assertEqual(duct.get_dampers(), [])
+        self.assertEqual(duct.get_fans(), [])
+
+        self.assertEqual(duct.get_filters(), [filter_one, filter_two])
+
+    def test_remove_filters_from_duct(self):
+        duct = Duct("PR.VNT", DuctType.AIR)
+        duct.duct_sub_type = DuctSubType.FRESH_AIR
+        filter_one = Filter("FLT.VNT", FilterType.ELECTROSTATIC)
+        filter_two = Filter("FLT.VNT.02", FilterType.FIBREGLASS)
+        duct.add_filter(filter_one)
+        duct.add_filter(filter_two)
+
+        duct.remove_filter(filter_one)
+
+        self.assertEqual(duct.connections, None)
+        self.assertEqual(duct.get_heat_exchangers(), [])
+        self.assertEqual(duct.get_dampers(), [])
+        self.assertEqual(duct.get_fans(), [])
+
+        self.assertEqual(duct.get_filters(), [filter_two])
+
+    def test_remove_position_data_from_damper(self):
+        damper = Damper("PR.VNT.DP.01", DamperType.BACK_DRAFT)
+        dpm_pos = DamperPosition(0.85)
+        damper.add_damper_position(dpm_pos)
+        damper.add_damper_position(DamperPosition(0.78))
+        damper.add_damper_position(DamperPosition(0.787))
+        damper.add_damper_position(DamperPosition(0.765))
+
+        damper.remove_damper_position(dpm_pos)
+
+        self.assertEqual(len(damper.get_damper_positions()), 3)
+
+    def test_get_position_positions_by_date(self):
+        damper = Damper("PR.VNT.DP.01", DamperType.BACK_DRAFT)
+        pos_date = '2024-09-23'
+        dpm_pos = DamperPosition(0.85, pos_date)
+        damper.add_damper_position(dpm_pos)
+        damper.add_damper_position(DamperPosition(0.78))
+        damper.add_damper_position(DamperPosition(0.787))
+        damper.add_damper_position(DamperPosition(0.765))
+
+        self.assertEqual(damper.get_damper_positions_by_date(pos_date, pos_date), [dpm_pos])
+
     def test_principal_duct_with_components_but_no_connection(self):
         duct = Duct("PR.VNT", DuctType.AIR)
         duct.duct_sub_type = DuctSubType.FRESH_AIR
@@ -180,7 +238,11 @@ class TestBuildingControlSystem(BaseTest):
         vfd = VariableFrequencyDrive('PR.VNT.VRD.01')
         fan = Fan("PR.VNT.FN.01", PowerState.ON, vfd)
         heat_exchanger = HeatExchanger("PR.VNT.HE.01", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
-        damper = Damper("PR.VNT.DP.01", DamperType.BACK_DRAFT, 35)
+        damper = Damper("PR.VNT.DP.01", DamperType.BACK_DRAFT)
+        damper.add_damper_position(DamperPosition(0.85))
+        damper.add_damper_position(DamperPosition(0.78))
+        damper.add_damper_position(DamperPosition(0.787))
+        damper.add_damper_position(DamperPosition(0.765))
         duct.add_heat_exchanger(heat_exchanger)
         duct.add_fan(fan)
         duct.add_damper(damper)
@@ -190,7 +252,7 @@ class TestBuildingControlSystem(BaseTest):
         self.assertEqual(duct.get_fans({'name': 'PR.VNT.FN.01'})[0], fan)
         self.assertEqual(duct.get_fans({'name': 'PR.VNT.FN.01'})[0].vfd, vfd)
         self.assertEqual(duct.get_dampers(), [damper])
-        self.assertEqual(duct.get_dampers()[0].percentage_opened, 35)
+        self.assertEqual(len(duct.get_dampers()[0].get_damper_positions()), 4)
         self.assertEqual(duct.get_heat_exchangers(), [heat_exchanger])
 
     def test_principal_duct_with_supply_air_having_vav_box(self):
@@ -402,5 +464,3 @@ class TestBuildingControlSystem(BaseTest):
         self.assertEqual(vent_sys.principal_duct.connections.get_destination_entities(), [supply_air_duct])
         self.assertEqual(vent_sys.principal_duct.connections.get_destination_entities()[0]
                          .connections.get_destination_entities(), [self.floor])
-
-

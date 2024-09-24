@@ -19,6 +19,7 @@ from visitors.hvac_component_search_visitor import HVACComponentSearchVisitor
 from subsystem.hvac_components.duct import Duct
 from enumerations import DuctType
 from enumerations import DuctSubType
+from measure_instruments.damper_position import DamperPosition
 
 
 class TestHVACComponentSearchVisitor(BaseTest):
@@ -129,8 +130,12 @@ class TestHVACComponentSearchVisitor(BaseTest):
     def test_search_for_room_and_duct_dampers(self):
         room_damper = Damper('PR.VNT.DMP.01', DamperType.MANUAL_VOLUME)
         duct_damper = Damper('PR.VNT.DMP.02', DamperType.BIOMETRIC_BYPASS)
-        room_damper.percentage_opened = 70
-        duct_damper.percentage_opened = 70
+        room_damper.add_damper_position(DamperPosition(0.71))
+        room_damper.add_damper_position(DamperPosition(0.732))
+
+        duct_damper.add_damper_position(DamperPosition(0.65))
+        duct_damper.add_damper_position(DamperPosition(0.675))
+
         second_floor = Floor(self.floor_area, 2, FloorType.ROOFTOP, open_spaces=[self.hall])
         self.building.add_floors([second_floor])
 
@@ -141,10 +146,9 @@ class TestHVACComponentSearchVisitor(BaseTest):
         self.room.add_hvac_component(room_damper)
         self.hall.add_hvac_component(supply_air_duct)
 
-        hvac_search = HVACComponentSearchVisitor(hvac_component_criteria={'component_class': 'Damper',
-                                                                          'percentage_opened': 70})
+        hvac_search = HVACComponentSearchVisitor(hvac_component_criteria={'component_class': 'Damper'})
         self.building.accept(hvac_search)
-
+        self.assertEqual(len(hvac_search.found_entities[0].get_damper_positions()), 2)
         self.assertEqual(len(hvac_search.found_entities), 2)
         self.assertIn(duct_damper, hvac_search.found_entities)
         self.assertIn(room_damper, hvac_search.found_entities)
@@ -152,8 +156,7 @@ class TestHVACComponentSearchVisitor(BaseTest):
     def test_search_for_heat_exchangers_in_ducts(self):
         room_damper = Damper('PR.VNT.DMP.01', DamperType.MANUAL_VOLUME)
         duct_damper = Damper('PR.VNT.DMP.02', DamperType.BIOMETRIC_BYPASS)
-        room_damper.percentage_opened = 70
-        duct_damper.percentage_opened = 70
+
         second_floor = Floor(self.floor_area, 2, FloorType.ROOFTOP, open_spaces=[self.hall])
         self.building.add_floors([second_floor])
 

@@ -50,10 +50,11 @@ class Filter(AbstractHVACComponent):
 
     @life_span.setter
     def life_span(self, value: int):
-        if value > 0:
-            self._life_span = value
-        else:
-            raise ValueError('life_span must be a positive integer')
+        if value:
+            if value > 0:
+                self._life_span = value
+            else:
+                raise ValueError('life_span must be a positive integer')
 
     @property
     def efficiency(self) -> int:
