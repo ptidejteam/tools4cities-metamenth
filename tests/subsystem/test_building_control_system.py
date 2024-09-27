@@ -52,6 +52,8 @@ from datetime import timedelta
 from enumerations import PowerState
 from measure_instruments.damper_position import DamperPosition
 from enumerations import FilterType
+from enumerations import PumpType
+from subsystem.hvac_components.pump import Pump
 
 
 class TestBuildingControlSystem(BaseTest):
@@ -206,6 +208,24 @@ class TestBuildingControlSystem(BaseTest):
         self.assertEqual(duct.get_fans(), [])
 
         self.assertEqual(duct.get_filters(), [filter_two])
+
+    def test_pump_chiller_connection(self):
+        duct = Duct("PR.VNT", DuctType.WATER_WITH_ANTI_FREEZE)
+        duct.duct_sub_type = DuctSubType.GLYCOL
+
+        chiller = Chiller('PR.VNT.CL.01', ChillerType.WATER_COOLED, PowerState.ON)
+        pump = Pump("PR.PMP", PumpType.CIRCULATOR)
+
+        chiller_pump_connection = DuctConnection()
+        chiller_pump_connection.add_entity(DuctConnectionEntityType.SOURCE, chiller)
+        chiller_pump_connection.add_entity(DuctConnectionEntityType.DESTINATION, pump)
+        chiller_pump_connection.is_loop = True
+
+        duct.connections = chiller_pump_connection
+
+        self.assertEqual(duct.connections, chiller_pump_connection)
+        self.assertEqual(duct.connections.get_source_entities(), [chiller])
+        self.assertEqual(duct.connections.get_destination_entities(), [pump])
 
     def test_remove_position_data_from_damper(self):
         damper = Damper("PR.VNT.DP.01", DamperType.BACK_DRAFT)

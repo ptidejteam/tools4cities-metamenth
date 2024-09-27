@@ -10,5 +10,4 @@ class DuctConnectionEntityType(AbstractEnum):
     """
     SOURCE = "Source"
     DESTINATION = "Destination"
-    INSIDE = "Inside"
 

@@ -4,6 +4,7 @@ from enumerations import DuctConnectionEntityType
 from subsystem.hvac_components.fan import Fan
 from subsystem.hvac_components.heat_exchanger import HeatExchanger
 from subsystem.hvac_components.damper import Damper
+from subsystem.hvac_components.filter import Filter
 from utils import StructureEntitySearch
 from typing import Dict
 
@@ -12,8 +13,6 @@ class DuctConnection:
     def __init__(self):
         self._source_entities = []
         self._destination_entities = []
-        # TODO: Validate which entities are allowed inside a duct
-        self._inside_entities = []
         self._is_loop = False
 
     def add_entity(self, entity_type: DuctConnectionEntityType, duct_entity):
@@ -25,13 +24,9 @@ class DuctConnection:
         """
         from subsystem.hvac_components.duct import Duct
         allowed_entity_types = [AbstractHVACComponent, AbstractSpace, Duct]
-        disallowed_inside_entities = [Fan, Damper, HeatExchanger]
 
         if any(isinstance(duct_entity, cls) for cls in allowed_entity_types):
-            if entity_type == DuctConnectionEntityType.INSIDE:
-                if not any(isinstance(duct_entity, cls) for cls in disallowed_inside_entities):
-                    self._inside_entities.append(duct_entity)
-            elif entity_type == DuctConnectionEntityType.SOURCE:
+            if entity_type == DuctConnectionEntityType.SOURCE:
                 if duct_entity not in self._destination_entities:
                     self._source_entities.append(duct_entity)
             elif entity_type == DuctConnectionEntityType.DESTINATION:
@@ -45,10 +40,7 @@ class DuctConnection:
         :param duct_entity: the entity to add
         :return:
         """
-        if entity_type == DuctConnectionEntityType.INSIDE:
-            if duct_entity in self._inside_entities:
-                self._inside_entities.remove(duct_entity)
-        elif entity_type == DuctConnectionEntityType.SOURCE:
+        if entity_type == DuctConnectionEntityType.SOURCE:
             if duct_entity in self._source_entities:
                 self._source_entities.remove(duct_entity)
         elif entity_type == DuctConnectionEntityType.DESTINATION:
@@ -71,14 +63,6 @@ class DuctConnection:
         """
         return StructureEntitySearch.search(self._destination_entities, search_terms)
 
-    def get_inside_entities(self, search_terms: Dict = None):
-        """
-        Search inside entities by attribute values
-        :param search_terms: a dictionary of attributes and their values
-        :return:
-        """
-        return StructureEntitySearch.search(self._inside_entities, search_terms)
-
     @property
     def is_loop(self) -> bool:
         return self._is_loop
@@ -98,7 +82,6 @@ class DuctConnection:
             f"DuctConnection ({super().__str__()}"
             f"Source Entities: {self._source_entities}, "
             f"Destination Entities: {self._destination_entities}, "
-            f"Is Loop: {self._is_loop}, "
-            f"Inside Entities: {self._inside_entities})"
+            f"Is Loop: {self._is_loop})"
         )
 
