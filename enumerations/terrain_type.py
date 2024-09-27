@@ -3,7 +3,7 @@ from enumerations.abstract_enum import AbstractEnum
 
 class TerrainType(AbstractEnum):
     """
-    Duct connection object types
+   Terrain types of buildings
 
     Author: Peter Yefi
     Email: peteryefi@gmail.com
