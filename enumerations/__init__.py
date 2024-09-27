@@ -57,3 +57,4 @@ from .operation_type import OperationType
 from .filter_type import FilterType
 from .layer_roughness import LayerRoughness
 from .pump_type import PumpType
+from .terrain_type import TerrainType

@@ -19,6 +19,7 @@ from utils import StructureSearch
 from typing import Dict
 from enumerations import RoomType
 from enumerations import OpenSpaceType
+from enumerations import TerrainType
 from observers.observable import Observable
 from misc import StateTrackDecorator
 from utils import StructureEntitySearch
@@ -54,6 +55,7 @@ class Building(Observable):
         self._internal_mass = None
         self._address = None
         self._building_type = None
+        self._terrain = None
         self._schedulable_entity = SchedulableEntity()
         self._envelope: Envelope = Optional[None]
         self._floors = []
@@ -231,6 +233,17 @@ class Building(Observable):
         if value is None:
             raise ValueError("schedules should be of type SchedulableEntity")
         self._schedulable_entity = value
+
+    @property
+    def terrain(self) -> TerrainType:
+        return self._terrain
+
+    @terrain.setter
+    def terrain(self, value: TerrainType):
+        if value is not None:
+            self._terrain = value
+        else:
+            raise ValueError("terrain must be of type TerrainType")
 
     @StateTrackDecorator
     def add_weather_station(self, weather_station: WeatherStation):
