@@ -1,6 +1,7 @@
 from subsystem.hvac_components.interfaces.abstract_duct_connected_component import AbstractDuctConnectedComponent
 from enumerations import AirVolumeType
 from subsystem.hvac_components.duct import Damper
+from datatypes.binary_measure import BinaryMeasure
 
 
 class AirVolumeBox(AbstractDuctConnectedComponent):
@@ -17,6 +18,7 @@ class AirVolumeBox(AbstractDuctConnectedComponent):
         self._inlet_dampers: [Damper] = []
         self._has_heating_capability = has_heating_capability
         self._has_cooling_capability = has_cooling_capability
+        self._max_air_flow = None
 
         self.air_volume_type = air_volume_type
 
@@ -54,11 +56,20 @@ class AirVolumeBox(AbstractDuctConnectedComponent):
     def inlet_dampers(self, value: [Damper]):
         self._inlet_dampers = value
 
+    @property
+    def max_air_flow(self) -> BinaryMeasure:
+        return self._max_air_flow
+
+    @max_air_flow.setter
+    def max_air_flow(self, value: BinaryMeasure):
+        self._max_air_flow = value
+
     def __str__(self):
         return (
             f"AirVolumeBox ({super().__str__()}"
             f"Air Volume Type: {self.air_volume_type.value}, "
             f"Inlet Dampers: {self.inlet_dampers}, "
+            f"Maximum Air Flow: {self.max_air_flow}, "
             f"Has Cooling Capability: {self._has_cooling_capability}, "
             f"Has Heating Capability: {self.has_heating_capability})"
         )
