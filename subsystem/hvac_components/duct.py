@@ -32,7 +32,6 @@ class Duct(AbstractDynamicEntity, AbstractZonalEntity):
         self._dampers: List[Damper] = []
         self._connected_air_volume_box: [AirVolumeBox] = []
         self._filters: [Filter] = []
-
         self.name = name
         self.duct_type = duct_type
 

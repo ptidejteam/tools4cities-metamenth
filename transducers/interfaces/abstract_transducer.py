@@ -8,8 +8,6 @@ from typing import List
 from typing import Union
 from measure_instruments.sensor_data import SensorData
 from measure_instruments.trigger_history import TriggerHistory
-from datatypes.interfaces.abstract_measure import AbstractMeasure
-from enumerations import MeasurementUnit
 
 
 class AbstractTransducer(ABC):
@@ -34,18 +32,10 @@ class AbstractTransducer(ABC):
         self.input_voltage_range = input_voltage_range
         self.input_current_range = input_current_range
         self.registry_id = registry_id
-        self._set_point = None
         self.output_current_range = output_current_range
         self.output_voltage_range = output_voltage_range
         self.meta_data: Dict[str, Any] = {}
         self._data = []
-
-    def set_set_point(self, value: AbstractMeasure, measure: MeasurementUnit):
-        if value is not None and measure is not None:
-            if value.measurement_unit.value != measure.value:
-                raise ValueError('(Input) sensor measure: {} not matching set point measure: {}'
-                                 .format(value.measurement_unit.value, measure.value))
-        self._set_point = value
 
     def add_data(self, data: Union[List[TriggerHistory], List[SensorData]]):
         if data is None:
@@ -104,7 +94,6 @@ class AbstractTransducer(ABC):
 
     def __str__(self):
         return (f"Unit: {self.UID}, Name: {self.name}, Registry ID: {self.registry_id}, "
-                f"Set Point: {self._set_point}, "
                 f"Input Voltage Range: {self.input_voltage_range}, "
                 f"Output Voltage Range: {self.output_voltage_range}, "
                 f"Input Current Range: {self.input_current_range}, "
