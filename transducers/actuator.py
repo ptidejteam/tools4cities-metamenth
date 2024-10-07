@@ -2,6 +2,8 @@ from abc import ABC
 from transducers.interfaces.abstract_transducer import AbstractTransducer
 from subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
 from subsystem.hvac_components.controller import Controller
+from typing import Union
+from subsystem.appliance import Appliance
 
 
 class Actuator(AbstractTransducer, ABC):
@@ -12,7 +14,7 @@ class Actuator(AbstractTransducer, ABC):
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, name: str, trigger_output: AbstractHVACComponent,
+    def __init__(self, name: str, trigger_output: Union[AbstractHVACComponent, Appliance],
                  controller: Controller = None, actuation_interval: float = None):
         """
         :param name: the unique name of a transducers
@@ -27,13 +29,13 @@ class Actuator(AbstractTransducer, ABC):
         self.controller = controller
 
     @property
-    def trigger_output(self) -> AbstractHVACComponent:
+    def trigger_output(self) -> Union[AbstractHVACComponent, Appliance]:
         return self._trigger_output
 
     @trigger_output.setter
-    def trigger_output(self, value: AbstractHVACComponent):
+    def trigger_output(self, value: Union[AbstractHVACComponent, Appliance]):
         if value is None:
-            raise ValueError('trigger_output must be of type AbstractHvACComponent')
+            raise ValueError('trigger_output must be of type AbstractHvACComponent or Appliance')
         self._trigger_output = value
 
     @property

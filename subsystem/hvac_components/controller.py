@@ -1,7 +1,6 @@
 from subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
 from typing import Dict
 from subsystem.appliance import Appliance
-from subsystem.hvac_components.interfaces.abstract_duct_connected_component import AbstractDuctConnectedComponent
 from typing import Union
 from utils import StructureEntitySearch
 from utils import EntityRemover
@@ -14,8 +13,8 @@ from misc import Validate
 class Controller(AbstractHVACComponent):
     def __init__(self, name: str):
         super().__init__(name)
-        self._set_points: {} = {}
-        self._controller_entities: [Union[AbstractHVACComponent, AbstractDuctConnectedComponent, Appliance]] = []
+        self._set_points: Dict[str, AbstractMeasure] = {}
+        self._controller_entities: [Union[AbstractHVACComponent, Appliance]] = []
 
     def add_set_point(self, set_point: AbstractMeasure, transducer_pair: tuple):
         """
@@ -60,22 +59,21 @@ class Controller(AbstractHVACComponent):
         if f'{sensor_name}:{actuator_name}' in self._set_points:
             del self._set_points[f'{sensor_name}:{actuator_name}']
 
-    def add_controller_entity(self, entity: Union[AbstractHVACComponent, AbstractDuctConnectedComponent, Appliance]):
+    def add_controller_entity(self, entity: Union[AbstractHVACComponent, Appliance]):
         """
         Adds an entity controlled by this controller
         :param entity: the entity that is controlled
         """
         EntityInsert.insert_building_entity(self._controller_entities, entity, BuildingEntity.HVAC_COMPONENT.value)
 
-    def remove_controller_entity(self, entity: Union[AbstractHVACComponent, AbstractDuctConnectedComponent, Appliance]):
+    def remove_controller_entity(self, entity: Union[AbstractHVACComponent, Appliance]):
         """
         Removes an entity controlled by this controller
         :param entity: the entity to be removed
         """
         EntityRemover.remove_building_entity(self._controller_entities, entity)
 
-    def get_controller_entities(self, search_terms: Dict = None) -> \
-            [Union[AbstractHVACComponent, AbstractDuctConnectedComponent, Appliance]]:
+    def get_controller_entities(self, search_terms: Dict = None) -> [Union[AbstractHVACComponent, Appliance]]:
         """
         Search data by attributes values
         :param search_terms: a dictionary of attributes and their values
