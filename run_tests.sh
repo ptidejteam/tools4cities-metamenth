@@ -13,4 +13,4 @@ for dir in $TEST_DIRS; do
 done
 
 # Generate coverage report
-coverage report --omit="*/tests/*"
+# coverage report --omit="*/tests/*"
