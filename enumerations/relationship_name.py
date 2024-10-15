@@ -1,7 +1,7 @@
 from enumerations.abstract_enum import AbstractEnum
 
 
-class RelationshipType(AbstractEnum):
+class RelationshipName(AbstractEnum):
     CONTAINS = "Contains"
     USES = "Uses"
     FEEDS = "Feeds"
