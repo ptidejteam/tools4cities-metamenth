@@ -1,10 +1,16 @@
 from structure.interfaces.abstract_space import AbstractSpace
 from subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
 from enumerations import DuctConnectionEntityType
-from subsystem.hvac_components.fan import Fan
+from subsystem.hvac_components.circulation_pump import CirculationPump
+from subsystem.hvac_components.compressor import Compressor
+from subsystem.hvac_components.pump import Pump
+from subsystem.hvac_components.heat_pump import HeatPump
+from subsystem.hvac_components.condenser import Condenser
 from subsystem.hvac_components.heat_exchanger import HeatExchanger
-from subsystem.hvac_components.damper import Damper
-from subsystem.hvac_components.filter import Filter
+from subsystem.hvac_components.air_volume_box import AirVolumeBox
+from subsystem.hvac_components.cooling_tower import CoolingTower
+from subsystem.hvac_components.chiller import Chiller
+from subsystem.hvac_components.boiler import Boiler
 from utils import StructureEntitySearch
 from typing import Dict
 
@@ -23,7 +29,8 @@ class DuctConnection:
         :return:
         """
         from subsystem.hvac_components.duct import Duct
-        allowed_entity_types = [AbstractHVACComponent, AbstractSpace, Duct]
+        allowed_entity_types = [HeatExchanger, AbstractSpace, Duct, Boiler, Chiller, CirculationPump,
+                                Compressor, Pump, HeatPump, Condenser, AirVolumeBox, CoolingTower]
 
         if any(isinstance(duct_entity, cls) for cls in allowed_entity_types):
             if entity_type == DuctConnectionEntityType.SOURCE:
@@ -32,6 +39,8 @@ class DuctConnection:
             elif entity_type == DuctConnectionEntityType.DESTINATION:
                 if duct_entity not in self._source_entities:
                     self._destination_entities.append(duct_entity)
+        else:
+            raise ValueError(f'{duct_entity} cannot be connected to a duct')
 
     def remove_entity(self, entity_type: DuctConnectionEntityType, duct_entity):
         """
