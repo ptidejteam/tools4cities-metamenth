@@ -156,6 +156,14 @@ class TestBuildingControlSystem(BaseTest):
         self.assertEqual(heat_pump.get_spaces({'name': self.hall.name}), [self.hall])
         self.assertEqual(heat_pump.condenser, condenser)
 
+    def test_add_fan_to_room(self):
+        try:
+            vfd = VariableFrequencyDrive('PR.VNT.VRD.01')
+            fan = Fan("PR.VNT.FN.01", PowerState.ON, vfd)
+            self.room.add_hvac_component(fan)
+        except ValueError as err:
+            self.assertEqual(err.__str__(), "PR.VNT.FN.01 cannot be added to a space entity")
+
     def test_building_control_system_with_hvac_system_without_ventilation(self):
         building_control_system = BuildingControlSystem("EV Control System")
         hvac_system = HVACSystem()

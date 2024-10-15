@@ -24,21 +24,9 @@ from measure_instruments.electric_vehicle_connectivity import ElectricVehicleCon
 from enumerations import OperationType
 from energysystem.storage_system.electric_vehicle import ElectricVehicle
 from enumerations import V2GMode
-from visitors.sensor_search_visitor import SensorSearchVisitor
-from visitors.space_search_visitor import SpaceSearchVisitor
-from visitors.meter_search_visitor import MeterSearchVisitor
-from enumerations import BoilerCategory
-from subsystem.hvac_components.boiler import Boiler
-from subsystem.appliance import Appliance
-from enumerations import ApplianceType
-from enumerations import ApplianceCategory
-from enumerations import SensorMeasure
 from measure_instruments.meter import Meter
 from enumerations import MeasurementUnit
 from enumerations import MeterType
-from energysystem.electricals.uninterruptible_power_supply import UninterruptiblePowerSupply
-from enumerations import PowerState
-from enumerations import UPSPhase
 
 
 class TestBuilding(BaseTest):

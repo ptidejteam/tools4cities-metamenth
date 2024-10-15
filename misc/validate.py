@@ -4,6 +4,8 @@ from enumerations import MeasurementUnit
 from datetime import datetime
 from enumerations import EngineType
 from enumerations import EngineSubType
+from typing import List
+from typing import Any
 
 
 class Validate:
@@ -11,7 +13,6 @@ class Validate:
     Has miscillineous methods for validation
 
     """
-
     @staticmethod
     def validate_what3word(input_string: str) -> str:
         """
@@ -172,6 +173,19 @@ class Validate:
                                    EngineSubType.JETFUEL.value]:
                 return True
         return False
+
+    @staticmethod
+    def is_hvac_component_allowed_in_space(hvac_component, disallowed_entities: List[Any]):
+        """
+        Validates HVAC entities that can be added to spaces
+        :param hvac_component: the HVAC entity
+        :param disallowed_entities: the entities not allowed to be added
+        """
+        if any(isinstance(hvac_component, cls) for cls in disallowed_entities):
+            raise ValueError(f'{hvac_component.name} cannot be added to a space entity')
+        return True
+
+
 
 
 

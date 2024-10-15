@@ -115,7 +115,7 @@ class TestRoom(BaseTest):
             self.assertIn("Space sensors must be one of the following", err.__str__())
 
     def test_classroom_with_actuator(self):
-        damper = Damper("PR.VNT.DP.01", DamperType.BACK_DRAFT, 35)
+        damper = Damper("PR.VNT.DP.01", DamperType.BACK_DRAFT)
         actuator = Actuator("DAMPER.ACT", damper)
 
         try:
