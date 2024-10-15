@@ -54,6 +54,7 @@ from measure_instruments.damper_position import DamperPosition
 from enumerations import FilterType
 from enumerations import PumpType
 from subsystem.hvac_components.pump import Pump
+from enumerations import RoomType
 
 
 class TestBuildingControlSystem(BaseTest):
@@ -163,6 +164,39 @@ class TestBuildingControlSystem(BaseTest):
             self.room.add_hvac_component(fan)
         except ValueError as err:
             self.assertEqual(err.__str__(), "PR.VNT.FN.01 cannot be added to a space entity")
+
+    def test_add_fan_to_open_space(self):
+        try:
+            vfd = VariableFrequencyDrive('PR.VNT.VRD.01')
+            fan = Fan("PR.VNT.FN.01", PowerState.ON, vfd)
+            self.hall.add_hvac_component(fan)
+        except ValueError as err:
+            self.assertEqual(err.__str__(), "PR.VNT.FN.01 cannot be added to a space entity")
+
+    def test_add_vav_box_to_non_mechanical_room(self):
+        vav_box = AirVolumeBox('PR.VNT.VAV.01', AirVolumeType.VARIABLE_AIR_VOLUME)
+        self.room.add_hvac_component(vav_box)
+        self.assertEqual(self.room.get_hvac_components(), [vav_box])
+
+    def test_add_heat_exchanger_to_open_space(self):
+        try:
+            heat_exchanger = HeatExchanger("PR.VNT.HE.01", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
+            self.hall.add_hvac_component(heat_exchanger)
+        except ValueError as err:
+            self.assertEqual(err.__str__(), "You can only add air volume box to open spaces")
+
+    def test_add_heat_exchanger_to_non_mechanical_room(self):
+        try:
+            heat_exchanger = HeatExchanger("PR.VNT.HE.01", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
+            self.room.add_hvac_component(heat_exchanger)
+        except ValueError as err:
+            self.assertEqual(err.__str__(), "You can only add HVAC components to mechanical rooms")
+
+    def test_add_boiler_to_mechanical_room(self):
+        boiler = Boiler('PR.VNT.BL.01', BoilerCategory.NATURAL_GAS, PowerState.ON)
+        self.room.room_type = RoomType.MECHANICAL
+        self.room.add_hvac_component(boiler)
+        self.assertEqual(self.room.get_hvac_components(), [boiler])
 
     def test_building_control_system_with_hvac_system_without_ventilation(self):
         building_control_system = BuildingControlSystem("EV Control System")

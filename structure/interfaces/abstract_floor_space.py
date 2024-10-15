@@ -17,6 +17,11 @@ from transducers.actuator import Actuator
 from typing import Union
 from enumerations import SensorMeasure
 from energysystem.interfaces.abstract_common_energy_system import AbstractCommonEnergySystem
+from misc import Validate
+from subsystem.hvac_components.fan import Fan
+from subsystem.hvac_components.filter import Filter
+from subsystem.hvac_components.damper import Damper
+from subsystem.hvac_components.controller import Controller
 
 
 class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
@@ -122,7 +127,9 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
         :param hvac_component: the hvac component to add
         :return:
         """
-        EntityInsert.insert_building_entity(self._hvac_components, hvac_component, BuildingEntity.HVAC_COMPONENT.value)
+        if Validate.is_hvac_component_allowed_in_space(hvac_component, [Fan, Damper, Filter, Controller], self):
+            EntityInsert.insert_building_entity(self._hvac_components, hvac_component,
+                                                BuildingEntity.HVAC_COMPONENT.value)
 
     def remove_hvac_component(self, hvac_component: Union[AbstractHVACComponent, AbstractVentilationComponent]):
         """

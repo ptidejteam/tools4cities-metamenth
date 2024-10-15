@@ -6,6 +6,7 @@ from enumerations import EngineType
 from enumerations import EngineSubType
 from typing import List
 from typing import Any
+from enumerations import RoomType
 
 
 class Validate:
@@ -13,6 +14,7 @@ class Validate:
     Has miscillineous methods for validation
 
     """
+
     @staticmethod
     def validate_what3word(input_string: str) -> str:
         """
@@ -73,7 +75,7 @@ class Validate:
             '%m/%d/%Y %H:%M',
             '%Y-%m-%d %H:%M:%S.%f',
             '%Y-%m-%d %H:%M:%S'
-            ]
+        ]
         for fmt in formats:
             try:
                 dt = datetime.strptime(date_string, fmt)
@@ -175,17 +177,26 @@ class Validate:
         return False
 
     @staticmethod
-    def is_hvac_component_allowed_in_space(hvac_component, disallowed_entities: List[Any]):
+    def is_hvac_component_allowed_in_space(hvac_component, disallowed_entities: List[Any], space_entity):
         """
         Validates HVAC entities that can be added to spaces
         :param hvac_component: the HVAC entity
         :param disallowed_entities: the entities not allowed to be added
+        :param space_entity: the space entity, e.g., room, open space
         """
+        from structure.room import Room
+        from structure.open_space import OpenSpace
+        from subsystem.hvac_components.air_volume_box import AirVolumeBox
+        from subsystem.radiant_slab import RadiantSlab
+        from subsystem.baseboard_heater import BaseboardHeater
+
         if any(isinstance(hvac_component, cls) for cls in disallowed_entities):
             raise ValueError(f'{hvac_component.name} cannot be added to a space entity')
+        elif isinstance(space_entity, Room):
+            if (space_entity.room_type is not RoomType.MECHANICAL and
+                    not any(isinstance(hvac_component, cls) for cls in [AirVolumeBox, BaseboardHeater, RadiantSlab])):
+                raise ValueError('You can only add HVAC components to mechanical rooms')
+        elif (isinstance(space_entity, OpenSpace) and
+              not any(isinstance(hvac_component, cls) for cls in [AirVolumeBox, BaseboardHeater, RadiantSlab])):
+            raise ValueError('You can only add air volume box to open spaces')
         return True
-
-
-
-
-
