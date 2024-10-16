@@ -5,6 +5,7 @@ from enumerations import CoverType
 import copy
 from tests.structure.base_test import BaseTest
 from enumerations import MaterialType
+from enumerations import LayerRoughness
 
 
 class TestCoverAndEnvelop(BaseTest):
@@ -75,7 +76,7 @@ class TestCoverAndEnvelop(BaseTest):
     def test_get_layer_by_uid(self):
         cover = Cover(CoverType.ROOF)
         cover.add_layer(self.layer)
-        new_layer = Layer(self.height, self.length, self.width, self.ex_material)
+        new_layer = Layer(self.height, self.length, self.width, self.ex_material, LayerRoughness.SMOOTH)
         new_layer.has_vapour_barrier = True
         cover.add_layer(new_layer)
         layer = cover.get_layer_by_uid(new_layer.UID)
@@ -84,7 +85,7 @@ class TestCoverAndEnvelop(BaseTest):
     def test_get_layer_with_wrong_uid(self):
         cover = Cover(CoverType.ROOF)
         cover.add_layer(self.layer)
-        new_layer = Layer(self.height, self.length, self.width, self.ex_material)
+        new_layer = Layer(self.height, self.length, self.width, self.ex_material, LayerRoughness.MEDIUM_ROUGH)
         new_layer.has_vapour_barrier = True
         cover.add_layer(new_layer)
         layer = cover.get_layer_by_uid(cover.UID)
@@ -93,7 +94,7 @@ class TestCoverAndEnvelop(BaseTest):
     def test_search_layers_with_wrong_values(self):
         cover = Cover(CoverType.ROOF)
         cover.add_layer(self.layer)
-        new_layer = Layer(self.height, self.length, self.width, self.ex_material)
+        new_layer = Layer(self.height, self.length, self.width, self.ex_material, LayerRoughness.ROUGH)
         new_layer.has_vapour_barrier = True
         cover.add_layer(new_layer)
         layers = cover.get_layers({'height': self.width, 'thickness': self.length})
@@ -102,7 +103,7 @@ class TestCoverAndEnvelop(BaseTest):
     def test_search_layers_with_wrong_attributes(self):
         cover = Cover(CoverType.ROOF)
         cover.add_layer(self.layer)
-        new_layer = Layer(self.height, self.length, self.width, self.ex_material)
+        new_layer = Layer(self.height, self.length, self.width, self.ex_material, LayerRoughness.VERY_SMOOTH)
         new_layer.has_vapour_barrier = True
         cover.add_layer(new_layer)
         layers = cover.get_layers({'width': self.width, 'area': self.length})
@@ -111,7 +112,7 @@ class TestCoverAndEnvelop(BaseTest):
     def test_search_layers(self):
         cover = Cover(CoverType.ROOF)
         cover.add_layer(self.layer)
-        new_layer = Layer(self.height, self.length, self.width, self.ex_material)
+        new_layer = Layer(self.height, self.length, self.width, self.ex_material, LayerRoughness.ROUGH)
         new_layer.has_vapour_barrier = True
         cover.add_layer(new_layer)
         layers = cover.get_layers({'height': self.height, 'thickness': self.width})
@@ -125,7 +126,7 @@ class TestCoverAndEnvelop(BaseTest):
         material = copy.deepcopy(self.ex_material)
 
         material.material_type = MaterialType.WIN_DOOR_WOOD
-        new_layer = Layer(self.height, self.length, self.width, material)
+        new_layer = Layer(self.height, self.length, self.width, material, LayerRoughness.VERY_ROUGH)
         second_cover.add_layer(new_layer)
 
         envelope = Envelope()
@@ -153,7 +154,7 @@ class TestCoverAndEnvelop(BaseTest):
         material = copy.deepcopy(self.ex_material)
 
         material.material_type = MaterialType.WIN_DOOR_WOOD
-        new_layer = Layer(self.height, self.length, self.width, material)
+        new_layer = Layer(self.height, self.length, self.width, material, LayerRoughness.VERY_SMOOTH)
         second_cover.add_layer(new_layer)
 
         envelope = Envelope()
@@ -171,7 +172,7 @@ class TestCoverAndEnvelop(BaseTest):
         material = copy.deepcopy(self.ex_material)
 
         material.material_type = MaterialType.WIN_DOOR_WOOD
-        new_layer = Layer(self.height, self.length, self.width, material)
+        new_layer = Layer(self.height, self.length, self.width, material, LayerRoughness.VERY_SMOOTH)
         second_cover.add_layer(new_layer)
 
         envelope = Envelope()
