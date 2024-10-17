@@ -183,7 +183,7 @@ class TestBuildingControlSystem(BaseTest):
             heat_exchanger = HeatExchanger("PR.VNT.HE.01", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
             self.hall.add_hvac_component(heat_exchanger)
         except ValueError as err:
-            self.assertEqual(err.__str__(), "You can only add air volume box to open spaces")
+            self.assertEqual(err.__str__(), "You can only add air volume box/ducts to open spaces")
 
     def test_add_heat_exchanger_to_non_mechanical_room(self):
         try:

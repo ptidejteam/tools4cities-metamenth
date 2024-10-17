@@ -143,15 +143,13 @@ class TestHVACComponentSearchVisitor(BaseTest):
         supply_air_duct.duct_sub_type = DuctSubType.FRESH_AIR
         supply_air_duct.add_damper(duct_damper)
 
-        self.room.add_hvac_component(room_damper)
         self.hall.add_hvac_component(supply_air_duct)
 
         hvac_search = HVACComponentSearchVisitor(hvac_component_criteria={'component_class': 'Damper'})
         self.building.accept(hvac_search)
         self.assertEqual(len(hvac_search.found_entities[0].get_damper_positions()), 2)
-        self.assertEqual(len(hvac_search.found_entities), 2)
+        self.assertEqual(len(hvac_search.found_entities), 1)
         self.assertIn(duct_damper, hvac_search.found_entities)
-        self.assertIn(room_damper, hvac_search.found_entities)
 
     def test_search_for_heat_exchangers_in_ducts(self):
         room_damper = Damper('PR.VNT.DMP.01', DamperType.MANUAL_VOLUME)
@@ -172,7 +170,6 @@ class TestHVACComponentSearchVisitor(BaseTest):
         return_air_duct = Duct("SUPP.VNT.01", DuctType.AIR)
         return_air_duct.duct_sub_type = DuctSubType.RETURN_AIR
 
-        self.room.add_hvac_component(room_damper)
         self.hall.add_hvac_component(supply_air_duct)
         self.room.add_hvac_component(return_air_duct)
 
