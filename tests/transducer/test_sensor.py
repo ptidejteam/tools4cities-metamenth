@@ -9,6 +9,7 @@ from enumerations import SensorMeasureType
 from enumerations import SensorLogType
 from measure_instruments.sensor_data import SensorData
 from time import sleep
+from datetime import datetime, timedelta
 
 
 class TestSensor(TestCase):
@@ -154,8 +155,10 @@ class TestSensor(TestCase):
                             SensorMeasureType.THERMO_COUPLE_TYPE_C, 70)
 
         sensor_data = []
+        now = datetime.now()
         for data in range(180, 200):
-            sensor_data.append(SensorData(data))
+            sensor_data.append(SensorData(data,  now.strftime("%Y-%m-%d %H:%M:%S")))
+            now = now + timedelta(days=1)
             sleep(0.5)
         co2_sensor.add_data(sensor_data)
         returned_data = co2_sensor.get_data_by_date(str(sensor_data[10].timestamp), str(sensor_data[19].timestamp))
