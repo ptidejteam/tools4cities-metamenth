@@ -19,7 +19,8 @@ class TestMaterial(TestCase):
         self.material = None
 
     def test_material_without_thermal_resistance(self):
-        try:
+
+        with self.assertRaises(TypeError) as context:
             self.material = Material(
                 description="Material for the external wall of a building",
                 material_type=MaterialType.EX_WALL_BRICK,
@@ -27,8 +28,8 @@ class TestMaterial(TestCase):
                 heat_capacity=self.hc_measure,
                 thermal_transmittance=self.tt_measure
             )
-        except TypeError as err:
-            self.assertEqual(err.__str__(), "__init__() missing 1 required positional argument: 'thermal_resistance'")
+            self.assertEqual(str(context.exception),
+                             "__init__() missing 1 required positional argument: 'thermal_resistance'")
 
     def test_valid_material(self):
 
