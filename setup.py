@@ -6,7 +6,7 @@ with open('requirements.txt') as f:
 setup(
     name="metamenth",
     version="1.0.1",
-    packages=find_packages(),
+    packages=find_packages(exclude=["venv", "venv.*", "tests", "tests.*", ".github", ".github.*"]),
     install_requires=requirements,
     entry_points={
         'console_scripts': [
