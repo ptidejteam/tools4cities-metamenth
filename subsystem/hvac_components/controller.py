@@ -33,7 +33,6 @@ class Controller(AbstractHVACComponent):
             # validate the phenomenon measured by the sensor against the set point
             if set_point:
                 if Validate.validate_sensor_type(controller_sensor.measure.value, set_point.measurement_unit.value):
-                    print('came here...')
                     self._set_points[f'{transducer_pair[0]}:{transducer_pair[1]}'] = set_point
                 else:
                     raise ValueError('Sensor measure: {} not matching set point measure: {}'

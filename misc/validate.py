@@ -189,14 +189,15 @@ class Validate:
         from subsystem.hvac_components.air_volume_box import AirVolumeBox
         from subsystem.radiant_slab import RadiantSlab
         from subsystem.baseboard_heater import BaseboardHeater
+        from subsystem.hvac_components.duct import Duct
 
         if any(isinstance(hvac_component, cls) for cls in disallowed_entities):
             raise ValueError(f'{hvac_component.name} cannot be added to a space entity')
         elif isinstance(space_entity, Room):
             if (space_entity.room_type is not RoomType.MECHANICAL and
-                    not any(isinstance(hvac_component, cls) for cls in [AirVolumeBox, BaseboardHeater, RadiantSlab])):
+                    not any(isinstance(hvac_component, cls) for cls in [AirVolumeBox, BaseboardHeater, RadiantSlab, Duct])):
                 raise ValueError('You can only add HVAC components to mechanical rooms')
         elif (isinstance(space_entity, OpenSpace) and
-              not any(isinstance(hvac_component, cls) for cls in [AirVolumeBox, BaseboardHeater, RadiantSlab])):
-            raise ValueError('You can only add air volume box to open spaces')
+              not any(isinstance(hvac_component, cls) for cls in [AirVolumeBox, BaseboardHeater, RadiantSlab, Duct])):
+            raise ValueError('You can only add air volume box/ducts to open spaces')
         return True

@@ -26,6 +26,7 @@ from transducers.sensor import Sensor
 from enumerations import SensorMeasure
 from enumerations import SensorMeasureType
 from enumerations import SensorLogType
+import copy
 
 
 class TestSensorSearchVisitor(BaseTest):
@@ -72,8 +73,10 @@ class TestSensorSearchVisitor(BaseTest):
         heat_exchanger = HeatExchanger("PR.VNT.HE.01", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
         heat_exchanger.add_transducer(self.temp_sensor)
 
-        self.room.add_hvac_component(boiler)
-        self.hall.add_hvac_component(heat_exchanger)
+        mechanical_room = copy.copy(self.room)
+        mechanical_room.room_type = RoomType.MECHANICAL
+        mechanical_room.add_hvac_component(boiler)
+        mechanical_room.add_hvac_component(heat_exchanger)
 
         sensor_search = SensorSearchVisitor(sensor_criteria={
             'measure': [SensorMeasure.TEMPERATURE.value, SensorMeasure.OCCUPANCY.value],
@@ -98,8 +101,10 @@ class TestSensorSearchVisitor(BaseTest):
         heat_exchanger = HeatExchanger("PR.VNT.HE.01", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
         heat_exchanger.add_transducer(self.temp_sensor)
 
-        self.room.add_hvac_component(boiler)
-        self.hall.add_hvac_component(heat_exchanger)
+        mechanical_room = copy.copy(self.room)
+        mechanical_room.room_type = RoomType.MECHANICAL
+        mechanical_room.add_hvac_component(boiler)
+        mechanical_room.add_hvac_component(heat_exchanger)
 
         smart_camera = Appliance("Smart Camera", [ApplianceCategory.OFFICE, ApplianceCategory.SMART],
                                  ApplianceType.CAMERA)
@@ -110,10 +115,10 @@ class TestSensorSearchVisitor(BaseTest):
                                             floor_criteria={'number': 1})
         building.accept(sensor_search)
 
-        self.assertEqual(len(sensor_search.found_entities), 3)
+        self.assertEqual(len(sensor_search.found_entities), 4)
         self.assertIn(self.temp_sensor, sensor_search.found_entities)
         self.assertEqual(sensor_search.found_entities.count(self.presence_sensor), 1)
-        self.assertEqual(sensor_search.found_entities.count(self.temp_sensor), 2)
+        self.assertEqual(sensor_search.found_entities.count(self.temp_sensor), 3)
 
     def test_search_space_hvac_component_appliance_and_energy_system_sensors(self):
         self.hall.add_transducer(self.presence_sensor)
@@ -128,8 +133,11 @@ class TestSensorSearchVisitor(BaseTest):
         heat_exchanger = HeatExchanger("PR.VNT.HE.01", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
         heat_exchanger.add_transducer(self.temp_sensor)
 
-        self.room.add_hvac_component(boiler)
-        self.hall.add_hvac_component(heat_exchanger)
+        mechanical_room = copy.copy(self.room)
+        mechanical_room.add_transducer(self.temp_sensor)
+        mechanical_room.room_type = RoomType.MECHANICAL
+        mechanical_room.add_hvac_component(boiler)
+        mechanical_room.add_hvac_component(heat_exchanger)
 
         smart_camera = Appliance("Smart Camera", [ApplianceCategory.OFFICE, ApplianceCategory.SMART],
                                  ApplianceType.CAMERA)
@@ -151,10 +159,10 @@ class TestSensorSearchVisitor(BaseTest):
         sensor_search = SensorSearchVisitor(sensor_criteria={'data_frequency': 900},
                                             floor_criteria={'number': 2})
         building.accept(sensor_search)
-        self.assertEqual(len(sensor_search.found_entities), 3)
+        self.assertEqual(len(sensor_search.found_entities), 2)
         self.assertIn(temp_sensor, sensor_search.found_entities)
         self.assertEqual(sensor_search.found_entities.count(voltage_sensor), 1)
-        self.assertEqual(sensor_search.found_entities.count(self.temp_sensor), 1)
+        self.assertEqual(sensor_search.found_entities.count(self.temp_sensor), 0)
 
     def test_search_sensors_with_unmatched_criteria(self):
         self.hall.add_transducer(self.presence_sensor)
@@ -168,8 +176,10 @@ class TestSensorSearchVisitor(BaseTest):
         heat_exchanger = HeatExchanger("PR.VNT.HE.01", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
         heat_exchanger.add_transducer(self.temp_sensor)
 
-        self.room.add_hvac_component(boiler)
-        self.hall.add_hvac_component(heat_exchanger)
+        mechanical_room = copy.copy(self.room)
+        mechanical_room.room_type = RoomType.MECHANICAL
+        mechanical_room.add_hvac_component(boiler)
+        mechanical_room.add_hvac_component(heat_exchanger)
 
         sensor_search = SensorSearchVisitor(floor_criteria={'number': 3}, sensor_criteria={})
         building.accept(sensor_search)

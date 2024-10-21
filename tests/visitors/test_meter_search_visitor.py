@@ -16,6 +16,8 @@ from energysystem.electricals.uninterruptible_power_supply import Uninterruptibl
 from enumerations import PowerState
 from enumerations import UPSPhase
 from enumerations import MeterMeasureMode
+import copy
+from enumerations import RoomType
 
 
 class TestSensorSearchVisitor(BaseTest):
@@ -105,8 +107,11 @@ class TestSensorSearchVisitor(BaseTest):
 
         boiler = Boiler('PR.VNT.BL.01', BoilerCategory.NATURAL_GAS, PowerState.ON)
         boiler.meter = water_flow_meter
-        self.hall.add_hvac_component(boiler)
+
+        mechanical_room = copy.copy(self.room)
+        mechanical_room.room_type = RoomType.MECHANICAL
         self.room.add_energy_system(ups)
+        mechanical_room.add_hvac_component(boiler)
 
         building.add_meter(electricity_meter)
         meter_types = [MeterType.FLOW.value, MeterType.ELECTRICITY.value, MeterType.POWER.value]
@@ -131,8 +136,6 @@ class TestSensorSearchVisitor(BaseTest):
         cooling_zone = Zone("HVAC_COOLING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
         heating_zone = Zone("HVAC_HEATING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
 
-
-
         electricity_meter = Meter(meter_location="huz.cab.err",
                                   manufacturer="Honeywell",
                                   measurement_frequency=5,
@@ -156,11 +159,13 @@ class TestSensorSearchVisitor(BaseTest):
 
         boiler = Boiler('PR.VNT.BL.01', BoilerCategory.NATURAL_GAS, PowerState.ON)
         boiler.meter = water_flow_meter
-        self.hall.add_hvac_component(boiler)
+        mechanical_room = copy.copy(self.room)
+        mechanical_room.room_type = RoomType.MECHANICAL
+        mechanical_room.add_hvac_component(boiler)
         self.room.add_energy_system(ups)
 
         self.room.add_zone(cooling_zone, building)
-        self.hall.add_zone(heating_zone, building)
+        mechanical_room.add_zone(heating_zone, building)
 
         building.add_meter(electricity_meter)
         meter_types = [MeterType.FLOW.value, MeterType.ELECTRICITY.value, MeterType.POWER.value]
@@ -170,8 +175,7 @@ class TestSensorSearchVisitor(BaseTest):
 
         building.accept(meter_search)
 
-        self.assertEqual(len(meter_search.found_entities), 2)
-        self.assertEqual(meter_search.found_entities.count(water_flow_meter), 0)
+        self.assertEqual(len(meter_search.found_entities), 3)
+        self.assertEqual(meter_search.found_entities.count(water_flow_meter), 1)
         self.assertEqual(meter_search.found_entities.count(electricity_meter), 1)
         self.assertEqual(meter_search.found_entities.count(voltage_meter), 1)
-
