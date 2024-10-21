@@ -1,3 +1,10 @@
+!Build Status
+!License
+!PyPI
+!Python Versions
+!Codecov
+!Dependencies
+
 Read the documentation here: [MetamEnTh Documentation](https://github.com/peteryefi/metamenth/wiki)
 
 ### Setting up MetamEnTh Locally
