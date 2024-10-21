@@ -1,11 +1,9 @@
 # MetamEnTh
 
-!Build Status
-!License
-!PyPI
-!Python Versions
-!Codecov
-!Dependencies
+![Build Status](https://github.com/peteryefi/metamenth/actions/workflows/build.yml/badge.svg)
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+[![License](https://img.shields.io/github/license/peteryefi/metamenth)](https://github.com/username/repository/blob/main/LICENSE)
+![PyPI version](https://img.shields.io/pypi/v/metamenth.svg)
 
 Read the documentation here: [MetamEnTh Documentation](https://github.com/peteryefi/metamenth/wiki)
 
