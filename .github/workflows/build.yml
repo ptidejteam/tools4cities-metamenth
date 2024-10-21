@@ -50,6 +50,7 @@ jobs:
         python setup.py sdist bdist_wheel
 
     - name: Check if version exists on PyPI
+      if: github.ref == 'refs/heads/main'
       run: |
         VERSION=$(python setup.py --version)
         if twine check dist/* | grep -q "This version already exists on PyPI"; then
@@ -58,6 +59,7 @@ jobs:
         fi
 
     - name: Upload package to PyPI
+      if: github.ref == 'refs/heads/main'
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}

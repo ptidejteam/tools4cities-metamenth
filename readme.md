@@ -4,6 +4,7 @@
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 [![License](https://img.shields.io/github/license/peteryefi/metamenth)](https://github.com/username/repository/blob/main/LICENSE)
 ![PyPI version](https://img.shields.io/pypi/v/metamenth.svg)
+[![Wiki](https://img.shields.io/badge/docs-wiki-blue.svg)](https://github.com/peteryefi/metamenth/wiki)
 
 Read the documentation here: [MetamEnTh Documentation](https://github.com/peteryefi/metamenth/wiki)
 
