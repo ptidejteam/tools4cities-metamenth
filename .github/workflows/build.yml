@@ -46,6 +46,14 @@ jobs:
       run: |
         python setup.py sdist bdist_wheel
 
+    - name: Check if version exists on PyPI
+      run: |
+        VERSION=$(python setup.py --version)
+        if twine check dist/* | grep -q "This version already exists on PyPI"; then
+          echo "Version $VERSION already exists on PyPI. Skipping upload."
+          exit 0
+        fi
+
     - name: Upload package to PyPI
       env:
         TWINE_USERNAME: __token__
