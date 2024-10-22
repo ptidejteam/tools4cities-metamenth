@@ -1,20 +1,20 @@
 from unittest import TestCase
-from misc import MeasureFactory
-from enumerations import RecordingType
-from datatypes.measure import Measure
-from enumerations import MeasurementUnit
-from transducers.sensor import Sensor
-from enumerations import SensorMeasure
-from enumerations import SensorMeasureType
-from transducers.actuator import Actuator
-from measure_instruments.trigger_history import TriggerHistory
-from enumerations import TriggerType
-from subsystem.hvac_components.damper import Damper
-from subsystem.hvac_components.fan import Fan
-from subsystem.hvac_components.variable_frequency_drive import VariableFrequencyDrive
-from enumerations import DamperType
-from enumerations import PowerState
-from subsystem.hvac_components.controller import Controller
+from metamenth.misc import MeasureFactory
+from metamenth.enumerations import RecordingType
+from metamenth.datatypes.measure import Measure
+from metamenth.enumerations import MeasurementUnit
+from metamenth.transducers.sensor import Sensor
+from metamenth.enumerations import SensorMeasure
+from metamenth.enumerations import SensorMeasureType
+from metamenth.transducers.actuator import Actuator
+from metamenth.measure_instruments.trigger_history import TriggerHistory
+from metamenth.enumerations import TriggerType
+from metamenth.subsystem.hvac_components.damper import Damper
+from metamenth.subsystem.hvac_components.fan import Fan
+from metamenth.subsystem.hvac_components.variable_frequency_drive import VariableFrequencyDrive
+from metamenth.enumerations import DamperType
+from metamenth.enumerations import PowerState
+from metamenth.subsystem.hvac_components.controller import Controller
 
 
 class TestActuator(TestCase):

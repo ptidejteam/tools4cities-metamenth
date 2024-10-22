@@ -1,15 +1,15 @@
-from enumerations import MeasurementUnit
-from structure.open_space import OpenSpace
-from enumerations import OpenSpaceType
+from metamenth.enumerations import MeasurementUnit
+from metamenth.structure.open_space import OpenSpace
+from metamenth.enumerations import OpenSpaceType
 import copy
 from tests.structure.base_test import BaseTest
-from transducers.sensor import Sensor
-from enumerations import SensorMeasure
-from enumerations import SensorMeasureType
-from enumerations import ApplianceCategory
-from enumerations import ApplianceType
-from subsystem.appliance import Appliance
-from enumerations import SensorLogType
+from metamenth.transducers.sensor import Sensor
+from metamenth.enumerations import SensorMeasure
+from metamenth.enumerations import SensorMeasureType
+from metamenth.enumerations import ApplianceCategory
+from metamenth.enumerations import ApplianceType
+from metamenth.subsystem.appliance import Appliance
+from metamenth.enumerations import SensorLogType
 
 
 class TestOpenSpace(BaseTest):

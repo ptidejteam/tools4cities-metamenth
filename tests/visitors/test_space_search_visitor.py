@@ -1,20 +1,20 @@
-from enumerations import OpenSpaceType
-from structure.floor import Floor
-from enumerations import FloorType
-from structure.building import Building
-from enumerations import BuildingType
-from virtual.zone import Zone
-from enumerations import ZoneType
-from enumerations import HVACType
+from metamenth.enumerations import OpenSpaceType
+from metamenth.structure.floor import Floor
+from metamenth.enumerations import FloorType
+from metamenth.structure.building import Building
+from metamenth.enumerations import BuildingType
+from metamenth.virtual.zone import Zone
+from metamenth.enumerations import ZoneType
+from metamenth.enumerations import HVACType
 from tests.structure.base_test import BaseTest
-from enumerations import RoomType
-from visitors.space_search_visitor import SpaceSearchVisitor
-from enumerations import MeasurementUnit
-from misc import MeasureFactory
-from enumerations import RecordingType
-from datatypes.measure import Measure
-from structure.room import Room
-from structure.open_space import OpenSpace
+from metamenth.enumerations import RoomType
+from metamenth.visitors.space_search_visitor import SpaceSearchVisitor
+from metamenth.enumerations import MeasurementUnit
+from metamenth.misc import MeasureFactory
+from metamenth.enumerations import RecordingType
+from metamenth.datatypes.measure import Measure
+from metamenth.structure.room import Room
+from metamenth.structure.open_space import OpenSpace
 
 
 class TestSpaceSearchVisitor(BaseTest):

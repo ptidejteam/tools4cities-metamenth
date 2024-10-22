@@ -1,13 +1,13 @@
 from unittest import TestCase
-from misc import MeasureFactory
-from enumerations import RecordingType
-from datatypes.measure import Measure
-from enumerations import MeasurementUnit
-from transducers.sensor import Sensor
-from enumerations import SensorMeasure
-from enumerations import SensorMeasureType
-from enumerations import SensorLogType
-from measure_instruments.sensor_data import SensorData
+from metamenth.misc import MeasureFactory
+from metamenth.enumerations import RecordingType
+from metamenth.datatypes.measure import Measure
+from metamenth.enumerations import MeasurementUnit
+from metamenth.transducers.sensor import Sensor
+from metamenth.enumerations import SensorMeasure
+from metamenth.enumerations import SensorMeasureType
+from metamenth.enumerations import SensorLogType
+from metamenth.measure_instruments.sensor_data import SensorData
 from time import sleep
 from datetime import datetime, timedelta
 

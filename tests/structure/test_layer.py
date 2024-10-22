@@ -1,12 +1,12 @@
 from unittest import TestCase
-from enumerations import MaterialType
-from structure.material import Material
-from structure.layer import Layer
-from misc import MeasureFactory
-from enumerations import RecordingType
-from datatypes.measure import Measure
-from enumerations import MeasurementUnit
-from enumerations import LayerRoughness
+from metamenth.enumerations import MaterialType
+from metamenth.structure.material import Material
+from metamenth.structure.layer import Layer
+from metamenth.misc import MeasureFactory
+from metamenth.enumerations import RecordingType
+from metamenth.datatypes.measure import Measure
+from metamenth.enumerations import MeasurementUnit
+from metamenth.enumerations import LayerRoughness
 
 
 class TestLayer(TestCase):

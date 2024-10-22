@@ -1,4 +1,8 @@
 include README.md
 include requirements.txt
+include LICENSE
 exclude tests/*
 exclude .github/*
+exclude relationship/*
+exclude venv/*
+recursive-include metamenth *

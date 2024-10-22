@@ -1,11 +1,11 @@
 from unittest import TestCase
-from measure_instruments.weather_station import WeatherStation
-from measure_instruments.weather_data import WeatherData
-from enumerations import DataMeasurementType
-from misc import MeasureFactory
-from enumerations import RecordingType
-from datatypes.measure import Measure
-from enumerations import MeasurementUnit
+from metamenth.measure_instruments.weather_station import WeatherStation
+from metamenth.measure_instruments.weather_data import WeatherData
+from metamenth.enumerations import DataMeasurementType
+from metamenth.misc import MeasureFactory
+from metamenth.enumerations import RecordingType
+from metamenth.datatypes.measure import Measure
+from metamenth.enumerations import MeasurementUnit
 import copy
 
 

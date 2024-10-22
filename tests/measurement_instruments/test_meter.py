@@ -1,13 +1,13 @@
 from unittest import TestCase
-from measure_instruments.meter import Meter
-from enumerations import MeasurementUnit
-from enumerations import MeterType
-from enumerations import MeterMeasureMode
-from enumerations import MeterAccumulationFrequency
-from measure_instruments.meter import MeterMeasure
-from measure_instruments.ev_charging_meter import EVChargingMeter
-from measure_instruments.electric_vehicle_connectivity import ElectricVehicleConnectivity
-from enumerations import OperationType
+from metamenth.measure_instruments.meter import Meter
+from metamenth.enumerations import MeasurementUnit
+from metamenth.enumerations import MeterType
+from metamenth.enumerations import MeterMeasureMode
+from metamenth.enumerations import MeterAccumulationFrequency
+from metamenth.measure_instruments.meter_measure import MeterMeasure
+from metamenth.measure_instruments.ev_charging_meter import EVChargingMeter
+from metamenth.measure_instruments.electric_vehicle_connectivity import ElectricVehicleConnectivity
+from metamenth.enumerations import OperationType
 from uuid import uuid4
 
 

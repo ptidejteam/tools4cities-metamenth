@@ -5,8 +5,8 @@ with open('requirements.txt') as f:
 
 setup(
     name="metamenth",
-    version="1.0.2",
-    packages=find_packages(exclude=["venv", "venv.*", "tests", "tests.*", ".github", ".github.*"]),
+    version="1.0.2b1",
+    packages=find_packages(include=["metamenth", "metamenth.*"]),
     install_requires=requirements,
     entry_points={
         'console_scripts': [
@@ -20,7 +20,7 @@ setup(
                 "focuses on the relationships and interactions between mechanical, electrical, and plumbing (MEP) "
                 "entities and their connections to sensors and spatial entities such as rooms and open spaces within "
                 "buildings.",
-    long_description=open('readme.md').read(),
+    long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     url="https://github.com/peteryefi/metamenth",
     classifiers=[
