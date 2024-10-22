@@ -40,22 +40,21 @@ Read the documentation here: [MetamEnTh Documentation](https://github.com/petery
 ### Example usage
 
 ```python
-from unittest import TestCase
 from metamenth.misc import MeasureFactory
 from metamenth.enumerations import RecordingType
-from metamenth.datatypes import Measure
+from metamenth.datatypes.measure import Measure
 from metamenth.enumerations import MeasurementUnit
 from metamenth.structure.open_space import OpenSpace
 from metamenth.enumerations import OpenSpaceType
 from metamenth.enumerations import RoomType
 from metamenth.structure.room import Room
-from metamenth.structure import Floor
+from metamenth.structure.floor import Floor
 from metamenth.enumerations import FloorType
 from metamenth.structure.building import Building
 from metamenth.enumerations import BuildingType
 from metamenth.datatypes.address import Address
-from metamenth.structure import Layer
-from metamenth.structure import Material
+from metamenth.structure.layer import Layer
+from metamenth.structure.material import Material
 from metamenth.enumerations import MaterialType
 from metamenth.enumerations import LayerRoughness
 from metamenth.structure.cover import Cover
