@@ -1,16 +1,16 @@
 from unittest import TestCase
-from enumerations import MeasurementUnit
-from transducers.sensor import Sensor
-from enumerations import SensorMeasure
-from enumerations import SensorMeasureType
-from enumerations import SensorLogType
-from measure_instruments.sensor_data import SensorData
-from subsystem.appliance import Appliance
-from enumerations import ApplianceType
-from enumerations import ApplianceCategory
-from datatypes.rated_device_measure import RatedDeviceMeasure
-from misc import MeasureFactory
-from datatypes.measure import Measure
+from metamenth.enumerations import MeasurementUnit
+from metamenth.transducers.sensor import Sensor
+from metamenth.enumerations import SensorMeasure
+from metamenth.enumerations import SensorMeasureType
+from metamenth.enumerations import SensorLogType
+from metamenth.measure_instruments.sensor_data import SensorData
+from metamenth.subsystem.appliance import Appliance
+from metamenth.enumerations import ApplianceType
+from metamenth.enumerations import ApplianceCategory
+from metamenth.datatypes.rated_device_measure import RatedDeviceMeasure
+from metamenth.misc import MeasureFactory
+from metamenth.datatypes.measure import Measure
 
 
 class TestAppliance(TestCase):

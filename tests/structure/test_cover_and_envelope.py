@@ -1,11 +1,11 @@
-from structure.layer import Layer
-from structure.cover import Cover
-from structure.envelope import Envelope
-from enumerations import CoverType
+from metamenth.structure.layer import Layer
+from metamenth.structure.cover import Cover
+from metamenth.structure.envelope import Envelope
+from metamenth.enumerations import CoverType
 import copy
 from tests.structure.base_test import BaseTest
-from enumerations import MaterialType
-from enumerations import LayerRoughness
+from metamenth.enumerations import MaterialType
+from metamenth.enumerations import LayerRoughness
 
 
 class TestCoverAndEnvelop(BaseTest):

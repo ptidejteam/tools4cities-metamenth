@@ -1,13 +1,13 @@
-from enumerations import OpenSpaceType
-from structure.floor import Floor
-from enumerations import FloorType
-from datatypes.operational_schedule import OperationalSchedule
+from metamenth.enumerations import OpenSpaceType
+from metamenth.structure.floor import Floor
+from metamenth.enumerations import FloorType
+from metamenth.datatypes.operational_schedule import OperationalSchedule
 from datetime import datetime
 from datetime import timedelta
 from tests.structure.base_test import BaseTest
-from structure.open_space import OpenSpace
-from structure.room import Room
-from enumerations import RoomType
+from metamenth.structure.open_space import OpenSpace
+from metamenth.structure.room import Room
+from metamenth.enumerations import RoomType
 
 
 class TestFloor(BaseTest):

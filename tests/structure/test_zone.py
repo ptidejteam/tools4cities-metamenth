@@ -1,17 +1,17 @@
 from unittest import TestCase
-from misc import MeasureFactory
-from enumerations import RecordingType
-from datatypes.measure import Measure
-from enumerations import MeasurementUnit
-from structure.open_space import OpenSpace
-from enumerations import OpenSpaceType
-from enumerations import RoomType
-from structure.room import Room
-from virtual.zone import Zone
-from enumerations import ZoneType
-from enumerations import HVACType
-from structure.floor import Floor
-from enumerations import FloorType
+from metamenth.misc import MeasureFactory
+from metamenth.enumerations import RecordingType
+from metamenth.datatypes.measure import Measure
+from metamenth.enumerations import MeasurementUnit
+from metamenth.structure.open_space import OpenSpace
+from metamenth.enumerations import OpenSpaceType
+from metamenth.enumerations import RoomType
+from metamenth.structure.room import Room
+from metamenth.virtual.zone import Zone
+from metamenth.enumerations import ZoneType
+from metamenth.enumerations import HVACType
+from metamenth.structure.floor import Floor
+from metamenth.enumerations import FloorType
 
 
 class TestZone(TestCase):

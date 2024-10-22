@@ -1,10 +1,10 @@
 from unittest import TestCase
-from enumerations import MaterialType
-from structure.material import Material
-from misc import MeasureFactory
-from enumerations import RecordingType
-from datatypes.measure import Measure
-from enumerations import MeasurementUnit
+from metamenth.enumerations import MaterialType
+from metamenth.structure.material import Material
+from metamenth.misc import MeasureFactory
+from metamenth.enumerations import RecordingType
+from metamenth.datatypes.measure import Measure
+from metamenth.enumerations import MeasurementUnit
 
 
 class TestMaterial(TestCase):
