@@ -1,5 +1,5 @@
 from metamenth.datatypes.interfaces.abstract_measure import AbstractMeasure
-from .measure import Measure
+from metamenth.datatypes.measure import Measure
 from metamenth.enumerations import DataMeasurementType
 
 

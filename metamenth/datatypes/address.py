@@ -1,4 +1,4 @@
-from .point import Point
+from metamenth.datatypes.point import Point
 from metamenth.datatypes.binary_measure import BinaryMeasure
 from metamenth.misc import Validate
 

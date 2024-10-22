@@ -1,5 +1,5 @@
 from metamenth.datatypes.interfaces.abstract_range_measure import AbstractRangeMeasure
-from .measure import Measure
+from metamenth.datatypes.measure import Measure
 
 
 class ContinuousMeasure(AbstractRangeMeasure):
