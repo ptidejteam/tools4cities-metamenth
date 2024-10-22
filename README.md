@@ -1,4 +1,4 @@
-# MetamEnTh
+# Metamodel for Energy Things (MetamEnTh)
 
 ![Build Status](https://github.com/peteryefi/metamenth/actions/workflows/build.yml/badge.svg)
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)

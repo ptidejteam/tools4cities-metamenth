@@ -16,10 +16,10 @@ setup(
     },
     author="Peter Yefi",
     author_email="peteryefi@gmail.com",
-    description="MetamEnTh is an object-oriented metamodel designed to model the operational aspects of buildings. It "
-                "focuses on the relationships and interactions between mechanical, electrical, and plumbing (MEP) "
-                "entities and their connections to sensors and spatial entities such as rooms and open spaces within "
-                "buildings.",
+    description="Metamodel for Energy Things (MetamEnTh) is an object-oriented metamodel designed to model the "
+                "operational aspects of buildings. It focuses on the relationships and interactions between "
+                "mechanical, electrical, and plumbing (MEP) entities and their connections to sensors and spatial "
+                "entities such as rooms and open spaces within buildings.",
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     url="https://github.com/peteryefi/metamenth",
