@@ -12,6 +12,7 @@ from metamenth.subsystem.hvac_components.chiller import Chiller
 from metamenth.subsystem.hvac_components.boiler import Boiler
 from metamenth.utils import StructureEntitySearch
 from typing import Dict
+from metamenth.subsystem.hvac_components.fan_coil_unit import FanCoilUnit
 
 
 class DuctConnection:
@@ -28,18 +29,23 @@ class DuctConnection:
         :return:
         """
         from metamenth.subsystem.hvac_components.duct import Duct
-        allowed_entity_types = [HeatExchanger, AbstractSpace, Duct, Boiler, Chiller, CirculationPump,
-                                Compressor, Pump, HeatPump, Condenser, AirVolumeBox, CoolingTower]
+        allowed_entity_types = [
+            HeatExchanger, AbstractSpace, Duct, Boiler, Chiller, CirculationPump,
+            Compressor, Pump, HeatPump, Condenser, AirVolumeBox, CoolingTower, FanCoilUnit
+        ]
 
-        if any(isinstance(duct_entity, cls) for cls in allowed_entity_types):
-            if entity_type == DuctConnectionEntityType.SOURCE:
-                if duct_entity not in self._destination_entities:
-                    self._source_entities.append(duct_entity)
-            elif entity_type == DuctConnectionEntityType.DESTINATION:
-                if duct_entity not in self._source_entities:
-                    self._destination_entities.append(duct_entity)
-        else:
-            raise ValueError(f'{duct_entity} cannot be connected to a duct')
+        if not any(isinstance(duct_entity, cls) for cls in allowed_entity_types):
+            raise ValueError(f'{duct_entity.name} cannot be connected to a duct')
+
+        if isinstance(duct_entity, FanCoilUnit) and not duct_entity.is_ducted:
+            raise ValueError(f'{duct_entity.name} cannot be connected to a duct')
+
+        if entity_type == DuctConnectionEntityType.SOURCE:
+            if duct_entity not in self._destination_entities:
+                self._source_entities.append(duct_entity)
+        elif entity_type == DuctConnectionEntityType.DESTINATION:
+            if duct_entity not in self._source_entities:
+                self._destination_entities.append(duct_entity)
 
     def remove_entity(self, entity_type: DuctConnectionEntityType, duct_entity):
         """

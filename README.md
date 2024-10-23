@@ -6,38 +6,59 @@
 ![PyPI version](https://img.shields.io/pypi/v/metamenth.svg)
 [![Wiki](https://img.shields.io/badge/docs-wiki-blue.svg)](https://github.com/peteryefi/metamenth/wiki)
 
+**MetamEnTh** is an object-oriented framework for modeling the operational aspects of buildings, with a focus on mechanical, electrical, and plumbing (MEP) entities. It allows users to model and interact with physical structures, such as rooms, floors, HVAC systems, and appliances, providing a detailed simulation of building components and energy systems.
+
 Read the documentation here: [MetamEnTh Documentation](https://github.com/peteryefi/metamenth/wiki)
 
-### Setting up MetamEnTh Locally
+## Table of Contents
+1. [Setting up MetamEnTh Locally](#setting-up-metamEnTh-locally)
+   - [Cloning the repository](#cloning-the-repository)
+   - [Creating a virtual environment](#creating-a-virtual-environment)
+   - [Activate the virtual environment](#activating-the-virtual-environment)
+   - [Installing dependencies](#installing-dependencies)
+   - [Running tests](#running-tests)
+3. [Example Usage](#example-usage)
 
-1. Clone the GitHub repository:
+
+## Setting up MetamEnTh Locally
+
+### Cloning the repository:
 
    ```sh
    git clone https://github.com/peteryefi/metamenth.git
    cd metamenth
+   ```
    
-2. Create a virtual environment
-    ```sh
-    python3 -m venv venv
+### Creating a virtual environment
+```shell
+python3 -m venv venv
+```
    
-3. Activate the virtual environment
-    * Windows
-        ```sh
-        venv\Scripts\activate
-    * MacOS/Linux
-        ```sh
-        source venv/bin/activate
-  
-4. Install project dependencies
-    ```sh
-    pip install -r requirements.txt
    
-5. Run the tests
-    ```sh
-     chmod +x run_tests.sh
-     ./run_tests.sh
+### Activating the virtual environment
 
-### Example usage
+```shell
+# Windows
+venv\Scripts\activate
+
+# MacOS/Linux
+source venv/bin/activate
+```
+
+### Installing dependencies
+```shell
+pip install -r requirements.txt
+```
+   
+### Running tests
+```shell
+chmod +x run_tests.sh
+     ./run_tests.sh
+```
+
+## Example usage
+
+### 1. Creating the Building
 
 ```python
 from metamenth.misc import MeasureFactory
@@ -53,13 +74,6 @@ from metamenth.enumerations import FloorType
 from metamenth.structure.building import Building
 from metamenth.enumerations import BuildingType
 from metamenth.datatypes.address import Address
-from metamenth.structure.layer import Layer
-from metamenth.structure.material import Material
-from metamenth.enumerations import MaterialType
-from metamenth.enumerations import LayerRoughness
-from metamenth.structure.cover import Cover
-from metamenth.structure.envelope import Envelope
-from metamenth.enumerations import CoverType
 
 floor_area = MeasureFactory.create_measure(RecordingType.BINARY.value,
                                            Measure(MeasurementUnit.SQUARE_METERS, 5))
@@ -88,6 +102,20 @@ address = Address("Montreal", "6399 Rue Sherbrooke", "QC", "H1N 2Z3", "Canada")
 # create building
 building = Building(2009, height, floor_area, internal_mass, address,
                     BuildingType.COMMERCIAL, [floor])
+```
+### 2. Adding an Envelope with Roof
+```python
+from metamenth.structure.layer import Layer
+from metamenth.structure.material import Material
+from metamenth.enumerations import MaterialType
+from metamenth.enumerations import LayerRoughness
+from metamenth.structure.cover import Cover
+from metamenth.structure.envelope import Envelope
+from metamenth.enumerations import CoverType
+from metamenth.enumerations import RecordingType
+from metamenth.datatypes.measure import Measure
+from metamenth.enumerations import MeasurementUnit
+from metamenth.misc import MeasureFactory
 
 # material properties
 density_measure = MeasureFactory.create_measure(RecordingType.BINARY.value,
@@ -99,6 +127,7 @@ tt_measure = MeasureFactory.create_measure(RecordingType.BINARY.value,
 tr_measure = MeasureFactory.create_measure(RecordingType.BINARY.value,
                                            Measure(MeasurementUnit.SQUARE_METERS_KELVIN_PER_WATTS,
                                                    2.3))
+
 # create roof material
 roof_material = Material(
    description="Steel roof",
@@ -125,6 +154,61 @@ roof_cover.add_layer(roof_layer)
 # create building envelope and add roof cover
 envelope = Envelope()
 envelope.add_cover(roof_cover)
-building.envelope = envelope
+building.envelope = envelope # building was created 1 above
 ```
+
+### 3. Create and associate Zones to the hall
+```python
+from metamenth.enumerations import ZoneType
+from metamenth.enumerations import HVACType
+from metamenth.virtual.zone import Zone
+
+hvac_cooling_zone = Zone("HVAC_COOLING_ZONE", ZoneType.HVAC, HVACType.INTERIOR)
+hvac_heating_zone = Zone("HVAC_HEATING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
+# make the cooling zone adjacent to the heating zone
+hvac_heating_zone.add_adjacent_zones([hvac_cooling_zone])
+
+# assign the zone to the room
+hall.add_zone(hvac_heating_zone, building) # building and hall were created in 1 above
+
+```
+### 4. Create and assign thermostats to the hall
+```python
+from metamenth.transducers.sensor import Sensor
+from metamenth.subsystem.appliance import Appliance
+from metamenth.enumerations import ApplianceType
+from metamenth.enumerations import ApplianceCategory
+from metamenth.enumerations import SensorMeasureType
+from metamenth.enumerations import SensorMeasure
+from metamenth.enumerations import SensorLogType
+from metamenth.datatypes.measure import Measure
+from metamenth.enumerations import MeasurementUnit
+from metamenth.misc import MeasureFactory
+
+temp_op_condition = MeasureFactory.create_measure("Continuous",
+                                    Measure(MeasurementUnit.DEGREE_CELSIUS, 4.4, 37.8))
+humidity_op_conditions = MeasureFactory.create_measure("Continuous",
+                                    Measure(MeasurementUnit.RELATIVE_HUMIDITY, 20, 80))
+thermostat = Appliance("Thermostat", [ApplianceCategory.HOME, ApplianceCategory.SMART],
+                               ApplianceType.THERMOSTAT,
+                               operating_conditions=[temp_op_condition, humidity_op_conditions])
+
+# create three sensors and assign them to the room
+presence_sensor = Sensor("PRESENCE.SENSOR", SensorMeasure.OCCUPANCY, MeasurementUnit.PRESENCE,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_A, 0, sensor_log_type=SensorLogType.POLLING)
+temp_sensor = Sensor("TEMPERATURE.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+humidity_sensor = Sensor("HUMIDITY.SENSOR", SensorMeasure.HUMIDITY, MeasurementUnit.RELATIVE_HUMIDITY,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+
+thermostat.add_transducer(presence_sensor)
+thermostat.add_transducer(temp_sensor)
+thermostat.add_transducer(humidity_sensor)
+
+# add thermostat to the hall
+hall.add_appliance(thermostat) # hall was created in 1 above
+
+```
+
+
 NB: Refer to the [test directory](https://github.com/peteryefi/metamenth/tree/main/tests) for more insight on usage

@@ -55,6 +55,9 @@ from metamenth.enumerations import FilterType
 from metamenth.enumerations import PumpType
 from metamenth.subsystem.hvac_components.pump import Pump
 from metamenth.enumerations import RoomType
+from metamenth.enumerations import FCUType
+from metamenth.enumerations import FCUPipeSystem
+from metamenth.subsystem.hvac_components.fan_coil_unit import FanCoilUnit
 
 
 class TestBuildingControlSystem(BaseTest):
@@ -191,6 +194,59 @@ class TestBuildingControlSystem(BaseTest):
             self.room.add_hvac_component(heat_exchanger)
         except ValueError as err:
             self.assertEqual(err.__str__(), "You can only add HVAC components to mechanical rooms")
+
+    def test_non_ducted_fcu_to_mechanical_room(self):
+        vfd = VariableFrequencyDrive('PR.VNT.VRD.01')
+        fan = Fan("PR.VNT.FN.01", PowerState.ON, vfd)
+        heat_exchanger = HeatExchanger("PR.VNT.HE.01", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
+        fcu = FanCoilUnit('FCU.01', heat_exchanger, fan, FCUType.STANDALONE, FCUPipeSystem.FOUR_PIPE, False)
+        self.room.room_type = RoomType.MECHANICAL
+        self.room.add_hvac_component(fcu)
+        self.assertEqual(self.room.get_hvac_components({'name': 'FCU.01'}), [fcu])
+
+    def test_ducted_fcu_to_mechanical_room(self):
+        vfd = VariableFrequencyDrive('PR.VNT.VRD.01')
+        fan = Fan("PR.VNT.FN.01", PowerState.ON, vfd)
+        heat_exchanger = HeatExchanger("PR.VNT.HE.01", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
+        fcu = FanCoilUnit('FCU.01', heat_exchanger, fan, FCUType.STANDALONE, FCUPipeSystem.FOUR_PIPE)
+        self.room.room_type = RoomType.MECHANICAL
+        self.room.add_hvac_component(fcu)
+        self.assertEqual(self.room.get_hvac_components({'name': 'FCU.01'}), [fcu])
+
+    def test_ducted_fcu_to_non_mechanical_room(self):
+        try:
+            vfd = VariableFrequencyDrive('PR.VNT.VRD.01')
+            fan = Fan("PR.VNT.FN.01", PowerState.ON, vfd)
+            heat_exchanger = HeatExchanger("PR.VNT.HE.01", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
+            fcu = FanCoilUnit('FCU.01', heat_exchanger, fan, FCUType.STANDALONE, FCUPipeSystem.FOUR_PIPE)
+            self.room.add_hvac_component(fcu)
+        except ValueError as err:
+            self.assertEqual(err.__str__(), 'You can only add HVAC components to mechanical rooms')
+
+    def test_add_non_ducted_fcu_to_duct(self):
+        try:
+            vfd = VariableFrequencyDrive('PR.VNT.VRD.01')
+            fan = Fan("PR.VNT.FN.01", PowerState.ON, vfd)
+            heat_exchanger = HeatExchanger("PR.VNT.HE.01", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
+            fcu = FanCoilUnit('FCU.01', heat_exchanger, fan, FCUType.STANDALONE, FCUPipeSystem.FOUR_PIPE, False)
+
+            duct = Duct("VNT", DuctType.AIR)
+            conn = DuctConnection()
+            conn.add_entity(DuctConnectionEntityType.SOURCE, fcu)
+            duct.connections = conn
+        except ValueError as err:
+            self.assertEqual(err.__str__(), "FCU.01 cannot be connected to a duct")
+
+    def test_add_ducted_fcu_to_duct(self):
+        vfd = VariableFrequencyDrive('PR.VNT.VRD.01')
+        fan = Fan("PR.VNT.FN.01", PowerState.ON, vfd)
+        heat_exchanger = HeatExchanger("PR.VNT.HE.01", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
+        fcu = FanCoilUnit('FCU.01', heat_exchanger, fan, FCUType.STANDALONE, FCUPipeSystem.FOUR_PIPE)
+        duct = Duct("VNT", DuctType.AIR)
+        conn = DuctConnection()
+        conn.add_entity(DuctConnectionEntityType.SOURCE, fcu)
+        duct.connections = conn
+        self.assertEqual(duct.connections.get_source_entities(), [fcu])
 
     def test_add_boiler_to_mechanical_room(self):
         boiler = Boiler('PR.VNT.BL.01', BoilerCategory.NATURAL_GAS, PowerState.ON)
