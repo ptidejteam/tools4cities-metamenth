@@ -103,7 +103,7 @@ address = Address("Montreal", "6399 Rue Sherbrooke", "QC", "H1N 2Z3", "Canada")
 building = Building(2009, height, floor_area, internal_mass, address,
                     BuildingType.COMMERCIAL, [floor])
 ```
-### 2. Adding an Envelope with Roof
+### 2. Adding an envelope with roof
 ```python
 from metamenth.structure.layer import Layer
 from metamenth.structure.material import Material
@@ -157,7 +157,7 @@ envelope.add_cover(roof_cover)
 building.envelope = envelope # building was created 1 above
 ```
 
-### 3. Create and associate Zones to the hall
+### 3. Create and associate zones to the hall
 ```python
 from metamenth.enumerations import ZoneType
 from metamenth.enumerations import HVACType
