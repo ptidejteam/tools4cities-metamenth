@@ -60,3 +60,5 @@ from metamenth.enumerations.pump_type import PumpType
 from metamenth.enumerations.terrain_type import TerrainType
 from metamenth.enumerations.solar_distribution_type import SolarDistributionType
 from metamenth.enumerations.relationship_name import RelationshipName
+from metamenth.enumerations.fcu_type import FCUType
+from metamenth.enumerations.fcu_pipe_system import FCUPipeSystem
