@@ -10,8 +10,6 @@ setup(
     install_requires=requirements,
     entry_points={
         'console_scripts': [
-            # Define command-line scripts here
-            # e.g., 'your-script=your_module:main_function'
         ],
     },
     author="Peter Yefi",
@@ -22,7 +20,7 @@ setup(
                 "entities such as rooms and open spaces within buildings.",
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url="https://github.com/peteryefi/metamenth",
+    url="https://github.com/ptidejteam/metamenth",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License",

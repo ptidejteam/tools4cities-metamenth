@@ -1,14 +1,14 @@
 # Metamodel for Energy Things (MetamEnTh)
 
-![Build Status](https://github.com/peteryefi/metamenth/actions/workflows/build.yml/badge.svg)
+![Build Status](https://github.com/ptidejteam/metamenth/actions/workflows/build.yml/badge.svg)
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
-[![License](https://img.shields.io/github/license/peteryefi/metamenth)](https://github.com/username/repository/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/ptidejteam/metamenth)](https://github.com/ptidejteam/metamenth/blob/main/LICENSE)
 ![PyPI version](https://img.shields.io/pypi/v/metamenth.svg)
-[![Wiki](https://img.shields.io/badge/docs-wiki-blue.svg)](https://github.com/peteryefi/metamenth/wiki)
+[![Wiki](https://img.shields.io/badge/docs-wiki-blue.svg)](https://github.com/ptidejteam/metamenth/wiki)
 
 **MetamEnTh** is an object-oriented framework for modeling the operational aspects of buildings, with a focus on mechanical, electrical, and plumbing (MEP) entities. It allows users to model and interact with physical structures, such as rooms, floors, HVAC systems, and appliances, providing a detailed simulation of building components and energy systems.
 
-Read the documentation here: [MetamEnTh Documentation](https://github.com/peteryefi/metamenth/wiki)
+Read the documentation here: [MetamEnTh Documentation](https://github.com/ptidejteam/metamenth/wiki)
 
 ## Table of Contents
 1. [Setting up MetamEnTh Locally](#setting-up-metamEnTh-locally)
@@ -25,7 +25,7 @@ Read the documentation here: [MetamEnTh Documentation](https://github.com/petery
 ### Cloning the repository:
 
    ```sh
-   git clone https://github.com/peteryefi/metamenth.git
+   git clone https://github.com/ptidejteam/metamenth.git
    cd metamenth
    ```
    
@@ -86,15 +86,18 @@ internal_mass = MeasureFactory.create_measure(RecordingType.BINARY.value,
 area = MeasureFactory.create_measure(RecordingType.BINARY.value,
                                      Measure(MeasurementUnit.SQUARE_METERS, 45))
 # create room
-room = Room(area, "Office 1", RoomType.OFFICE)
+room = Room(area, "Room", RoomType.OFFICE)
 
-mechanical_room = Room(area, "MR 01", RoomType.MECHANICAL)
+mechanical_room = Room(area, "Mechanical Room", RoomType.MECHANICAL)
 
 # create a hall
-hall = OpenSpace("Dinning Hall", area, OpenSpaceType.HALL)
+hall = OpenSpace("Hall", area, OpenSpaceType.HALL)
+
+# create a corridor
+corridor = OpenSpace("Corridor", area, OpenSpaceType.CORRIDOR)
 
 # create floor with a room and a hall
-floor = Floor(area=area, number=1, floor_type=FloorType.REGULAR, rooms=[room, hall, mechanical_room])
+floor = Floor(area=area, number=1, floor_type=FloorType.REGULAR, rooms=[room, hall, corridor, mechanical_room])
 
 # create the building's address
 address = Address("Montreal", "6399 Rue Sherbrooke", "QC", "H1N 2Z3", "Canada")
@@ -103,7 +106,7 @@ address = Address("Montreal", "6399 Rue Sherbrooke", "QC", "H1N 2Z3", "Canada")
 building = Building(2009, height, floor_area, internal_mass, address,
                     BuildingType.COMMERCIAL, [floor])
 ```
-### 2. Adding an Envelope with Roof
+### 2. Adding an envelope with roof
 ```python
 from metamenth.structure.layer import Layer
 from metamenth.structure.material import Material
@@ -157,22 +160,27 @@ envelope.add_cover(roof_cover)
 building.envelope = envelope # building was created 1 above
 ```
 
-### 3. Create and associate Zones to the hall
+### 3. Create and associate zones to the hall, corridor, room and office
 ```python
 from metamenth.enumerations import ZoneType
 from metamenth.enumerations import HVACType
 from metamenth.virtual.zone import Zone
 
-hvac_cooling_zone = Zone("HVAC_COOLING_ZONE", ZoneType.HVAC, HVACType.INTERIOR)
-hvac_heating_zone = Zone("HVAC_HEATING_ZONE", ZoneType.HVAC, HVACType.PERIMETER)
-# make the cooling zone adjacent to the heating zone
-hvac_heating_zone.add_adjacent_zones([hvac_cooling_zone])
+hvac_zone_1 = Zone("HVAC Zone 1", ZoneType.HVAC, HVACType.INTERIOR)
+hvac_zone_2 = Zone("HVAC Zone 2", ZoneType.HVAC, HVACType.INTERIOR)
+# set adjacent zones
+hvac_zone_2.add_adjacent_zones([hvac_zone_1])
 
-# assign the zone to the room
-hall.add_zone(hvac_heating_zone, building) # building and hall were created in 1 above
+# assign the mechanical room to hvac zone 1
+mechanical_room.add_zone(hvac_zone_1, building) # building and mechanical room were created in 1 above
+
+# assign the hall, corridor and room to hvac zone 2
+room.add_zone(hvac_zone_2, building)
+corridor.add_zone(hvac_zone_2, building)
+hall.add_zone(hvac_zone_2, building)
 
 ```
-### 4. Create and assign thermostats to the hall
+### 4. Create and assign thermostat to the hall
 ```python
 from metamenth.transducers.sensor import Sensor
 from metamenth.subsystem.appliance import Appliance
@@ -207,8 +215,219 @@ thermostat.add_transducer(humidity_sensor)
 
 # add thermostat to the hall
 hall.add_appliance(thermostat) # hall was created in 1 above
+```
+#### 5. Create and assign sensors to the corridor, room and mechanical room
+```python
+from metamenth.transducers.sensor import Sensor
+from metamenth.subsystem.appliance import Appliance
+from metamenth.enumerations import ApplianceType
+from metamenth.enumerations import ApplianceCategory
+from metamenth.enumerations import SensorMeasureType
+from metamenth.enumerations import SensorMeasure
+from metamenth.enumerations import SensorLogType
+from metamenth.datatypes.measure import Measure
+from metamenth.enumerations import MeasurementUnit
+from metamenth.misc import MeasureFactory
 
+# room sensors
+room_temp_sensor = Sensor("ROOM.TEMP.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+room_co2_sensor = Sensor("ROOM.CO2.SENSOR", SensorMeasure.CARBON_DIOXIDE, MeasurementUnit.PARTS_PER_MILLION,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+room.add_transducer(room_co2_sensor)
+room.add_transducer(room_temp_sensor)
+
+# mechanical room sensors
+mec_room_temp_sensor = Sensor("MEC.ROOM.TEMP.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_B, 900, sensor_log_type=SensorLogType.CHANGE_OF_VALUE)
+mec_room_humidity_sensor = Sensor("MEC.ROOM.HDT.SENSOR", SensorMeasure.HUMIDITY, MeasurementUnit.RELATIVE_HUMIDITY,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+mechanical_room.add_transducer(mec_room_humidity_sensor)
+mechanical_room.add_transducer(mec_room_temp_sensor)
+
+# add smoke detector to mechanical room
+temp_op_condition = MeasureFactory.create_measure("Continuous",
+                                    Measure(MeasurementUnit.DEGREE_CELSIUS, 0, 38))
+humidity_op_condition = MeasureFactory.create_measure("Continuous",
+                                    Measure(MeasurementUnit.RELATIVE_HUMIDITY, 0, 95))
+smoke_detector = Appliance("SMK.DETECTOR", [ApplianceCategory.HOME, ApplianceCategory.SMART],
+                               ApplianceType.SMOKE_DETECTOR,
+                               operating_conditions=[temp_op_condition, humidity_op_condition])
+mechanical_room.add_appliance(smoke_detector)
+
+# corridor sensors
+corr_room_temp_sensor = Sensor("CORR.ROOM.TEMP.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_B, 900, sensor_log_type=SensorLogType.CHANGE_OF_VALUE)
+corridor.add_transducer(corr_room_temp_sensor)
+```
+#### 6. Create and add the fan coil unit, baseboard heater, chiller and boiler
+```python
+from metamenth.subsystem.hvac_components.fan_coil_unit import FanCoilUnit
+from metamenth.subsystem.hvac_components.heat_exchanger import HeatExchanger
+from metamenth.subsystem.hvac_components.chiller import Chiller
+from metamenth.subsystem.hvac_components.boiler import Boiler
+from metamenth.subsystem.hvac_components.fan import Fan
+from metamenth.enumerations import ChillerType, BoilerCategory, FCUType, FCUPipeSystem, PowerState 
+from metamenth.enumerations import HeatingType, HeatExchangerType, HeatExchangerFlowType
+from metamenth.subsystem.baseboard_heater import BaseboardHeater
+from metamenth.subsystem.hvac_components.variable_frequency_drive import VariableFrequencyDrive
+
+# create boiler and chiller and add them to mechanical room
+boiler = Boiler('MEC.BOILER', BoilerCategory.NATURAL_GAS, PowerState.ON)
+chiller = Chiller('MEC.CHILLER', ChillerType.WATER_COOLED, PowerState.ON)
+mechanical_room.add_hvac_component(boiler)
+mechanical_room.add_hvac_component(chiller)
+
+# create baseboard heater add it to the corridor
+baseboard_heater = BaseboardHeater('CORR.BS.HEATER', HeatingType.ELECTRIC, PowerState.OUT_OF_SERVICE)
+corridor.add_hvac_component(baseboard_heater)
+
+# create fan coil unit and add it to the hall
+vfd = VariableFrequencyDrive('VFD')
+fan = Fan("FCU.FAN", PowerState.ON, vfd)
+heat_exchanger = HeatExchanger("FCU.HT.EXG", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
+fcu = FanCoilUnit('HALL.FCU', heat_exchanger, fan, FCUType.STANDALONE, FCUPipeSystem.TWO_PIPE, False)
+hall.add_hvac_component(fcu)
+```
+#### 7. Create an HVAC system for the building
+```python
+from metamenth.subsystem.building_control_system import BuildingControlSystem
+from metamenth.subsystem.hvac_system import HVACSystem
+from metamenth.subsystem.hvac_components.duct import Duct
+from metamenth.enumerations import DuctType, DuctSubType
+from metamenth.subsystem.hvac_components.duct_connection import DuctConnection
+from metamenth.enumerations import DuctConnectionEntityType, VentilationType
+from metamenth.subsystem.ventilation_system import VentilationSystem
+
+bcs = BuildingControlSystem("EV Control System")
+hvac_system = HVACSystem()
+bcs.hvac_system = hvac_system
+
+# Create the fresh air duct for the ventilation system
+supply_air_duct = Duct("SUPP.VNT.01", DuctType.AIR)
+supply_air_duct.duct_sub_type = DuctSubType.FRESH_AIR
+
+# create the return air duct for the ventilation system
+return_air_duct = Duct("RET.VNT.01", DuctType.AIR)
+return_air_duct.duct_sub_type = DuctSubType.RETURN_AIR
+
+# create the recirculation air duct
+recirculation_air_duct = Duct("REC.VNT.01", DuctType.AIR)
+recirculation_air_duct.duct_sub_type = DuctSubType.RETURN_AIR
+
+# connect the fresh air, return air and recirculation air ducts
+duct2duct_conn = DuctConnection()
+# add the return air duct as the source of the connection
+duct2duct_conn.add_entity(DuctConnectionEntityType.SOURCE, return_air_duct)
+# add the fresh air duct as the destination of the connection
+duct2duct_conn.add_entity(DuctConnectionEntityType.DESTINATION, supply_air_duct)
+# set the connection object as a property of the recirculation air duct
+recirculation_air_duct.connections = duct2duct_conn
+
+# set the recirculation air duct as the source for the supply air duct
+supp_duct_conn = DuctConnection()
+supp_duct_conn.add_entity(DuctConnectionEntityType.SOURCE, recirculation_air_duct)
+supply_air_duct.connections = duct2duct_conn
+
+# create the ventilation system with the supply air duct as the principal duct
+ventilation_system = VentilationSystem(VentilationType.AIR_HANDLING_UNIT, supply_air_duct)
+
+# set the ventilation system for the HVAC system
+hvac_system.add_ventilation_system(ventilation_system)
+```
+#### 8. Supply air duct components
+```python
+from metamenth.transducers.sensor import Sensor
+from metamenth.enumerations import SensorMeasureType
+from metamenth.enumerations import SensorMeasure
+from metamenth.enumerations import SensorLogType
+from metamenth.enumerations import MeasurementUnit
+from metamenth.subsystem.hvac_components.damper import Damper
+from metamenth.subsystem.hvac_components.filter import Filter
+from metamenth.enumerations import DamperType, FilterType
+from metamenth.subsystem.hvac_components.fan import Fan
+from metamenth.subsystem.hvac_components.variable_frequency_drive import VariableFrequencyDrive
+from metamenth.subsystem.hvac_components.duct import Duct
+from metamenth.subsystem.hvac_components.duct_connection import DuctConnection
+from metamenth.enumerations import DuctConnectionEntityType, HeatExchangerType, HeatExchangerFlowType, DuctType, DuctSubType
+from metamenth.subsystem.hvac_components.heat_exchanger import HeatExchanger
+from metamenth.subsystem.hvac_components.air_volume_box import AirVolumeBox
+from metamenth.enumerations import AirVolumeType
+
+# create the four temperature sensors and one pressure sensor for the supply air duct
+supp_vnt_temp_sensor_1 = Sensor("SUPP.VNT.TEMP.SENSOR.1", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_B, 900, sensor_log_type=SensorLogType.POLLING)
+supp_vnt_temp_sensor_2 = Sensor("SUPP.VNT.TEMP.SENSOR.2", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_B, 900, sensor_log_type=SensorLogType.POLLING)
+supp_vnt_temp_sensor_3 = Sensor("SUPP.VNT.TEMP.SENSOR.3", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_B, 900, sensor_log_type=SensorLogType.POLLING)
+supp_vnt_temp_sensor_4 = Sensor("SUPP.VNT.TEMP.SENSOR.4", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_B, 900, sensor_log_type=SensorLogType.POLLING)
+supp_vnt_pressure_sensor = Sensor("SUPP.VNT.PRS.SENSOR", SensorMeasure.PRESSURE, MeasurementUnit.PASCAL,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_B, 900, sensor_log_type=SensorLogType.POLLING)
+supply_air_duct.add_transducer(supp_vnt_temp_sensor_1) #supply_air_duct was created in Section 7
+supply_air_duct.add_transducer(supp_vnt_temp_sensor_2)
+supply_air_duct.add_transducer(supp_vnt_temp_sensor_3)
+supply_air_duct.add_transducer(supp_vnt_temp_sensor_4)
+supply_air_duct.add_transducer(supp_vnt_pressure_sensor)
+
+# create and add the damper and filter to the supply air duct
+damper = Damper("SUPP.VNT.DP", DamperType.BACK_DRAFT)
+filter = Filter("SUPP.VNT.FLT", FilterType.ELECTROSTATIC)
+supply_air_duct.add_filter(filter)
+supply_air_duct.add_damper(damper)
+
+# add fan to the supply air duct
+vfd = VariableFrequencyDrive('VFD')
+fan = Fan("SUPP.VNT.FAN", PowerState.ON, vfd)
+supply_air_duct.add_fan(fan)
+
+# add the two heat exchangers
+heat_exchanger_1 = HeatExchanger("SUPP.VNT.HT.EXG.1", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
+heat_exchanger_2 = HeatExchanger("SUPP.VNT.HT.EXG.2", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
+supply_air_duct.add_heat_exchanger(heat_exchanger_1)
+supply_air_duct.add_heat_exchanger(heat_exchanger_2)
+
+# connect heat exchanger 1 to the boiler
+heat_exchanger_boiler_pipe = Duct("HXG.BLR.PIPE", DuctType.WATER)
+heat_exchanger_boiler_pipe.duct_sub_type = DuctSubType.HOT_AND_COLD_WATER
+
+heat_exchanger_boiler_conn = DuctConnection()
+heat_exchanger_boiler_conn.add_entity(DuctConnectionEntityType.SOURCE, heat_exchanger_1)
+heat_exchanger_boiler_conn.add_entity(DuctConnectionEntityType.DESTINATION, boiler) # boiler was created in Section 6
+heat_exchanger_boiler_conn.is_loop = True # source can become destination and vice versa
+heat_exchanger_boiler_pipe.connections = heat_exchanger_boiler_conn
+heat_exchanger_1.add_duct(heat_exchanger_boiler_pipe)
+
+# connect heat exchanger 2 to the chiller
+heat_exchanger_chiller_pipe = Duct("HXG.CHL.PIP", DuctType.WATER_WITH_ANTI_FREEZE)
+heat_exchanger_chiller_conn = DuctConnection()
+heat_exchanger_boiler_conn.add_entity(DuctConnectionEntityType.SOURCE, heat_exchanger_2)
+heat_exchanger_boiler_conn.add_entity(DuctConnectionEntityType.DESTINATION, chiller) # chiller was created in Section 6
+heat_exchanger_boiler_conn.is_loop = True # source can become destination and vice versa
+heat_exchanger_chiller_pipe.connections = heat_exchanger_chiller_conn
+heat_exchanger_2.add_duct(heat_exchanger_chiller_pipe)
+
+# create the two VAV boxes for the supply air duct
+vav_box_1 = AirVolumeBox('SUPP.VNT.VAV.1', AirVolumeType.VARIABLE_AIR_VOLUME)
+vav_box_1.inlet_dampers = [Damper('SUP.VNT.VAV.DMP.1', DamperType.MANUAL_VOLUME)]
+vav_box_1_temp_sensor = Sensor("VAV.1.TEMP.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+vav_box_1.add_transducer(vav_box_1_temp_sensor)
+supply_air_duct.add_connected_air_volume_box(vav_box_1)
+
+vav_box_2 = AirVolumeBox('SUPP.VNT.VAV.2', AirVolumeType.VARIABLE_AIR_VOLUME)
+vav_box_2.inlet_dampers = [Damper('SUP.VNT.VAV.DMP.2', DamperType.MANUAL_VOLUME)]
+vav_box_2_temp_sensor = Sensor("VAV.2.TEMP.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+vav_box_2.add_transducer(vav_box_2_temp_sensor)
+supply_air_duct.add_connected_air_volume_box(vav_box_2)
+
+# add the mechanical room to vav box 2 (the vav box suppliers air to that room)
+vav_box_2.add_spaces([mechanical_room])
+
+# add the corridor, hall and room to vav box 1
+vav_box_1.add_spaces([room, corridor, hall])
 ```
 
-
-NB: Refer to the [test directory](https://github.com/peteryefi/metamenth/tree/main/tests) for more insight on usage
+NB: Refer to the [test directory](https://github.com/ptidejteam/metamenth/tree/main/tests) for more insight on usage

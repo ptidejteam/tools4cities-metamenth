@@ -14,6 +14,7 @@ class SensorMeasure(AbstractEnum):
     LIQUID_VELOCITY = "LiquidVelocity"
     LUMINANCE = "Luminance"
     CARBON_DIOXIDE = "CarbonDioxide"
+    CARBON_MONOXIDE = "CarbonMonoxide"
     NOISE = "Noise"
     CURRENT = "Current"
     VOLTAGE = "Voltage"
