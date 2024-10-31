@@ -335,6 +335,99 @@ ventilation_system = VentilationSystem(VentilationType.AIR_HANDLING_UNIT, supply
 # set the ventilation system for the HVAC system
 hvac_system.add_ventilation_system(ventilation_system)
 ```
+#### 8. Supply air duct components
+```python
+from metamenth.transducers.sensor import Sensor
+from metamenth.enumerations import SensorMeasureType
+from metamenth.enumerations import SensorMeasure
+from metamenth.enumerations import SensorLogType
+from metamenth.enumerations import MeasurementUnit
+from metamenth.subsystem.hvac_components.damper import Damper
+from metamenth.subsystem.hvac_components.filter import Filter
+from metamenth.enumerations import DamperType, FilterType
+from metamenth.subsystem.hvac_components.fan import Fan
+from metamenth.subsystem.hvac_components.variable_frequency_drive import VariableFrequencyDrive
+from metamenth.subsystem.hvac_components.duct import Duct
+from metamenth.subsystem.hvac_components.duct_connection import DuctConnection
+from metamenth.enumerations import DuctConnectionEntityType, HeatExchangerType, HeatExchangerFlowType, DuctType, DuctSubType
+from metamenth.subsystem.hvac_components.heat_exchanger import HeatExchanger
+from metamenth.subsystem.hvac_components.air_volume_box import AirVolumeBox
+from metamenth.enumerations import AirVolumeType
 
+# create the four temperature sensors and one pressure sensor for the supply air duct
+supp_vnt_temp_sensor_1 = Sensor("SUPP.VNT.TEMP.SENSOR.1", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_B, 900, sensor_log_type=SensorLogType.POLLING)
+supp_vnt_temp_sensor_2 = Sensor("SUPP.VNT.TEMP.SENSOR.2", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_B, 900, sensor_log_type=SensorLogType.POLLING)
+supp_vnt_temp_sensor_3 = Sensor("SUPP.VNT.TEMP.SENSOR.3", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_B, 900, sensor_log_type=SensorLogType.POLLING)
+supp_vnt_temp_sensor_4 = Sensor("SUPP.VNT.TEMP.SENSOR.4", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_B, 900, sensor_log_type=SensorLogType.POLLING)
+supp_vnt_pressure_sensor = Sensor("SUPP.VNT.PRS.SENSOR", SensorMeasure.PRESSURE, MeasurementUnit.PASCAL,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_B, 900, sensor_log_type=SensorLogType.POLLING)
+supply_air_duct.add_transducer(supp_vnt_temp_sensor_1) #supply_air_duct was created in Section 7
+supply_air_duct.add_transducer(supp_vnt_temp_sensor_2)
+supply_air_duct.add_transducer(supp_vnt_temp_sensor_3)
+supply_air_duct.add_transducer(supp_vnt_temp_sensor_4)
+supply_air_duct.add_transducer(supp_vnt_pressure_sensor)
+
+# create and add the damper and filter to the supply air duct
+damper = Damper("SUPP.VNT.DP", DamperType.BACK_DRAFT)
+filter = Filter("SUPP.VNT.FLT", FilterType.ELECTROSTATIC)
+supply_air_duct.add_filter(filter)
+supply_air_duct.add_damper(damper)
+
+# add fan to the supply air duct
+vfd = VariableFrequencyDrive('VFD')
+fan = Fan("SUPP.VNT.FAN", PowerState.ON, vfd)
+supply_air_duct.add_fan(fan)
+
+# add the two heat exchangers
+heat_exchanger_1 = HeatExchanger("SUPP.VNT.HT.EXG.1", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
+heat_exchanger_2 = HeatExchanger("SUPP.VNT.HT.EXG.2", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
+supply_air_duct.add_heat_exchanger(heat_exchanger_1)
+supply_air_duct.add_heat_exchanger(heat_exchanger_2)
+
+# connect heat exchanger 1 to the boiler
+heat_exchanger_boiler_pipe = Duct("HXG.BLR.PIPE", DuctType.WATER)
+heat_exchanger_boiler_pipe.duct_sub_type = DuctSubType.HOT_AND_COLD_WATER
+
+heat_exchanger_boiler_conn = DuctConnection()
+heat_exchanger_boiler_conn.add_entity(DuctConnectionEntityType.SOURCE, heat_exchanger_1)
+heat_exchanger_boiler_conn.add_entity(DuctConnectionEntityType.DESTINATION, boiler) # boiler was created in Section 6
+heat_exchanger_boiler_conn.is_loop = True # source can become destination and vice versa
+heat_exchanger_boiler_pipe.connections = heat_exchanger_boiler_conn
+heat_exchanger_1.add_duct(heat_exchanger_boiler_pipe)
+
+# connect heat exchanger 2 to the chiller
+heat_exchanger_chiller_pipe = Duct("HXG.CHL.PIP", DuctType.WATER_WITH_ANTI_FREEZE)
+heat_exchanger_chiller_conn = DuctConnection()
+heat_exchanger_boiler_conn.add_entity(DuctConnectionEntityType.SOURCE, heat_exchanger_2)
+heat_exchanger_boiler_conn.add_entity(DuctConnectionEntityType.DESTINATION, chiller) # chiller was created in Section 6
+heat_exchanger_boiler_conn.is_loop = True # source can become destination and vice versa
+heat_exchanger_chiller_pipe.connections = heat_exchanger_chiller_conn
+heat_exchanger_2.add_duct(heat_exchanger_chiller_pipe)
+
+# create the two VAV boxes for the supply air duct
+vav_box_1 = AirVolumeBox('SUPP.VNT.VAV.1', AirVolumeType.VARIABLE_AIR_VOLUME)
+vav_box_1.inlet_dampers = [Damper('SUP.VNT.VAV.DMP.1', DamperType.MANUAL_VOLUME)]
+vav_box_1_temp_sensor = Sensor("VAV.1.TEMP.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+vav_box_1.add_transducer(vav_box_1_temp_sensor)
+supply_air_duct.add_connected_air_volume_box(vav_box_1)
+
+vav_box_2 = AirVolumeBox('SUPP.VNT.VAV.2', AirVolumeType.VARIABLE_AIR_VOLUME)
+vav_box_2.inlet_dampers = [Damper('SUP.VNT.VAV.DMP.2', DamperType.MANUAL_VOLUME)]
+vav_box_2_temp_sensor = Sensor("VAV.2.TEMP.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+vav_box_2.add_transducer(vav_box_2_temp_sensor)
+supply_air_duct.add_connected_air_volume_box(vav_box_2)
+
+# add the mechanical room to vav box 2 (the vav box suppliers air to that room)
+vav_box_2.add_spaces([mechanical_room])
+
+# add the corridor, hall and room to vav box 1
+vav_box_1.add_spaces([room, corridor, hall])
+```
 
 NB: Refer to the [test directory](https://github.com/ptidejteam/metamenth/tree/main/tests) for more insight on usage
