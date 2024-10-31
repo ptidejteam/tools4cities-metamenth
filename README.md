@@ -86,9 +86,9 @@ internal_mass = MeasureFactory.create_measure(RecordingType.BINARY.value,
 area = MeasureFactory.create_measure(RecordingType.BINARY.value,
                                      Measure(MeasurementUnit.SQUARE_METERS, 45))
 # create room
-room = Room(area, "Office 1", RoomType.OFFICE)
+room = Room(area, "Room", RoomType.OFFICE)
 
-mechanical_room = Room(area, "MR 01", RoomType.MECHANICAL)
+mechanical_room = Room(area, "Mechanical Room", RoomType.MECHANICAL)
 
 # create a hall
 hall = OpenSpace("Hall", area, OpenSpaceType.HALL)
