@@ -1,14 +1,14 @@
 # Metamodel for Energy Things (MetamEnTh)
 
-![Build Status](https://github.com/peteryefi/metamenth/actions/workflows/build.yml/badge.svg)
+![Build Status](https://github.com/ptidejteam/metamenth/actions/workflows/build.yml/badge.svg)
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
-[![License](https://img.shields.io/github/license/peteryefi/metamenth)](https://github.com/username/repository/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/ptidejteam/metamenth)](https://github.com/ptidejteam/metamenth/blob/main/LICENSE)
 ![PyPI version](https://img.shields.io/pypi/v/metamenth.svg)
-[![Wiki](https://img.shields.io/badge/docs-wiki-blue.svg)](https://github.com/peteryefi/metamenth/wiki)
+[![Wiki](https://img.shields.io/badge/docs-wiki-blue.svg)](https://github.com/ptidejteam/metamenth/wiki)
 
 **MetamEnTh** is an object-oriented framework for modeling the operational aspects of buildings, with a focus on mechanical, electrical, and plumbing (MEP) entities. It allows users to model and interact with physical structures, such as rooms, floors, HVAC systems, and appliances, providing a detailed simulation of building components and energy systems.
 
-Read the documentation here: [MetamEnTh Documentation](https://github.com/peteryefi/metamenth/wiki)
+Read the documentation here: [MetamEnTh Documentation](https://github.com/ptidejteam/metamenth/wiki)
 
 ## Table of Contents
 1. [Setting up MetamEnTh Locally](#setting-up-metamEnTh-locally)
@@ -25,7 +25,7 @@ Read the documentation here: [MetamEnTh Documentation](https://github.com/petery
 ### Cloning the repository:
 
    ```sh
-   git clone https://github.com/peteryefi/metamenth.git
+   git clone https://github.com/ptidejteam/metamenth.git
    cd metamenth
    ```
    
@@ -211,4 +211,4 @@ hall.add_appliance(thermostat) # hall was created in 1 above
 ```
 
 
-NB: Refer to the [test directory](https://github.com/peteryefi/metamenth/tree/main/tests) for more insight on usage
+NB: Refer to the [test directory](https://github.com/ptidejteam/metamenth/tree/main/tests) for more insight on usage
