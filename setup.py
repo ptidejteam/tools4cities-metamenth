@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
 
 setup(
     name="metamenth",
-    version="1.0.3",
+    version="1.0.4",
     packages=find_packages(include=["metamenth", "metamenth.*"]),
     install_requires=requirements,
     entry_points={
