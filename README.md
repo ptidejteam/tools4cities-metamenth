@@ -57,7 +57,7 @@ chmod +x run_tests.sh
 ```
 
 ## Example usage
-![model-hvac.jpg](model-hvac.jpg)
+![Model HVAC System](https://raw.githubusercontent.com/ptidejteam/metamenth/main/model-hvac.jpg)
 Figure 1.0: The HVAC system in this figure is modelled below in the example usage code indicating how modellers could model complex HVAC systems with MetamEnTh
 ### 1. Creating the Building
 
