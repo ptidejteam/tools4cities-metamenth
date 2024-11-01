@@ -57,7 +57,8 @@ chmod +x run_tests.sh
 ```
 
 ## Example usage
-
+![model-hvac.jpg](model-hvac.jpg)
+Figure 1.0: The HVAC system in this figure is modelled below in the example usage code indicating how modellers could model complex HVAC systems with MetamEnTh
 ### 1. Creating the Building
 
 ```python
@@ -260,17 +261,25 @@ corr_room_temp_sensor = Sensor("CORR.ROOM.TEMP.SENSOR", SensorMeasure.TEMPERATUR
                             SensorMeasureType.THERMO_COUPLE_TYPE_B, 900, sensor_log_type=SensorLogType.CHANGE_OF_VALUE)
 corridor.add_transducer(corr_room_temp_sensor)
 ```
-#### 6. Create and add the fan coil unit, baseboard heater, chiller and boiler
+#### 6. Create and add the fan coil unit, baseboard heater, radiant heat slab, chiller and boiler
 ```python
 from metamenth.subsystem.hvac_components.fan_coil_unit import FanCoilUnit
 from metamenth.subsystem.hvac_components.heat_exchanger import HeatExchanger
 from metamenth.subsystem.hvac_components.chiller import Chiller
 from metamenth.subsystem.hvac_components.boiler import Boiler
 from metamenth.subsystem.hvac_components.fan import Fan
-from metamenth.enumerations import ChillerType, BoilerCategory, FCUType, FCUPipeSystem, PowerState 
+from metamenth.enumerations import ChillerType, BoilerCategory, FCUType, FCUPipeSystem, PowerState
 from metamenth.enumerations import HeatingType, HeatExchangerType, HeatExchangerFlowType
+from metamenth.enumerations import RadiantSlabType, MeterMeasureMode,  MeterType, MeasurementUnit 
 from metamenth.subsystem.baseboard_heater import BaseboardHeater
 from metamenth.subsystem.hvac_components.variable_frequency_drive import VariableFrequencyDrive
+from metamenth.subsystem.radiant_slab import RadiantSlab
+from metamenth.subsystem.hvac_components.cooling_tower import CoolingTower
+from metamenth.measure_instruments.meter import Meter
+from metamenth.subsystem.hvac_components.duct import Duct
+from metamenth.enumerations import DuctType, DuctSubType
+from metamenth.subsystem.hvac_components.duct_connection import DuctConnection
+from metamenth.enumerations import DuctConnectionEntityType
 
 # create boiler and chiller and add them to mechanical room
 boiler = Boiler('MEC.BOILER', BoilerCategory.NATURAL_GAS, PowerState.ON)
@@ -288,6 +297,26 @@ fan = Fan("FCU.FAN", PowerState.ON, vfd)
 heat_exchanger = HeatExchanger("FCU.HT.EXG", HeatExchangerType.FIN_TUBE, HeatExchangerFlowType.PARALLEL)
 fcu = FanCoilUnit('HALL.FCU', heat_exchanger, fan, FCUType.STANDALONE, FCUPipeSystem.TWO_PIPE, False)
 hall.add_hvac_component(fcu)
+
+# add radiant heat slab to the hall
+slab = RadiantSlab('HALL.SLAB', RadiantSlabType.ELECTRIC)
+hall.add_hvac_component(slab)
+
+# create the cooling tower and connect it with the chiller
+cooling_tower = CoolingTower('CL.TWR')
+# create a flow meter and assign it to the cooling tower
+flow_meter = Meter('CL.TWR.FL.MTR', 90, MeasurementUnit.LITERS_PER_SECOND, MeterType.FLOW, MeterMeasureMode.AUTOMATIC)
+cooling_tower.meter = flow_meter
+chiller_tower_duct = Duct("CL.TWR.01", DuctType.WATER)
+chiller_tower_duct.duct_sub_type = DuctSubType.HOT_AND_COLD_WATER
+chiller_tower_duct_conn = DuctConnection()
+chiller_tower_duct_conn.add_entity(DuctConnectionEntityType.SOURCE, chiller)
+chiller_tower_duct_conn.add_entity(DuctConnectionEntityType.DESTINATION, cooling_tower)
+chiller_tower_duct_conn.is_loop = True
+chiller_tower_duct.connections = chiller_tower_duct_conn
+chiller.add_duct(chiller_tower_duct) # the duct is accessible from the chiller
+cooling_tower.add_duct(chiller_tower_duct) # (optionally) make the duct accessible from the cooling tower as well
+
 ```
 #### 7. Create an HVAC system for the building
 ```python
@@ -400,7 +429,7 @@ heat_exchanger_boiler_pipe.connections = heat_exchanger_boiler_conn
 heat_exchanger_1.add_duct(heat_exchanger_boiler_pipe)
 
 # connect heat exchanger 2 to the chiller
-heat_exchanger_chiller_pipe = Duct("HXG.CHL.PIP", DuctType.WATER_WITH_ANTI_FREEZE)
+heat_exchanger_chiller_pipe = Duct("HXG.CHL.PIPE", DuctType.WATER_WITH_ANTI_FREEZE)
 heat_exchanger_chiller_conn = DuctConnection()
 heat_exchanger_boiler_conn.add_entity(DuctConnectionEntityType.SOURCE, heat_exchanger_2)
 heat_exchanger_boiler_conn.add_entity(DuctConnectionEntityType.DESTINATION, chiller) # chiller was created in Section 6
@@ -428,6 +457,78 @@ vav_box_2.add_spaces([mechanical_room])
 
 # add the corridor, hall and room to vav box 1
 vav_box_1.add_spaces([room, corridor, hall])
+```
+#### 9. Recirculation air duct components
+```python
+from metamenth.subsystem.hvac_components.damper import Damper
+from metamenth.enumerations import DamperType
+
+# create the damper for the recirculation air duct
+rec_damper = Damper('REC.VNT.DMP', DamperType.MANUAL_VOLUME)
+recirculation_air_duct.add_damper(rec_damper) # recirculation_air_duct created in section 7
+```
+#### 10. Return air duct components
+```python
+from metamenth.transducers.sensor import Sensor
+from metamenth.enumerations import SensorMeasureType
+from metamenth.enumerations import SensorMeasure
+from metamenth.enumerations import SensorLogType
+from metamenth.enumerations import MeasurementUnit
+from metamenth.subsystem.hvac_components.damper import Damper
+from metamenth.subsystem.hvac_components.filter import Filter
+from metamenth.enumerations import DamperType, FilterType
+from metamenth.subsystem.hvac_components.fan import Fan
+from metamenth.subsystem.hvac_components.variable_frequency_drive import VariableFrequencyDrive
+from metamenth.subsystem.hvac_components.duct import Duct
+from metamenth.subsystem.hvac_components.duct_connection import DuctConnection
+from metamenth.enumerations import RecordingType, HeatExchangerType, HeatExchangerFlowType, DuctType, DuctSubType, PowerState
+from metamenth.subsystem.hvac_components.heat_exchanger import HeatExchanger
+from metamenth.subsystem.hvac_components.air_volume_box import AirVolumeBox
+from metamenth.enumerations import AirVolumeType
+from metamenth.transducers.actuator import Actuator
+from metamenth.subsystem.hvac_components.controller import Controller
+from metamenth.misc import MeasureFactory
+from metamenth.datatypes.measure import Measure
+
+# create the damper and add it to the duct
+ret_damper = Damper('RET.VNT.DMP', DamperType.MANUAL_VOLUME)
+return_air_duct.add_damper(ret_damper)
+
+# add the two temperature sensors
+ret_duct_temp_sensor_1 = Sensor("RET.VNT.TEMP.SENSOR.1", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+ret_duct_temp_sensor_2 = Sensor("RET.VNT.TEMP.SENSOR.2", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                            SensorMeasureType.THERMO_COUPLE_TYPE_A, 900, sensor_log_type=SensorLogType.POLLING)
+return_air_duct.add_transducer(ret_duct_temp_sensor_1)
+return_air_duct.add_transducer(ret_duct_temp_sensor_2)
+
+# create the fan, actuator and controller and link them together
+vfd = VariableFrequencyDrive('RET.VNT.VRD')
+fan = Fan("RET.VNT.FN", PowerState.ON, vfd)
+# the actuator actuates the fan
+actuator = Actuator("RET.ACT.FN", fan)
+controller = Controller('RET.CTL')
+controller.add_controller_entity(fan)
+# the controller controls the actuator
+actuator.controller = controller
+controller.add_transducer(actuator)
+# the controller gets its temperature input from ret_duct_temp_sensor_1
+controller.add_transducer(ret_duct_temp_sensor_1)
+
+# add temperature set point for the controller. The set point is related to ret_duct_temp_sensor_1 and the actuator
+temperature_set_point = MeasureFactory.create_measure(RecordingType.CONTINUOUS.value,
+                                                              Measure(MeasurementUnit.DEGREE_CELSIUS, 10, 20))
+controller.add_set_point(temperature_set_point, (ret_duct_temp_sensor_1.name, actuator.name))
+
+# add the actuator and fan to the duct
+return_air_duct.add_transducer(actuator)
+return_air_duct.add_fan(fan)
+
+# (optionally) set the spaces (hall, corridor, room and mechanical room as source entities for the return air duct)
+return_air_duct.connections.add_entity(DuctConnectionEntityType.SOURCE, room)
+return_air_duct.connections.add_entity(DuctConnectionEntityType.SOURCE, hall)
+return_air_duct.connections.add_entity(DuctConnectionEntityType.SOURCE, corridor)
+return_air_duct.connections.add_entity(DuctConnectionEntityType.SOURCE, mechanical_room)
 ```
 
 NB: Refer to the [test directory](https://github.com/ptidejteam/metamenth/tree/main/tests) for more insight on usage
