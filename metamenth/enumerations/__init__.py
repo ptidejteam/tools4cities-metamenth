@@ -62,3 +62,5 @@ from metamenth.enumerations.solar_distribution_type import SolarDistributionType
 from metamenth.enumerations.relationship_name import RelationshipName
 from metamenth.enumerations.fcu_type import FCUType
 from metamenth.enumerations.fcu_pipe_system import FCUPipeSystem
+from metamenth.enumerations.anemometer_type import AnemometerType
+from metamenth.enumerations.duct_shape import DuctShape

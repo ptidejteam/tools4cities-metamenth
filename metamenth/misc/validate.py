@@ -11,7 +11,7 @@ from metamenth.enumerations import RoomType
 
 class Validate:
     """
-    Has miscillineous methods for validation
+    Has miscellaneous methods for validation
 
     """
 
@@ -202,4 +202,23 @@ class Validate:
         elif (isinstance(space_entity, OpenSpace) and
               not any(isinstance(hvac_component, cls) for cls in [AirVolumeBox, BaseboardHeater, RadiantSlab, Duct])):
             raise ValueError('You can only add air volume box/ducts to open spaces')
+        return True
+
+    @staticmethod
+    def are_units_same(measurements):
+        """
+        Validate measurement unit of multiple binary measure to be the same
+        """
+        from metamenth.datatypes.binary_measure import BinaryMeasure
+        if not measurements:
+            raise ValueError('The measurements list cannot be empty')
+
+        first_measurement = measurements[0]
+        if not isinstance(first_measurement, BinaryMeasure):
+            raise ValueError('Measurement must of of type BinaryMeasure')
+
+        for measurement in measurements:
+            if not isinstance(measurement,
+                              BinaryMeasure) or measurement.measurement_unit != first_measurement.measurement_unit:
+                raise ValueError('All measurements must be of type BinaryMeasure and have the same unit')
         return True
