@@ -27,6 +27,7 @@ from metamenth.enumerations import V2GMode
 from metamenth.measure_instruments.meter import Meter
 from metamenth.enumerations import MeasurementUnit
 from metamenth.enumerations import MeterType
+from metamenth.enumerations import BuildingOrientation
 
 
 class TestBuilding(BaseTest):
@@ -496,7 +497,7 @@ class TestBuilding(BaseTest):
         self.assertEqual(len(self.building.get_weather_stations()), 1)
 
     def test_add_envelop_to_building(self):
-        cover = Cover(CoverType.ROOF)
+        cover = Cover(CoverType.ROOF, BuildingOrientation.SOUTH, 1)
         cover.add_layer(self.layer)
         new_layer = copy.deepcopy(self.layer)
         new_layer.has_vapour_barrier = True

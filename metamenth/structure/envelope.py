@@ -41,7 +41,7 @@ class Envelope:
     def get_covers(self, search_term: Dict = None) -> List[Cover]:
         """
         Retrieves covers given the attributes and their values
-        :param search_term: the uid of the floor
+        :param search_term: key, values pairs of attributes and their values
         :return:
         """
         return StructureSearch.search(self._covers, search_term)

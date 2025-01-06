@@ -64,3 +64,4 @@ from metamenth.enumerations.fcu_type import FCUType
 from metamenth.enumerations.fcu_pipe_system import FCUPipeSystem
 from metamenth.enumerations.anemometer_type import AnemometerType
 from metamenth.enumerations.duct_shape import DuctShape
+from metamenth.enumerations.building_orientation import BuildingOrientation
