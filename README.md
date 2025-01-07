@@ -157,7 +157,7 @@ roof_cover = Cover(CoverType.FLOOR, BuildingOrientation.NORTH, 1)
 roof_cover.add_layer(roof_layer)
 
 # create building envelope and add roof cover
-envelope = Envelope()
+envelope = Envelope('Block One')
 envelope.add_cover(roof_cover)
 building.add_envelope(envelope) # building was created 1 above
 ```
