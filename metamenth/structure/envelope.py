@@ -12,13 +12,27 @@ class Envelope:
     Author: Peter Yefi
     Email: peteryefi@gmail.com
     """
-    def __init__(self):
+
+    def __init__(self, name: str):
         self._UID = str(uuid.uuid4())
+        self._name = None
         self._covers: List['Cover'] = []
+
+        self.name = name
 
     @property
     def UID(self) -> str:
         return self._UID
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @name.setter
+    def name(self, value: str):
+        if value is None:
+            raise ValueError("mame must be of type str")
+        self._name = value
 
     def add_cover(self, cover: Cover):
         """
@@ -51,5 +65,6 @@ class Envelope:
         return (
             f"Cover("
             f"UID: {self.UID}, "
+            f"UID: {self.name}, "
             f"Layers:\n{cover_details})"
         )

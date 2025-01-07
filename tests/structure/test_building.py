@@ -502,14 +502,14 @@ class TestBuilding(BaseTest):
         new_layer = copy.deepcopy(self.layer)
         new_layer.has_vapour_barrier = True
         cover.add_layer(new_layer)
-        envelope = Envelope()
+        envelope = Envelope('EV Block')
         envelope.add_cover(cover)
-        self.building.envelope = envelope
-        self.assertEqual(self.building.envelope, envelope)
-        self.assertEqual(self.building.envelope.get_cover_by_uid(cover.UID).cover_type, CoverType.ROOF)
-        self.assertEqual(self.building.envelope.get_cover_by_uid(cover.UID).get_layers(), [self.layer, new_layer])
-        self.assertEqual(self.building.envelope.get_cover_by_uid(cover.UID).get_layers()[0].thickness.value, 3)
-        self.assertEqual(self.building.envelope.get_cover_by_uid(cover.UID).get_layers()[1].material.material_type,
+        self.building.add_envelope(envelope)
+        self.assertEqual(self.building.envelope[0], envelope)
+        self.assertEqual(self.building.envelope[0].get_cover_by_uid(cover.UID).cover_type, CoverType.ROOF)
+        self.assertEqual(self.building.envelope[0].get_cover_by_uid(cover.UID).get_layers(), [self.layer, new_layer])
+        self.assertEqual(self.building.envelope[0].get_cover_by_uid(cover.UID).get_layers()[0].thickness.value, 3)
+        self.assertEqual(self.building.envelope[0].get_cover_by_uid(cover.UID).get_layers()[1].material.material_type,
                          MaterialType.ROOF_STEEL)
 
     def test_building_floor_area_change_history(self):

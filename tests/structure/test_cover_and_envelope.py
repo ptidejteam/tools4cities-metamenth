@@ -48,14 +48,40 @@ class TestCoverAndEnvelop(BaseTest):
         self.assertEqual(cover.get_layers()[1].has_vapour_barrier, True)
         self.assertEqual(len(cover.get_layers()), 2)
 
+    def test_roof_cover_with_neighbours(self):
+        cover = Cover(CoverType.ROOF, BuildingOrientation.NORTH, 3)
+        cover.add_layer(self.layer)
+        left_neighbour = Cover(CoverType.ROOF, BuildingOrientation.NORTH, 3)
+        right_neighbour = Cover(CoverType.ROOF, BuildingOrientation.NORTH, 3)
+        cover.add_neighbour(left_neighbour, 'left')
+        cover.add_neighbour(right_neighbour, 'right')
+        self.assertEqual(cover.get_neighbour('left'), left_neighbour.UID)
+        self.assertEqual(cover.get_neighbour('right'), right_neighbour.UID)
+
+    def test_neighbours_on_different_floors(self):
+        with self.assertRaises(ValueError) as context:
+            cover = Cover(CoverType.ROOF, BuildingOrientation.NORTH, 3)
+            cover.add_layer(self.layer)
+            left_neighbour = Cover(CoverType.ROOF, BuildingOrientation.NORTH, 1)
+            cover.add_neighbour(left_neighbour, 'left')
+        self.assertEqual(str(context.exception), 'Neighbour covers must be on the same floor and side of building')
+
+    def test_neighbours_on_different_sides_of_building(self):
+        with self.assertRaises(ValueError) as context:
+            cover = Cover(CoverType.ROOF, BuildingOrientation.NORTH, 1)
+            cover.add_layer(self.layer)
+            left_neighbour = Cover(CoverType.ROOF, BuildingOrientation.SOUTH, 1)
+            cover.add_neighbour(left_neighbour, 'right')
+        self.assertEqual(str(context.exception), 'Neighbour covers must be on the same floor and side of building')
+
     def test_empty_envelope(self):
-        envelope = Envelope()
+        envelope = Envelope('Tower One')
         self.assertIsNotNone(envelope.UID)
         self.assertEqual(envelope.get_covers(), [])
 
     def test_envelope_with_none_cover(self):
         try:
-            envelope = Envelope()
+            envelope = Envelope('Tower One')
             envelope.add_cover(None)
         except ValueError as err:
             self.assertEqual(err.__str__(), "cover must be of type Cover")
@@ -66,7 +92,7 @@ class TestCoverAndEnvelop(BaseTest):
         new_layer = copy.deepcopy(self.layer)
         new_layer.has_vapour_barrier = True
         cover.add_layer(new_layer)
-        envelope = Envelope()
+        envelope = Envelope('Tower One')
         envelope.add_cover(cover)
         self.assertEqual(envelope.get_cover_by_uid(cover.UID), cover)
         self.assertIsInstance(envelope.get_cover_by_uid(cover.UID), Cover)
@@ -130,7 +156,7 @@ class TestCoverAndEnvelop(BaseTest):
         new_layer = Layer(self.height, self.length, self.width, material, LayerRoughness.VERY_ROUGH)
         second_cover.add_layer(new_layer)
 
-        envelope = Envelope()
+        envelope = Envelope('Tower One')
         envelope.add_cover(first_cover)
         envelope.add_cover(second_cover)
 
@@ -141,7 +167,7 @@ class TestCoverAndEnvelop(BaseTest):
         cover = Cover(CoverType.ROOF, BuildingOrientation.SOUTH, 1)
         cover.add_layer(self.layer)
 
-        envelope = Envelope()
+        envelope = Envelope('Tower One')
         envelope.add_cover(cover)
 
         self.assertIsNone(envelope.get_cover_by_uid(self.layer.UID))
@@ -158,7 +184,7 @@ class TestCoverAndEnvelop(BaseTest):
         new_layer = Layer(self.height, self.length, self.width, material, LayerRoughness.VERY_SMOOTH)
         second_cover.add_layer(new_layer)
 
-        envelope = Envelope()
+        envelope = Envelope('Tower One')
         envelope.add_cover(first_cover)
         envelope.add_cover(second_cover)
 
@@ -176,12 +202,9 @@ class TestCoverAndEnvelop(BaseTest):
         new_layer = Layer(self.height, self.length, self.width, material, LayerRoughness.VERY_SMOOTH)
         second_cover.add_layer(new_layer)
 
-        envelope = Envelope()
+        envelope = Envelope('Tower One')
         envelope.add_cover(first_cover)
         envelope.add_cover(second_cover)
 
         covers = envelope.get_covers({'cover_type': CoverType.WINDOW})
         self.assertEqual(covers, [second_cover])
-
-
-

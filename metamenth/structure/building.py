@@ -59,7 +59,7 @@ class Building(Observable):
         self._terrain = None
         self._solar_distribution = None
         self._schedulable_entity = SchedulableEntity()
-        self._envelope: Envelope = Optional[None]
+        self._envelope: [Envelope] = []  # multiple envelopes indicate multiple towers of a building
         self._floors = []
         self._meters: [AbstractReader] = []
         self._weather_stations: List[WeatherStation] = []
@@ -192,14 +192,13 @@ class Building(Observable):
             raise ValueError("meters must be of type [Meter]")
 
     @property
-    def envelope(self) -> Envelope:
+    def envelope(self) -> [Envelope]:
         return self._envelope
 
-    @envelope.setter
     @StateTrackDecorator
-    def envelope(self, value: Envelope):
+    def add_envelope(self, value: Envelope):
         if value is not None:
-            self._envelope = value
+            self._envelope.append(value)
         else:
             raise ValueError("envelope must be of type Envelope")
 

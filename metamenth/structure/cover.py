@@ -2,7 +2,7 @@ import uuid
 from metamenth.enumerations import CoverType
 from metamenth.enumerations import BuildingOrientation
 from metamenth.structure.layer import Layer
-from typing import List
+from typing import List, Union
 from metamenth.utils import StructureSearch
 from typing import Dict
 
@@ -101,14 +101,14 @@ class Cover:
         :param neighbour_type: indicates the type of neighbour, e.g., left, right, top and bottom
         """
         try:
-            if self.floor_number == cover.floor_number:
+            if self.floor_number == cover.floor_number and self.building_orientation == cover.building_orientation:
                 self._neighbours[neighbour_type] = cover.UID
             else:
-                raise ValueError('Neighbour covers must be in the same floor')
+                raise ValueError('Neighbour covers must be on the same floor and side of building')
         except KeyError:
             print(f'Acceptable neighbour types include, left, right, top, and bottom')
 
-    def get_neighbour(self, neighbour_type: str):
+    def get_neighbour(self, neighbour_type: str) -> Union[str, None]:
         """
         Gets the neighbour of a cover
         :param neighbour_type: the type of neighbour, e.g, left, right
