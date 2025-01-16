@@ -8,7 +8,8 @@ from metamenth.utils import EntityInsert
 from metamenth.enumerations import BuildingEntity
 from metamenth.datatypes.interfaces.abstract_measure import AbstractMeasure
 from metamenth.misc import Validate
-
+from metamenth.controls.abstract_control import AbstractControl
+import time
 
 class Controller(AbstractHVACComponent):
     def __init__(self, name: str):
@@ -79,6 +80,40 @@ class Controller(AbstractHVACComponent):
         :return [Union[AbstractHVACComponent, AbstractDuctConnectedComponent, Appliance]]:
         """
         return StructureEntitySearch.search(self._controller_entities, search_terms)
+
+    def control(self, control_obj: AbstractControl):
+        """
+        Executes various control strategies for building systems.
+        :param control_obj: The control object is a user implementation of a control strategy for this controller.
+        The currently existing contracting are for on/off controls and PID controls. This will be extended to include
+        more complex control strategies.
+        """
+        # Ensure the process value sensor is specified
+        if not control_obj.process_value_sensor:
+            raise ValueError('Sensor for process variable must be specified')
+
+        # Ensure the process value sensor is part of this controller
+        if not self.get_transducer_by_name(control_obj.process_value_sensor.name):
+            raise ValueError('The process variable sensor is not configured for this controller')
+
+        if not control_obj.process_actuator:
+            raise ValueError('Actuator for process variable must be specified')
+
+        # Ensure the process actuator is part of this controller
+        if not self.get_transducer_by_name(control_obj.process_actuator.name):
+            raise ValueError('The provided transducer is not configured for this controller')
+
+        # Ensure the data frequency is specified
+        if not control_obj.process_value_sensor.data_frequency:
+            raise ValueError('Data frequency for the process variable sensor must be specified')
+
+        end_time = time.time() + control_obj.run_duration * 3600 if control_obj.run_duration is not None else None
+        # Execute control logic in a loop
+        while end_time is None or time.time() < end_time:
+            process_value = control_obj.acquire_process_value_data()
+            control_obj.execute_control(process_value)
+            time.sleep(control_obj.process_value_sensor.data_frequency)
+
 
     def __str__(self):
         return (

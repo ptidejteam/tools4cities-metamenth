@@ -57,7 +57,7 @@ class Actuator(AbstractTransducer, ABC):
     def __str__(self):
         trigger_data = "\n".join(str(data) for data in self._data)
         return (
-            f"Sensor("
+            f"Actuator("
             f"{super().__str__()}, "
             f"UID: {self.UID}, "
             f"Name: {self.name}, "
