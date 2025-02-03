@@ -1,4 +1,6 @@
-from metamenth.enumerations import SensorMeasure
+from metamenth.datatypes.measure import Measure
+from metamenth.enumerations import SensorMeasure, SensorMeasureType
+from metamenth.misc import MeasureFactory
 from metamenth.subsystem.building_control_system import BuildingControlSystem
 from metamenth.subsystem.interfaces.abstract_subsystem import AbstractSubsystem
 from metamenth.subsystem.hvac_system import HVACSystem
@@ -14,6 +16,8 @@ from metamenth.enumerations import HeatExchangerFlowType
 from metamenth.subsystem.hvac_components.damper import Damper
 from metamenth.enumerations import DamperType
 from metamenth.subsystem.hvac_components.duct_connection import DuctConnection
+from metamenth.transducers.actuator import Actuator
+from metamenth.transducers.sensor import Sensor
 from tests.subsystem.base_test import BaseTest
 from metamenth.enumerations import DuctConnectionEntityType
 from metamenth.subsystem.hvac_components.boiler import Boiler
@@ -58,7 +62,11 @@ from metamenth.enumerations import RoomType
 from metamenth.enumerations import FCUType
 from metamenth.enumerations import FCUPipeSystem
 from metamenth.subsystem.hvac_components.fan_coil_unit import FanCoilUnit
-
+from metamenth.subsystem.hvac_components.controller import Controller
+from metamenth.enumerations.recording_types import RecordingType
+from tests.subsystem.controls.on_off_control import OnOffControl
+from unittest.mock import patch
+from io import StringIO
 
 class TestBuildingControlSystem(BaseTest):
 
@@ -582,3 +590,37 @@ class TestBuildingControlSystem(BaseTest):
         self.assertEqual(vent_sys.principal_duct.connections.get_destination_entities(), [supply_air_duct])
         self.assertEqual(vent_sys.principal_duct.connections.get_destination_entities()[0]
                          .connections.get_destination_entities(), [self.floor])
+
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_binary_control(self, mock_stdout):
+        # create boiler
+        boiler = Boiler('CTRL.BL', BoilerCategory.NATURAL_GAS, PowerState.ON)
+
+        # create controller
+        controller = Controller('CTR')
+        temperature_set_point = MeasureFactory.create_measure(RecordingType.CONTINUOUS.value,
+                                                              Measure(MeasurementUnit.DEGREE_CELSIUS, 15, 23))
+        temp_sensor = Sensor("TEMP.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                             SensorMeasureType.THERMO_COUPLE_TYPE_B, 2)
+        actuator = Actuator("Boiler.ACT", boiler)
+        # indicate the actuator and sensor (process value source) for the controller
+        controller.add_transducer(temp_sensor)
+        controller.add_transducer(actuator)
+
+        # add set point for this controller
+        controller.add_set_point(temperature_set_point, (temp_sensor.name, actuator.name))
+
+        # instantiate control class
+        boiler_on_off_control = OnOffControl(temp_sensor, actuator, temperature_set_point, 10/3600)
+        controller.control(boiler_on_off_control)
+
+        output = mock_stdout.getvalue().strip().split('\n')
+
+        for line in output:
+            if 'greater than maximum threshold' in line:
+                self.assertIn(f'Triggering process actuator to turn off boiler.', output)
+            elif 'less than minimum threshold' in line:
+                self.assertIn(f'Triggering process actuator to turn on boiler.', output)
+
+
+

@@ -119,6 +119,7 @@ from metamenth.enumerations import CoverType
 from metamenth.enumerations import RecordingType
 from metamenth.datatypes.measure import Measure
 from metamenth.enumerations import MeasurementUnit
+from metamenth.enumerations import BuildingOrientation
 from metamenth.misc import MeasureFactory
 
 # material properties
@@ -150,15 +151,15 @@ roof_width = MeasureFactory.create_measure(RecordingType.BINARY.value, Measure(M
 roof_layer = Layer(roof_height, roof_length, roof_width, roof_material, LayerRoughness.MEDIUM_ROUGH)
 
 # create a cover for the roof
-roof_cover = Cover(CoverType.FLOOR)
+roof_cover = Cover(CoverType.FLOOR, BuildingOrientation.NORTH, 1)
 
 # roof layer to cover
 roof_cover.add_layer(roof_layer)
 
 # create building envelope and add roof cover
-envelope = Envelope()
+envelope = Envelope('Block One')
 envelope.add_cover(roof_cover)
-building.envelope = envelope # building was created 1 above
+building.add_envelope(envelope) # building was created 1 above
 ```
 
 ### 3. Create and associate zones to the hall, corridor, room and office
