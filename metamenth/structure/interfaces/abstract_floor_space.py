@@ -81,7 +81,7 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
         """
         if isinstance(new_transducer, Sensor):
             allowed_room_sensors = [SensorMeasure.OCCUPANCY, SensorMeasure.CARBON_DIOXIDE, SensorMeasure.DAYLIGHT,
-                                    SensorMeasure.TEMPERATURE, SensorMeasure.HUMIDITY]
+                                    SensorMeasure.TEMPERATURE, SensorMeasure.HUMIDITY, SensorMeasure.CARBON_MONOXIDE]
             if new_transducer.measure in allowed_room_sensors:
                 super().add_transducer(new_transducer)
             else:

@@ -18,7 +18,6 @@ from metamenth.subsystem.hvac_components.filter import Filter
 from metamenth.subsystem.hvac_components.anemometer import Anemometer
 from metamenth.datatypes.binary_measure import BinaryMeasure
 from metamenth.enumerations import DuctShape
-from metamenth.misc import Validate
 
 
 class Duct(AbstractDynamicEntity, AbstractZonalEntity):
