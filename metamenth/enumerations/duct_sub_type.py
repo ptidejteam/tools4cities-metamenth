@@ -10,6 +10,7 @@ class DuctSubType(AbstractEnum):
     """
     FRESH_AIR = "FreshAir"
     RETURN_AIR = "ReturnAir"
+    MIXED_AIR = "MixedAir"
     GLYCOL = "Glycol"
     HOT_WATER = "HotWater"
     COLD_WATER = "ColdWater"
