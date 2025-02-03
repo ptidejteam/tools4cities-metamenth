@@ -87,7 +87,7 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
             else:
                 raise ValueError(f'Space sensors must be one of the following: {allowed_room_sensors}')
         elif isinstance(new_transducer, Actuator):
-            raise ValueError(f'Actuators cannot be added to rooms directly')
+            raise ValueError(f'Actuators cannot be added to spaces directly')
 
     def add_adjacent_space(self, space: 'AbstractFloorSpace'):
         """

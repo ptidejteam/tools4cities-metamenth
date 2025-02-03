@@ -121,7 +121,7 @@ class TestRoom(BaseTest):
         try:
             self.room.add_transducer(actuator)
         except ValueError as err:
-            self.assertEqual("Actuators cannot be added to rooms directly", err.__str__())
+            self.assertEqual("Actuators cannot be added to spaces directly", err.__str__())
 
     def test_add_existing_sensor_with_the_same_name(self):
         co2_sensor = Sensor("Co2_Sensor", SensorMeasure.CARBON_DIOXIDE,
