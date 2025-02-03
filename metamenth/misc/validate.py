@@ -100,7 +100,7 @@ class Validate:
         elif sensor_measure == SensorMeasure.PRESSURE.value:
             if unit == MeasurementUnit.PASCAL.value:
                 return True
-        elif sensor_measure == SensorMeasure.CARBON_DIOXIDE.value:
+        elif sensor_measure == SensorMeasure.CARBON_DIOXIDE.value or sensor_measure == SensorMeasure.CARBON_MONOXIDE.value:
             if unit == MeasurementUnit.PARTS_PER_MILLION.value:
                 return True
         elif sensor_measure == SensorMeasure.AIR_VOLUME.value:
