@@ -3,3 +3,5 @@ fuzzywuzzy==0.18.0
 Levenshtein==0.25.0
 python-Levenshtein==0.25.0
 rapidfuzz==3.6.1
+numpy~=2.0.2
+setuptools~=68.2.0

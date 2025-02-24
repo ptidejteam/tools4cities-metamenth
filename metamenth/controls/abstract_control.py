@@ -9,7 +9,8 @@ class AbstractControl(ABC):
         """
         :param process_value_sensor: the sensor for the process value to be monitored
         :param process_actuator: the actuator that execute the control decision, e.g., turn system on/off
-        :param control_thresholds: the minimum and maximum values for the process value
+        :param control_thresholds: the minimum and maximum values for the process value.
+        This could be the setpoint value as well, e.g., if only the minimum value is provided
         :param run_duration: indicates how long the control strategy will be executed. The default None value indicates
         that the strategy will execute 'forever'
         """
