@@ -257,6 +257,14 @@ class Building(Observable):
         else:
             raise ValueError("solar_distribution must be of type SolarDistributionType")
 
+    def get_envelope_by_name(self, name: str) -> Envelope:
+        """
+        Retrieves an envelope given the name
+        :param name: the name of the envelope
+        :return:
+        """
+        return StructureSearch.search_by_name(self._envelope, name)
+
     @StateTrackDecorator
     def add_weather_station(self, weather_station: WeatherStation):
         """

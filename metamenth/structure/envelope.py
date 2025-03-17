@@ -63,8 +63,8 @@ class Envelope:
     def __str__(self):
         cover_details = "\n".join(str(cover) for cover in self._covers)
         return (
-            f"Cover("
+            f"Envelope("
             f"UID: {self.UID}, "
             f"UID: {self.name}, "
-            f"Layers:\n{cover_details})"
+            f"Covers:\n{cover_details})"
         )

@@ -12,3 +12,4 @@ class BuildingOrientation(AbstractEnum):
     SOUTH = "South"
     WEST = "West"
     EAST = "East"
+    TOP = "Top"

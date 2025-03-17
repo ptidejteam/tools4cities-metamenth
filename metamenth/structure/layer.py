@@ -17,7 +17,7 @@ class Layer:
         length: AbstractMeasure,
         thickness: AbstractMeasure,
         material: Material,
-        roughness: LayerRoughness,
+        roughness: LayerRoughness = None,
         has_vapour_barrier: bool = False,
         has_air_barrier: bool = False,
 
@@ -30,6 +30,7 @@ class Layer:
         self._roughness = None
         self._has_vapour_barrier = has_vapour_barrier
         self._has_air_barrier = has_air_barrier
+        self._order = 1 # where the layer is located in a block. 1 is the innermost layer
 
         # apply validation with setters
         self.height = height
@@ -88,8 +89,6 @@ class Layer:
 
     @roughness.setter
     def roughness(self, value: LayerRoughness):
-        if value is None:
-            raise ValueError("roughness must be of MaterialRoughness type")
         self._roughness = value
 
     @property
@@ -108,6 +107,16 @@ class Layer:
     def has_air_barrier(self, value: bool):
         self._has_air_barrier = value
 
+    @property
+    def order(self) -> int:
+        return self._order
+
+    @order.setter
+    def order(self, value: int):
+        if value is None or value < 1:
+            raise ValueError("order should be of type int starting from 1")
+        self._order = value
+
     def __str__(self):
         material_str = f"Material: {str(self.material)}" if self.material else "Material: None"
         return (
@@ -116,8 +125,9 @@ class Layer:
             f"Height: {self.height.value} {self.height.measurement_unit}, "
             f"Length: {self.length.value} {self.length.measurement_unit}, "
             f"Thickness: {self.thickness.value} {self.thickness.measurement_unit}, "
-            f"Roughness: {self.roughness.value}, "
+            f"Roughness: {self.roughness.value if self.roughness else ''}, "
             f"Vapour Barrier: {self.has_vapour_barrier}, "
             f"Air Barrier: {self.has_air_barrier}, "
+            f"Order: {self.order}, "
             f"{material_str})"
         )

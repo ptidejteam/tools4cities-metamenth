@@ -152,7 +152,9 @@ class Material:
 
     @visible_absorptance.setter
     def visible_absorptance(self, value: float):
-        self._visible_absportance = Validate.validate_number_range(value, (0, 1))
+        self._visible_absorptance = Validate.validate_number_range(value, (0, 1))
+
+
 
     def __str__(self):
         return (
@@ -169,7 +171,7 @@ class Material:
             f"{self.thermal_conductivity.measurement_unit.value if self.thermal_conductivity is not None else ''}, "
             f"Thermal Absorptance: {self.thermal_absorptance}, "
             f"Solar Heat Gain Coefficient: {self.solar_heat_gain_coefficient}, "
-            f"Solar Absorptance: {self.solar_absorptance}, "
+            f"Solar Absorptance: {self.solar_absportance}, "
             f"Visible Absorptance: {self.visible_absorptance}"
         )
 

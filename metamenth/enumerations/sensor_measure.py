@@ -8,7 +8,7 @@ class SensorMeasure(AbstractEnum):
     Author: Peter Yefi
     Email: peteryefi@gmail.com
     """
-    TEMPERATURE = "Temperature"
+    TEMPERATURE = "temperature"
     PRESSURE = "Pressure"
     GAS_VELOCITY = "GasVelocity"
     LIQUID_VELOCITY = "LiquidVelocity"

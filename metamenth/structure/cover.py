@@ -1,5 +1,5 @@
 import uuid
-from metamenth.enumerations import CoverType
+from metamenth.enumerations import CoverType, MaterialType
 from metamenth.enumerations import BuildingOrientation
 from metamenth.structure.layer import Layer
 from typing import List, Union
@@ -73,10 +73,8 @@ class Cover:
         :param layer: the layer to be added
         :return:
         """
-        if layer.material.material_type.value.split(":")[0].find(self.cover_type.value) != -1:
-            self._layers.append(layer)
-        else:
-            raise ValueError("The layer you're trying to add has a different material from the cover.")
+        self._layers.append(layer)
+
 
     def get_layer_by_uid(self, uid: str) -> Layer:
         """
