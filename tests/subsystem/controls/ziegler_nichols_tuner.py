@@ -19,9 +19,9 @@ import numpy as np
 
 class ZieglerNicholsTuner(AbstractPIDControl):
 
-    def __init__(self, process_value_sensor: Sensor, process_actuator: Actuator,
-                 control_thresholds: ContinuousMeasure, run_duration: float = None):
-        super().__init__(process_value_sensor, process_actuator, control_thresholds, run_duration)
+    def __init__(self, process_value_sensors: [Sensor], process_actuator: Actuator,
+                 control_thresholds: [ContinuousMeasure], run_duration: float = None):
+        super().__init__(process_value_sensors, process_actuator, control_thresholds, run_duration)
         self._proces_values = []
         self._errors = []
         self._optimum_data_points = 100 # number of process values to initiate Nichols Ziegler fine tuner
@@ -39,7 +39,7 @@ class ZieglerNicholsTuner(AbstractPIDControl):
         return round(random.uniform(10, 15))
 
     def execute_control(self, process_value: float):
-        error = self.control_thresholds.minimum - process_value
+        error = self.control_thresholds[0].minimum - process_value
         self._errors.append(error)
         self._proces_values.append(process_value)
 
@@ -56,7 +56,7 @@ class ZieglerNicholsTuner(AbstractPIDControl):
                 periods = np.where(oscillations != 0)[0]
 
                 if len(periods) > 1:
-                    period = np.mean(np.diff(periods)) * self.process_value_sensor.data_frequency
+                    period = np.mean(np.diff(periods)) * self.process_value_sensors[0].data_frequency
                     candidate_gains.append((kp_values[i], period, len(periods)))
 
             if candidate_gains:

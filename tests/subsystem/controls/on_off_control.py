@@ -18,9 +18,9 @@ import random
 
 class OnOffControl(AbstractBinaryControl):
 
-    def __init__(self, process_value_sensor: Sensor, process_actuator: Actuator,
-                 control_thresholds: ContinuousMeasure, run_duration: float = None):
-        super().__init__(process_value_sensor, process_actuator, control_thresholds, run_duration)
+    def __init__(self, process_value_sensors: [Sensor], process_actuator: Actuator,
+                 control_thresholds: [ContinuousMeasure], run_duration: float = None):
+        super().__init__(process_value_sensors, process_actuator, control_thresholds, run_duration)
 
 
     def acquire_process_value_data(self) -> float:
@@ -32,13 +32,13 @@ class OnOffControl(AbstractBinaryControl):
         return round(random.uniform(-20, 30))
 
     def execute_control(self, process_value: float):
-        if process_value > self.control_thresholds.maximum:
+        if process_value > self.control_thresholds[0].maximum:
             # turn off boiler through (external) API call
             print(f'process value of {process_value} is greater than maximum threshold of'
-                  f' {self.control_thresholds.maximum}')
+                  f' {self.control_thresholds[0].maximum}')
             print(f'Triggering process actuator to turn off boiler.')
-        elif process_value < self.control_thresholds.minimum:
+        elif process_value < self.control_thresholds[0].minimum:
             # turn on heater through (external) API call
             print(f'process value of {process_value} is lesser than maximum threshold of'
-                  f' {self.control_thresholds.maximum}')
+                  f' {self.control_thresholds[0].maximum}')
             print(f'Triggering process actuator to turn on boiler.')

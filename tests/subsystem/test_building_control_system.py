@@ -627,7 +627,7 @@ class TestBuildingControlSystem(BaseTest):
         controller.add_set_point(temperature_set_point, (temp_sensor.name, actuator.name))
 
         # instantiate control class
-        boiler_on_off_control = OnOffControl(temp_sensor, actuator, temperature_set_point, 10/3600)
+        boiler_on_off_control = OnOffControl([temp_sensor], actuator, [temperature_set_point], 10/3600)
         controller.control(boiler_on_off_control)
 
         output = mock_stdout.getvalue().strip().split('\n')
@@ -662,7 +662,7 @@ class TestBuildingControlSystem(BaseTest):
         controller.add_set_point(temperature_set_point, (temp_sensor.name, actuator.name))
 
         # instantiate control class
-        thermostat_ziegler_control = ZieglerNicholsTuner(temp_sensor, actuator, temperature_set_point, 600/3600)
+        thermostat_ziegler_control = ZieglerNicholsTuner([temp_sensor], actuator, [temperature_set_point], 600/3600)
 
         # assert PID values are None
         self.assertIsNone(thermostat_ziegler_control.proportional)
