@@ -120,13 +120,14 @@ class Controller(AbstractHVACComponent):
 
         # Ensure the data frequency is specified
         if not control_obj.process_value_sensors[0].data_frequency:
-            raise ValueError('Data frequency for the process variable sensor must be specified')
+            raise ValueError('Data frequency for the first process variable sensor must be specified')
 
         end_time = time.time() + control_obj.run_duration * 3600 if control_obj.run_duration is not None else None
         # Execute control logic in a loop
         while end_time is None or time.time() < end_time:
             process_value = control_obj.acquire_process_value_data()
             control_obj.execute_control(process_value)
+            # the data acquisition interval is based on the first process value sensor
             time.sleep(control_obj.process_value_sensors[0].data_frequency)
 
 
