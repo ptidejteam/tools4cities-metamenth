@@ -32,7 +32,6 @@ from metamenth.misc import Validate
 from metamenth.subsystem.hvac_components.fan import Fan
 from metamenth.subsystem.hvac_components.filter import Filter
 from metamenth.subsystem.hvac_components.damper import Damper
-from metamenth.subsystem.hvac_components.controller import Controller
 
 
 class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
@@ -138,7 +137,7 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
         :param hvac_component: the hvac component to add
         :return:
         """
-        if Validate.is_hvac_component_allowed_in_space(hvac_component, [Fan, Damper, Filter, Controller], self):
+        if Validate.is_hvac_component_allowed_in_space(hvac_component, [Fan, Damper, Filter], self):
             EntityInsert.insert_building_entity(self._hvac_components, hvac_component,
                                                 BuildingEntity.HVAC_COMPONENT.value)
 
