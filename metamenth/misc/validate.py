@@ -20,6 +20,7 @@ from typing import Any
 from metamenth.enumerations import RoomType
 
 
+
 class Validate:
     """
     Has miscellaneous methods for validation
@@ -148,6 +149,9 @@ class Validate:
         elif sensor_measure == SensorMeasure.HUMIDITY.value:
             if unit == MeasurementUnit.RELATIVE_HUMIDITY.value:
                 return True
+        elif sensor_measure == SensorMeasure.PARTICULAR_MATTER_2_5.value:
+            if unit == MeasurementUnit.MICROGRAM_PER_CUBIC_METER.value:
+                return True
         elif sensor_measure == SensorMeasure.OTHER.value:
             return True
         return False
@@ -202,12 +206,14 @@ class Validate:
         from metamenth.subsystem.baseboard_heater import BaseboardHeater
         from metamenth.subsystem.hvac_components.duct import Duct
         from metamenth.subsystem.hvac_components.fan_coil_unit import FanCoilUnit
+        from metamenth.subsystem.hvac_components.boiler import Boiler
+        from metamenth.subsystem.hvac_components.controller import Controller
 
         if any(isinstance(hvac_component, cls) for cls in disallowed_entities):
             raise ValueError(f'{hvac_component.name} cannot be added to a space entity')
         elif isinstance(space_entity, Room):
             if (space_entity.room_type is not RoomType.MECHANICAL and
-                    not any(isinstance(hvac_component, cls) for cls in [AirVolumeBox, BaseboardHeater, RadiantSlab, Duct])
+                    not any(isinstance(hvac_component, cls) for cls in [AirVolumeBox, BaseboardHeater, RadiantSlab, Duct, Controller, Boiler])
                     and not (isinstance(hvac_component, FanCoilUnit) and not hvac_component.is_ducted)):
                 raise ValueError('You can only add HVAC components to mechanical rooms')
         elif (isinstance(space_entity, OpenSpace) and

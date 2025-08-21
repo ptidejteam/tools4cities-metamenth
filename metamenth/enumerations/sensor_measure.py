@@ -36,4 +36,5 @@ class SensorMeasure(AbstractEnum):
     DAYLIGHT = "Daylight"
     AIR_VOLUME = "AirVolume"
     HUMIDITY = "Humidity"
+    PARTICULAR_MATTER_2_5 = "PM2.5"
     OTHER = "Other"

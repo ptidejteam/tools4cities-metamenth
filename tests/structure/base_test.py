@@ -64,7 +64,7 @@ class BaseTest(TestCase):
                                                            2.3))
         self.ex_material = Material(
             description="Material for the external wall of a building",
-            material_type=MaterialType.ROOF_STEEL,
+            material_type=MaterialType.STEEL,
             density=density_measure,
             heat_capacity=self.hc_measure,
             thermal_transmittance=tt_measure,

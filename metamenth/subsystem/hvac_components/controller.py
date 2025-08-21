@@ -103,7 +103,7 @@ class Controller(AbstractHVACComponent):
         if not control_obj.process_value_sensors:
             raise ValueError('Sensor for process variable must be specified')
 
-        if len(control_obj.process_actuator) != len(control_obj.control_thresholds):
+        if len(control_obj.process_value_sensors) != len(control_obj.control_thresholds):
             raise ValueError('There must equal number of process values and control thresholds')
 
         # Ensure the process value sensor is part of this controller

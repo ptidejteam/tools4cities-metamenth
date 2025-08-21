@@ -22,4 +22,5 @@ class BuildingType(AbstractEnum):
     COMMERCIAL = "Commercial"
     NON_COMMERCIAL = "NonCommercial"
     RESIDENTIAL = "Residential"
+    COMMERCIAL_RESIDENTIAL = "CommercialResidential"
 

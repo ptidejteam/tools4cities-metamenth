@@ -11,7 +11,7 @@ Contributors:
 
 from uuid import uuid4
 from metamenth.datatypes.rated_device_measure import RatedDeviceMeasure
-from typing import List
+from typing import List, Callable
 from typing import Dict
 from metamenth.datatypes.continuous_measure import ContinuousMeasure
 from metamenth.measure_instruments.meter import Meter
@@ -36,6 +36,9 @@ class AbstractHVACComponent(AbstractDynamicEntity):
         self._operating_conditions: List[ContinuousMeasure] = []
         self._spaces = []
         self._status_measure: [StatusMeasure] = []
+
+        # status observer
+        self._status_observers: List[Callable[[List[StatusMeasure]], None]] = []
 
         self.name = name
 
@@ -114,6 +117,24 @@ class AbstractHVACComponent(AbstractDynamicEntity):
         """
         return StructureEntitySearch.search(self._spaces, search_terms)
 
+    def add_measure_status_observer(self, observer: Callable[[str, StatusMeasure], None]):
+        """
+        Register an observer to monitor whenever new hvac component is added
+        :param observer: the observer (callback)
+        :return: None
+        """
+        self._status_observers.append(observer)
+
+    def _notify(self, action: str, status: StatusMeasure):
+        """
+        Notify observer whenever status measure is added
+        :param action:
+        :param status:
+        :return:
+        """
+        for observer in self._status_observers:
+            observer(action, StatusMeasure)
+
     def add_status_measure(self, status: StatusMeasure):
         """
         Adds status of hvac component schedule to this building
@@ -121,6 +142,7 @@ class AbstractHVACComponent(AbstractDynamicEntity):
         :return:
         """
         EntityInsert.insert_building_entity(self._status_measure, status)
+        self._notify("added status measure", status)
         return self
 
     def remove_status_measure(self, status):

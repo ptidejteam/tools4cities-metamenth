@@ -89,15 +89,19 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
         :param new_transducer: a transducers to be added to this space
         :return:
         """
-        if isinstance(new_transducer, Sensor):
-            allowed_room_sensors = [SensorMeasure.OCCUPANCY, SensorMeasure.CARBON_DIOXIDE, SensorMeasure.DAYLIGHT,
-                                    SensorMeasure.TEMPERATURE, SensorMeasure.HUMIDITY, SensorMeasure.CARBON_MONOXIDE]
-            if new_transducer.measure in allowed_room_sensors:
-                super().add_transducer(new_transducer)
-            else:
-                raise ValueError(f'Space sensors must be one of the following: {allowed_room_sensors}')
-        elif isinstance(new_transducer, Actuator):
-            raise ValueError(f'Actuators cannot be added to spaces directly')
+        if new_transducer:
+            if isinstance(new_transducer, Sensor):
+                allowed_room_sensors = [SensorMeasure.OCCUPANCY, SensorMeasure.CARBON_DIOXIDE, SensorMeasure.DAYLIGHT,
+                                    SensorMeasure.TEMPERATURE, SensorMeasure.HUMIDITY, SensorMeasure.CARBON_MONOXIDE,
+                                        SensorMeasure.PARTICULAR_MATTER_2_5]
+                if new_transducer.measure in allowed_room_sensors:
+                    super().add_transducer(new_transducer)
+                else:
+                    raise ValueError(f'Space sensors must be one of the following: {allowed_room_sensors}')
+            elif isinstance(new_transducer, Actuator):
+                raise ValueError(f'Actuators cannot be added to spaces directly')
+        else:
+            raise ValueError(f'Transducer cannot be none')
 
     def add_adjacent_space(self, space: 'AbstractFloorSpace'):
         """

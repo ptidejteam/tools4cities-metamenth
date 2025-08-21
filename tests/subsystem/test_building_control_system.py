@@ -192,6 +192,15 @@ class TestBuildingControlSystem(BaseTest):
         except ValueError as err:
             self.assertEqual(err.__str__(), "PR.VNT.FN.01 cannot be added to a space entity")
 
+    def test_add_act_to_room(self):
+        try:
+            boiler = Boiler('CTRL.BL', BoilerCategory.NATURAL_GAS, PowerState.ON)
+            actuator = Actuator("Boiler.ACT", boiler)
+            self.room.add_transducer(actuator)
+        except ValueError as err:
+            print(err)
+            self.assertEqual(err.__str__(), "Actuators cannot be added to spaces directly")
+
     def test_add_fan_to_open_space(self):
         try:
             vfd = VariableFrequencyDrive('PR.VNT.VRD.01')
@@ -662,7 +671,7 @@ class TestBuildingControlSystem(BaseTest):
         controller.add_set_point(temperature_set_point, (temp_sensor.name, actuator.name))
 
         # instantiate control class
-        thermostat_ziegler_control = ZieglerNicholsTuner([temp_sensor], actuator, [temperature_set_point], 600/3600)
+        thermostat_ziegler_control = ZieglerNicholsTuner([temp_sensor], actuator, [temperature_set_point], 300/3600)
 
         # assert PID values are None
         self.assertIsNone(thermostat_ziegler_control.proportional)

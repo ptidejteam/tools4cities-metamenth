@@ -8,6 +8,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 Contributors:
     Peter Yefi - API design and implementation
 """
+from collections.abc import Callable
 
 from metamenth.subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
 from metamenth.enumerations import DamperType
@@ -27,6 +28,7 @@ class Damper(AbstractHVACComponent):
         super().__init__(name)
         self._damper_type = None
         self._percentage_opened: [DamperPosition] = []
+        self._observers: List[Callable[[str, DamperPosition], None]] = []
 
         self.damper_type = damper_type
 
@@ -41,7 +43,26 @@ class Damper(AbstractHVACComponent):
         else:
             raise ValueError("damper_type must be of type DamperType")
 
+    def add_damper_position_observer(self, observer: Callable[[str, DamperPosition], None]):
+        """
+        Register an external observer to observe damper position updates
+        :param observer: the observer (callback) function
+        :return: None
+        """
+        self._observers.append(observer)
+
+    def _notify(self, action: str, damper_position: DamperPosition):
+        """
+        Notify observer when damper position changes
+        :param action: the action, adding damper position
+        :param damper_position:
+        :return:
+        """
+        for observer in self._observers:
+            observer(action, damper_position)
+
     def add_damper_position(self, damper_position: DamperPosition):
+        self._notify("added", damper_position)
         return self._percentage_opened.append(damper_position)
 
     def remove_damper_position(self, damper_position: DamperPosition):

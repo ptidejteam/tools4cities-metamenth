@@ -14,6 +14,7 @@ from metamenth.transducers.sensor import Sensor
 from metamenth.transducers.actuator import Actuator
 from metamenth.datatypes.continuous_measure import ContinuousMeasure
 import random
+from typing import Dict
 
 
 class OnOffControl(AbstractBinaryControl):
@@ -23,22 +24,22 @@ class OnOffControl(AbstractBinaryControl):
         super().__init__(process_value_sensors, process_actuator, control_thresholds, run_duration)
 
 
-    def acquire_process_value_data(self) -> float:
+    def acquire_process_value_data(self) -> Dict:
         """
         Generate random temperature values from -20 to 30 degree Celsius
         to test the implementation. Ideally, you will acquire the process value
         through an API call
         """
-        return round(random.uniform(-20, 30))
+        return {'value': round(random.uniform(-20, 30))}
 
-    def execute_control(self, process_value: float):
-        if process_value > self.control_thresholds[0].maximum:
+    def execute_control(self, process_value: Dict):
+        if process_value['value'] > self.control_thresholds[0].maximum:
             # turn off boiler through (external) API call
-            print(f'process value of {process_value} is greater than maximum threshold of'
+            print(f'process value of {process_value["value"]} is greater than maximum threshold of'
                   f' {self.control_thresholds[0].maximum}')
             print(f'Triggering process actuator to turn off boiler.')
-        elif process_value < self.control_thresholds[0].minimum:
+        elif process_value['value'] < self.control_thresholds[0].minimum:
             # turn on heater through (external) API call
-            print(f'process value of {process_value} is lesser than maximum threshold of'
+            print(f'process value of {process_value["value"]} is lesser than maximum threshold of'
                   f' {self.control_thresholds[0].maximum}')
             print(f'Triggering process actuator to turn on boiler.')

@@ -105,10 +105,12 @@ class Building(Observable):
 
     @construction_year.setter
     def construction_year(self, value):
-        if value is not None:
-            self._construction_year = value
-        else:
-            raise ValueError("construction_year must be a number")
+        if value is None:
+            raise ValueError("construction_year must not be None")
+        if not isinstance(value, int):
+            raise TypeError("construction_year must be an integer")
+        if value < 1800 or value > 2100:
+            raise ValueError("construction_year must be between 1800 and 2100")
 
     @property
     def height(self) -> AbstractMeasure:

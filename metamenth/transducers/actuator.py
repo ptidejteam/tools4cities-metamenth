@@ -9,7 +9,6 @@ Contributors:
     Peter Yefi - API design and implementation
 """
 
-from abc import ABC
 from metamenth.transducers.interfaces.abstract_transducer import AbstractTransducer
 from metamenth.subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
 from metamenth.subsystem.hvac_components.controller import Controller
@@ -17,7 +16,7 @@ from typing import Union
 from metamenth.subsystem.appliance import Appliance
 
 
-class Actuator(AbstractTransducer, ABC):
+class Actuator(AbstractTransducer):
     """
     A representation of an actuator in a building
 
