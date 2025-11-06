@@ -24,29 +24,29 @@ class Actuator(AbstractTransducer):
     Email: peteryefi@gmail.com
     """
 
-    def __init__(self, name: str, trigger_output: Union[AbstractHVACComponent, Appliance],
+    def __init__(self, name: str, actuated_component: Union[AbstractHVACComponent, Appliance],
                  controller: Controller = None, actuation_interval: float = None):
         """
         :param name: the unique name of a transducers
         :param controller: the controller that triggers the actuator
-        :param trigger_output: the device or equipment which is actuated
+        :param actuated_component: the device or equipment which is actuated
         """
         super().__init__(name)
-        self._trigger_output = trigger_output
+        self._actuated_component = actuated_component
         self._controller = None
         self._actuation_interval = actuation_interval
 
         self.controller = controller
 
     @property
-    def trigger_output(self) -> Union[AbstractHVACComponent, Appliance]:
-        return self._trigger_output
+    def actuated_component(self) -> Union[AbstractHVACComponent, Appliance]:
+        return self._actuated_component
 
-    @trigger_output.setter
-    def trigger_output(self, value: Union[AbstractHVACComponent, Appliance]):
+    @actuated_component.setter
+    def actuated_component(self, value: Union[AbstractHVACComponent, Appliance]):
         if value is None:
-            raise ValueError('trigger_output must be of type AbstractHvACComponent or Appliance')
-        self._trigger_output = value
+            raise ValueError('actuated_component must be of type AbstractHvACComponent or Appliance')
+        self._actuated_component = value
 
     @property
     def actuation_interval(self) -> float:
@@ -72,7 +72,7 @@ class Actuator(AbstractTransducer):
             f"UID: {self.UID}, "
             f"Name: {self.name}, "
             f"Controller: {self.controller}, "
-            f"Trigger Output: {self.trigger_output}, "
+            f"Actuated Component: {self.actuated_component}, "
             f"Trigger Value: {self.actuation_interval}, "
             f"Trigger Count: {len(trigger_data)}\n"
             f"Trigger History: {trigger_data})"

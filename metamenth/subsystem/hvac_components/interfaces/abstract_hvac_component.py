@@ -11,7 +11,7 @@ Contributors:
 
 from uuid import uuid4
 from metamenth.datatypes.rated_device_measure import RatedDeviceMeasure
-from typing import List, Callable
+from typing import List, Callable, Any
 from typing import Dict
 from metamenth.datatypes.continuous_measure import ContinuousMeasure
 from metamenth.measure_instruments.meter import Meter
@@ -117,7 +117,7 @@ class AbstractHVACComponent(AbstractDynamicEntity):
         """
         return StructureEntitySearch.search(self._spaces, search_terms)
 
-    def add_measure_status_observer(self, observer: Callable[[str, StatusMeasure], None]):
+    def add_update_observer(self, observer: Callable[[str, StatusMeasure], None]):
         """
         Register an observer to monitor whenever new hvac component is added
         :param observer: the observer (callback)
@@ -125,7 +125,7 @@ class AbstractHVACComponent(AbstractDynamicEntity):
         """
         self._status_observers.append(observer)
 
-    def _notify(self, action: str, status: StatusMeasure):
+    def _notify(self, action: str, status: Any):
         """
         Notify observer whenever status measure is added
         :param action:
@@ -133,7 +133,7 @@ class AbstractHVACComponent(AbstractDynamicEntity):
         :return:
         """
         for observer in self._status_observers:
-            observer(action, StatusMeasure)
+            observer(action, Any)
 
     def add_status_measure(self, status: StatusMeasure):
         """

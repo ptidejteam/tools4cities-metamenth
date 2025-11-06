@@ -29,3 +29,4 @@ class SensorMeasureType(Enum):
     PIEZO_RESISTIVE_PRESSURE = "PiezoResistivePressure"
     ANALOGUE_PRESSURE = "AnaloguePressure"
     PASSIVE_INFRARED = "PassiveInfrared"
+    NON_DISPERSIVE_INFRARED = "NonDispersiveInfrared"

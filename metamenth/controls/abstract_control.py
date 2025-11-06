@@ -12,6 +12,7 @@ Contributors:
 from abc import ABC, abstractmethod
 from metamenth.transducers.sensor import Sensor
 from metamenth.datatypes.continuous_measure import ContinuousMeasure
+from typing import Any
 
 class AbstractControl(ABC):
 
@@ -31,7 +32,7 @@ class AbstractControl(ABC):
         self.run_duration = run_duration
 
     @abstractmethod
-    def acquire_process_value_data(self, *args, **kwargs):
+    def acquire_process_value_data(self, *args, **kwargs) -> Any:
         pass
 
     @abstractmethod

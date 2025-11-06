@@ -12,7 +12,7 @@ Contributors:
 from typing import Dict
 from metamenth.enumerations import SensorMeasure
 from metamenth.enumerations import MeasurementUnit
-from datetime import datetime
+from datetime import datetime, timedelta
 from metamenth.enumerations import EngineType
 from metamenth.enumerations import EngineSubType
 from typing import List
@@ -88,6 +88,14 @@ class Validate:
             '%Y-%m-%d %H:%M:%S.%f',
             '%Y-%m-%d %H:%M:%S'
         ]
+
+        if ":" in date_string and len(date_string.split(":")) == 2:
+            try:
+                minutes, seconds = map(float, date_string.split(":"))
+                return timedelta(minutes=minutes, seconds=seconds)
+            except ValueError:
+                pass
+
         for fmt in formats:
             try:
                 dt = datetime.strptime(date_string, fmt)

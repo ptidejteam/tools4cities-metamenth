@@ -39,7 +39,7 @@ class TestActuator(TestCase):
         actuator = Actuator("DAMPER.ACT", self.damper)
         self.assertEqual(actuator.name, "DAMPER.ACT")
         self.assertIsNotNone(actuator.UID)
-        self.assertEqual(actuator.trigger_output, self.damper)
+        self.assertEqual(actuator.actuated_component, self.damper)
 
     def test_actuator_with_continuous_set_point(self):
         vfd = VariableFrequencyDrive('PR.VNT.VRD.01')
@@ -47,7 +47,7 @@ class TestActuator(TestCase):
         actuator = Actuator("FAN.ACT", fan)
         self.assertEqual(actuator.name, "FAN.ACT")
         self.assertIsNotNone(actuator.UID)
-        self.assertEqual(actuator.trigger_output, fan)
+        self.assertEqual(actuator.actuated_component, fan)
 
     def test_actuator_with_controller(self):
         controller = Controller('CTR')
