@@ -1,3 +1,14 @@
+"""
+Copyright (c) 2023-2025 Peter Yefi.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU General Public License v3.0
+which accompanies this distribution, and is available at:
+https://www.gnu.org/licenses/gpl-3.0.html
+
+Contributors:
+    Peter Yefi - API design and implementation
+"""
+
 from metamenth.structure.interfaces.abstract_space import AbstractSpace
 from metamenth.datatypes.interfaces.abstract_measure import AbstractMeasure
 from metamenth.enumerations import FloorType
@@ -228,7 +239,7 @@ class Floor(AbstractSpace):
         return False
 
     def __str__(self):
-        floor_details = (f"Floor {super().__str__()} {self.number} ({self.floor_type.value}): {self.description}, "
+        floor_details = (f"Floor {super().__str__()} Number: {self.number} ({self.floor_type.value}): {self.description}, "
                          f"Area: {self.area}, Height: {self.height}, Location: {self.location}, UID: {self.UID}, "
                          f"Rooms Count: {len(self._rooms)}, Open Spaces Count: {len(self._open_spaces)})")
 

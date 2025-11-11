@@ -2,3 +2,5 @@
 .coverage
 .bumpversion.cfg
 .DS_Store
+.env
+htmlcov

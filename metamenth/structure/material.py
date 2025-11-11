@@ -1,3 +1,14 @@
+"""
+Copyright (c) 2023-2025 Peter Yefi.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU General Public License v3.0
+which accompanies this distribution, and is available at:
+https://www.gnu.org/licenses/gpl-3.0.html
+
+Contributors:
+    Peter Yefi - API design and implementation
+"""
+
 from metamenth.enumerations import MaterialType
 from metamenth.datatypes.interfaces.abstract_measure import AbstractMeasure
 import uuid
@@ -152,7 +163,9 @@ class Material:
 
     @visible_absorptance.setter
     def visible_absorptance(self, value: float):
-        self._visible_absportance = Validate.validate_number_range(value, (0, 1))
+        self._visible_absorptance = Validate.validate_number_range(value, (0, 1))
+
+
 
     def __str__(self):
         return (
@@ -169,7 +182,7 @@ class Material:
             f"{self.thermal_conductivity.measurement_unit.value if self.thermal_conductivity is not None else ''}, "
             f"Thermal Absorptance: {self.thermal_absorptance}, "
             f"Solar Heat Gain Coefficient: {self.solar_heat_gain_coefficient}, "
-            f"Solar Absorptance: {self.solar_absorptance}, "
+            f"Solar Absorptance: {self.solar_absportance}, "
             f"Visible Absorptance: {self.visible_absorptance}"
         )
 

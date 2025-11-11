@@ -1,3 +1,14 @@
+"""
+Copyright (c) 2023-2025 Peter Yefi.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU General Public License v3.0
+which accompanies this distribution, and is available at:
+https://www.gnu.org/licenses/gpl-3.0.html
+
+Contributors:
+    Peter Yefi - API design and implementation
+"""
+
 from metamenth.subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
 from typing import Dict
 from metamenth.subsystem.appliance import Appliance
@@ -89,12 +100,16 @@ class Controller(AbstractHVACComponent):
         more complex control strategies.
         """
         # Ensure the process value sensor is specified
-        if not control_obj.process_value_sensor:
+        if not control_obj.process_value_sensors:
             raise ValueError('Sensor for process variable must be specified')
 
+        if len(control_obj.process_value_sensors) != len(control_obj.control_thresholds):
+            raise ValueError('There must equal number of process values and control thresholds')
+
         # Ensure the process value sensor is part of this controller
-        if not self.get_transducer_by_name(control_obj.process_value_sensor.name):
-            raise ValueError('The process variable sensor is not configured for this controller')
+        for sensor in control_obj.process_value_sensors:
+            if not self.get_transducer_by_name(sensor.name):
+                raise ValueError('The process variable sensor is not configured for this controller')
 
         if not control_obj.process_actuator:
             raise ValueError('Actuator for process variable must be specified')
@@ -104,15 +119,16 @@ class Controller(AbstractHVACComponent):
             raise ValueError('The provided transducer is not configured for this controller')
 
         # Ensure the data frequency is specified
-        if not control_obj.process_value_sensor.data_frequency:
-            raise ValueError('Data frequency for the process variable sensor must be specified')
+        if not control_obj.process_value_sensors[0].data_frequency:
+            raise ValueError('Data frequency for the first process variable sensor must be specified')
 
         end_time = time.time() + control_obj.run_duration * 3600 if control_obj.run_duration is not None else None
         # Execute control logic in a loop
         while end_time is None or time.time() < end_time:
             process_value = control_obj.acquire_process_value_data()
             control_obj.execute_control(process_value)
-            time.sleep(control_obj.process_value_sensor.data_frequency)
+            # the data acquisition interval is based on the first process value sensor
+            time.sleep(control_obj.process_value_sensors[0].data_frequency)
 
 
     def __str__(self):

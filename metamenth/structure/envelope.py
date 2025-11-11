@@ -1,3 +1,14 @@
+"""
+Copyright (c) 2023-2025 Peter Yefi.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU General Public License v3.0
+which accompanies this distribution, and is available at:
+https://www.gnu.org/licenses/gpl-3.0.html
+
+Contributors:
+    Peter Yefi - API design and implementation
+"""
+
 import uuid
 from metamenth.structure.cover import Cover
 from typing import List
@@ -63,8 +74,8 @@ class Envelope:
     def __str__(self):
         cover_details = "\n".join(str(cover) for cover in self._covers)
         return (
-            f"Cover("
+            f"Envelope("
             f"UID: {self.UID}, "
             f"UID: {self.name}, "
-            f"Layers:\n{cover_details})"
+            f"Covers:\n{cover_details})"
         )

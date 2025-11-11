@@ -1,3 +1,15 @@
+"""
+Copyright (c) 2023-2025 Peter Yefi.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU General Public License v3.0
+which accompanies this distribution, and is available at:
+https://www.gnu.org/licenses/gpl-3.0.html
+
+Contributors:
+    Peter Yefi - API design and implementation
+"""
+from collections.abc import Callable
+
 from metamenth.subsystem.hvac_components.interfaces.abstract_hvac_component import AbstractHVACComponent
 from metamenth.enumerations import DamperType
 from metamenth.measure_instruments.damper_position import DamperPosition
@@ -16,7 +28,6 @@ class Damper(AbstractHVACComponent):
         super().__init__(name)
         self._damper_type = None
         self._percentage_opened: [DamperPosition] = []
-
         self.damper_type = damper_type
 
     @property
@@ -31,6 +42,7 @@ class Damper(AbstractHVACComponent):
             raise ValueError("damper_type must be of type DamperType")
 
     def add_damper_position(self, damper_position: DamperPosition):
+        self._notify("added", damper_position)
         return self._percentage_opened.append(damper_position)
 
     def remove_damper_position(self, damper_position: DamperPosition):

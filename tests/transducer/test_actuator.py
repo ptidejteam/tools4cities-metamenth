@@ -1,3 +1,14 @@
+"""
+Copyright (c) 2023-2025 Peter Yefi.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU General Public License v3.0
+which accompanies this distribution, and is available at:
+https://www.gnu.org/licenses/gpl-3.0.html
+
+Contributors:
+    Peter Yefi - API design and implementation
+"""
+
 from unittest import TestCase
 from metamenth.misc import MeasureFactory
 from metamenth.enumerations import RecordingType
@@ -28,7 +39,7 @@ class TestActuator(TestCase):
         actuator = Actuator("DAMPER.ACT", self.damper)
         self.assertEqual(actuator.name, "DAMPER.ACT")
         self.assertIsNotNone(actuator.UID)
-        self.assertEqual(actuator.trigger_output, self.damper)
+        self.assertEqual(actuator.actuated_component, self.damper)
 
     def test_actuator_with_continuous_set_point(self):
         vfd = VariableFrequencyDrive('PR.VNT.VRD.01')
@@ -36,7 +47,7 @@ class TestActuator(TestCase):
         actuator = Actuator("FAN.ACT", fan)
         self.assertEqual(actuator.name, "FAN.ACT")
         self.assertIsNotNone(actuator.UID)
-        self.assertEqual(actuator.trigger_output, fan)
+        self.assertEqual(actuator.actuated_component, fan)
 
     def test_actuator_with_controller(self):
         controller = Controller('CTR')

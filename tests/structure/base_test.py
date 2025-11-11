@@ -1,3 +1,14 @@
+"""
+Copyright (c) 2023-2025 Peter Yefi.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU General Public License v3.0
+which accompanies this distribution, and is available at:
+https://www.gnu.org/licenses/gpl-3.0.html
+
+Contributors:
+    Peter Yefi - API design and implementation
+"""
+
 from unittest import TestCase
 from metamenth.misc import MeasureFactory
 from metamenth.enumerations import RecordingType
@@ -53,7 +64,7 @@ class BaseTest(TestCase):
                                                            2.3))
         self.ex_material = Material(
             description="Material for the external wall of a building",
-            material_type=MaterialType.ROOF_STEEL,
+            material_type=MaterialType.STEEL,
             density=density_measure,
             heat_capacity=self.hc_measure,
             thermal_transmittance=tt_measure,

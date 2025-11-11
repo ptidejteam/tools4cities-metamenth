@@ -1,3 +1,14 @@
+"""
+Copyright (c) 2023-2025 Peter Yefi.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU General Public License v3.0
+which accompanies this distribution, and is available at:
+https://www.gnu.org/licenses/gpl-3.0.html
+
+Contributors:
+    Peter Yefi - API design and implementation
+"""
+
 from uuid import uuid4
 from metamenth.enumerations import BuildingType
 from metamenth.datatypes.address import Address
@@ -94,10 +105,12 @@ class Building(Observable):
 
     @construction_year.setter
     def construction_year(self, value):
-        if value is not None:
-            self._construction_year = value
-        else:
-            raise ValueError("construction_year must be a number")
+        if value is None:
+            raise ValueError("construction_year must not be None")
+        if not isinstance(value, int):
+            raise TypeError("construction_year must be an integer")
+        if value < 1800 or value > 2100:
+            raise ValueError("construction_year must be between 1800 and 2100")
 
     @property
     def height(self) -> AbstractMeasure:
@@ -256,6 +269,14 @@ class Building(Observable):
             self._solar_distribution = value
         else:
             raise ValueError("solar_distribution must be of type SolarDistributionType")
+
+    def get_envelope_by_name(self, name: str) -> Envelope:
+        """
+        Retrieves an envelope given the name
+        :param name: the name of the envelope
+        :return:
+        """
+        return StructureSearch.search_by_name(self._envelope, name)
 
     @StateTrackDecorator
     def add_weather_station(self, weather_station: WeatherStation):

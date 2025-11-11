@@ -9,15 +9,13 @@ Contributors:
     Peter Yefi - API design and implementation
 """
 
-
 from abc import abstractmethod
 from metamenth.transducers.sensor import Sensor
 from metamenth.transducers.actuator import Actuator
 from metamenth.datatypes.continuous_measure import ContinuousMeasure
 from metamenth.controls.abstract_control import AbstractControl
-from typing import Dict
 
-class AbstractBinaryControl(AbstractControl):
+class AbstractPIDControl(AbstractControl):
 
     def __init__(self, process_value_sensors: [Sensor], process_actuator: Actuator,
                  control_thresholds: [ContinuousMeasure], run_duration: float = None):
@@ -26,7 +24,7 @@ class AbstractBinaryControl(AbstractControl):
 
 
     @abstractmethod
-    def acquire_process_value_data(self) -> Dict:
+    def acquire_process_value_data(self):
         """
         This method executes periodically based on the data frequency defined
         by the process value sensor. It retrieves the process values for control decisions
@@ -35,9 +33,10 @@ class AbstractBinaryControl(AbstractControl):
         pass
 
     @abstractmethod
-    def execute_control(self, process_value: Dict):
+    def execute_control(self, process_value: float):
         """
-        Compares the process value to the min and max thresholds and execute control logic to alter system behaviour
+        Generates proportional, integral and derivative constants for PID loops
+        (Optionally) include API request to update PID values in BMS
         :param process_value: the process value being monitored
         """
         pass

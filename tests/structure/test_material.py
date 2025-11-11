@@ -1,3 +1,14 @@
+"""
+Copyright (c) 2023-2025 Peter Yefi.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU General Public License v3.0
+which accompanies this distribution, and is available at:
+https://www.gnu.org/licenses/gpl-3.0.html
+
+Contributors:
+    Peter Yefi - API design and implementation
+"""
+
 from unittest import TestCase
 from metamenth.enumerations import MaterialType
 from metamenth.structure.material import Material
@@ -23,7 +34,7 @@ class TestMaterial(TestCase):
         with self.assertRaises(TypeError) as context:
             self.material = Material(
                 description="Material for the external wall of a building",
-                material_type=MaterialType.EX_WALL_BRICK,
+                material_type=MaterialType.BRICK,
                 density=self.density_measure,
                 heat_capacity=self.hc_measure,
                 thermal_transmittance=self.tt_measure
@@ -38,7 +49,7 @@ class TestMaterial(TestCase):
                                                            2.3))
         self.material = Material(
             description="Material for the external wall of a building",
-            material_type=MaterialType.EX_WALL_BRICK,
+            material_type=MaterialType.BRICK,
             density=self.density_measure,
             heat_capacity=self.hc_measure,
             thermal_transmittance=self.tt_measure,
@@ -49,7 +60,7 @@ class TestMaterial(TestCase):
 
         # Test other attributes
         self.assertEqual(self.material.thermal_transmittance, self.tt_measure)
-        self.assertEqual(self.material.material_type, MaterialType.EX_WALL_BRICK)
+        self.assertEqual(self.material.material_type, MaterialType.BRICK)
         self.assertEqual(self.material.thermal_resistance, tr_measure)
         self.assertEqual(self.material.visible_absorptance, None)
 
@@ -60,7 +71,7 @@ class TestMaterial(TestCase):
         try:
             self.material = Material(
                 description="Material for the external wall of a building",
-                material_type=MaterialType.EX_WALL_BRICK,
+                material_type=MaterialType.BRICK,
                 density=self.density_measure,
                 heat_capacity=self.hc_measure,
                 thermal_transmittance=self.tt_measure,
@@ -74,7 +85,7 @@ class TestMaterial(TestCase):
         try:
             self.material = Material(
                 description="Material for the external wall of a building",
-                material_type=MaterialType.EX_WALL_BRICK,
+                material_type=MaterialType.BRICK,
                 density=self.density_measure,
                 heat_capacity=self.hc_measure,
                 thermal_transmittance=self.tt_measure,

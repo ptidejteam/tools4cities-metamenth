@@ -1,3 +1,14 @@
+"""
+Copyright (c) 2023-2025 Peter Yefi.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU General Public License v3.0
+which accompanies this distribution, and is available at:
+https://www.gnu.org/licenses/gpl-3.0.html
+
+Contributors:
+    Peter Yefi - API design and implementation
+"""
+
 from unittest import TestCase
 from metamenth.enumerations import MaterialType
 from metamenth.structure.material import Material
@@ -23,7 +34,7 @@ class TestLayer(TestCase):
                                                            2.3))
         self.ex_material = Material(
             description="Material for the external wall of a building",
-            material_type=MaterialType.EX_WALL_BRICK,
+            material_type=MaterialType.BRICK,
             density=density_measure,
             heat_capacity=self.hc_measure,
             thermal_transmittance=tt_measure,
@@ -54,7 +65,7 @@ class TestLayer(TestCase):
             self.assertEqual(err.__str__(), "material cannot be None")
 
     def test_layer_with_internal_material(self):
-        self.ex_material.material_type = MaterialType.IN_WALL_CELLULOSE
+        self.ex_material.material_type = MaterialType.CELLULOSE
         self.layer.material = self.ex_material
-        self.assertEqual(self.layer.material.material_type, MaterialType.IN_WALL_CELLULOSE)
+        self.assertEqual(self.layer.material.material_type, MaterialType.CELLULOSE)
         self.assertEqual(self.layer.material, self.ex_material)

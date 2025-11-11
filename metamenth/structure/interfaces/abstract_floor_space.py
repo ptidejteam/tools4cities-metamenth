@@ -1,3 +1,14 @@
+"""
+Copyright (c) 2023-2025 Peter Yefi.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU General Public License v3.0
+which accompanies this distribution, and is available at:
+https://www.gnu.org/licenses/gpl-3.0.html
+
+Contributors:
+    Peter Yefi - API design and implementation
+"""
+
 from typing import List
 from metamenth.structure.interfaces.abstract_space import AbstractSpace
 from metamenth.datatypes.interfaces.abstract_measure import AbstractMeasure
@@ -21,7 +32,6 @@ from metamenth.misc import Validate
 from metamenth.subsystem.hvac_components.fan import Fan
 from metamenth.subsystem.hvac_components.filter import Filter
 from metamenth.subsystem.hvac_components.damper import Damper
-from metamenth.subsystem.hvac_components.controller import Controller
 
 
 class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
@@ -79,15 +89,19 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
         :param new_transducer: a transducers to be added to this space
         :return:
         """
-        if isinstance(new_transducer, Sensor):
-            allowed_room_sensors = [SensorMeasure.OCCUPANCY, SensorMeasure.CARBON_DIOXIDE, SensorMeasure.DAYLIGHT,
-                                    SensorMeasure.TEMPERATURE, SensorMeasure.HUMIDITY, SensorMeasure.CARBON_MONOXIDE]
-            if new_transducer.measure in allowed_room_sensors:
-                super().add_transducer(new_transducer)
-            else:
-                raise ValueError(f'Space sensors must be one of the following: {allowed_room_sensors}')
-        elif isinstance(new_transducer, Actuator):
-            raise ValueError(f'Actuators cannot be added to spaces directly')
+        if new_transducer:
+            if isinstance(new_transducer, Sensor):
+                allowed_room_sensors = [SensorMeasure.OCCUPANCY, SensorMeasure.CARBON_DIOXIDE, SensorMeasure.DAYLIGHT,
+                                    SensorMeasure.TEMPERATURE, SensorMeasure.HUMIDITY, SensorMeasure.CARBON_MONOXIDE,
+                                        SensorMeasure.PARTICULAR_MATTER_2_5]
+                if new_transducer.measure in allowed_room_sensors:
+                    super().add_transducer(new_transducer)
+                else:
+                    raise ValueError(f'Space sensors must be one of the following: {allowed_room_sensors}')
+            elif isinstance(new_transducer, Actuator):
+                raise ValueError(f'Actuators cannot be added to spaces directly')
+        else:
+            raise ValueError(f'Transducer cannot be none')
 
     def add_adjacent_space(self, space: 'AbstractFloorSpace'):
         """
@@ -127,7 +141,7 @@ class AbstractFloorSpace(AbstractSpace, AbstractDynamicEntity):
         :param hvac_component: the hvac component to add
         :return:
         """
-        if Validate.is_hvac_component_allowed_in_space(hvac_component, [Fan, Damper, Filter, Controller], self):
+        if Validate.is_hvac_component_allowed_in_space(hvac_component, [Fan, Damper, Filter], self):
             EntityInsert.insert_building_entity(self._hvac_components, hvac_component,
                                                 BuildingEntity.HVAC_COMPONENT.value)
 

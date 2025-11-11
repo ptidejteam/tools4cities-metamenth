@@ -1,3 +1,14 @@
+"""
+Copyright (c) 2023-2025 Peter Yefi.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU General Public License v3.0
+which accompanies this distribution, and is available at:
+https://www.gnu.org/licenses/gpl-3.0.html
+
+Contributors:
+    Peter Yefi - API design and implementation
+"""
+
 from metamenth.enumerations.abstract_enum import AbstractEnum
 
 
@@ -17,6 +28,7 @@ class MeasurementUnit(AbstractEnum):
     DEGREES = "Deg"
     PERCENTAGE = "Percentage"
     WATTS_PER_METER_SQUARE = "W/m2"
+    WATTS_PER_METER_KELVIN = "W/m.K"
     PRESENCE = "Presence"
     GRAM_PER_KILOGRAM = "g/kg"
     GRAM_PER_CUBIC_METER = "g/m3"
@@ -43,6 +55,7 @@ class MeasurementUnit(AbstractEnum):
     WATTS_PER_SQUARE_METER_KELVIN = "W/(m2.K)"
     SQUARE_METERS_KELVIN_PER_WATTS = "m2.K/W"
     METERS = "m"
+    MILLIMETERS = "mm"
     CENTIMETERS = "cm"
     SQUARE_METERS = "m2"
     KILOGRAMS = "Kg"

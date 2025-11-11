@@ -1,3 +1,14 @@
+"""
+Copyright (c) 2023-2025 Peter Yefi.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU General Public License v3.0
+which accompanies this distribution, and is available at:
+https://www.gnu.org/licenses/gpl-3.0.html
+
+Contributors:
+    Peter Yefi - API design and implementation
+"""
+
 from metamenth.structure.layer import Layer
 from metamenth.structure.cover import Cover
 from metamenth.structure.envelope import Envelope
@@ -25,13 +36,6 @@ class TestCoverAndEnvelop(BaseTest):
             self.assertIsNotNone(cover.UID)
         except ValueError as err:
             self.assertEqual(err.__str__(), "cover_type must be of type CoverType")
-
-    def test_floor_cover_with_roof_layer(self):
-        try:
-            cover = Cover(CoverType.FLOOR, BuildingOrientation.EAST, 2)
-            cover.add_layer(self.layer)
-        except ValueError as err:
-            self.assertEqual(err.__str__(), "The layer you're trying to add has a different material from the cover.")
 
     def test_roof_cover_with_roof_layer(self):
         cover = Cover(CoverType.ROOF, BuildingOrientation.SOUTH, 2)
@@ -152,7 +156,7 @@ class TestCoverAndEnvelop(BaseTest):
         second_cover = Cover(CoverType.WINDOW, BuildingOrientation.EAST, 2)
         material = copy.deepcopy(self.ex_material)
 
-        material.material_type = MaterialType.WIN_DOOR_WOOD
+        material.material_type = MaterialType.WOOD
         new_layer = Layer(self.height, self.length, self.width, material, LayerRoughness.VERY_ROUGH)
         second_cover.add_layer(new_layer)
 
@@ -180,7 +184,7 @@ class TestCoverAndEnvelop(BaseTest):
         second_cover = Cover(CoverType.WINDOW, BuildingOrientation.NORTH, 0)
         material = copy.deepcopy(self.ex_material)
 
-        material.material_type = MaterialType.WIN_DOOR_WOOD
+        material.material_type = MaterialType.WOOD
         new_layer = Layer(self.height, self.length, self.width, material, LayerRoughness.VERY_SMOOTH)
         second_cover.add_layer(new_layer)
 
@@ -198,7 +202,7 @@ class TestCoverAndEnvelop(BaseTest):
         second_cover = Cover(CoverType.WINDOW, BuildingOrientation.SOUTH, 1)
         material = copy.deepcopy(self.ex_material)
 
-        material.material_type = MaterialType.WIN_DOOR_WOOD
+        material.material_type = MaterialType.WOOD
         new_layer = Layer(self.height, self.length, self.width, material, LayerRoughness.VERY_SMOOTH)
         second_cover.add_layer(new_layer)
 

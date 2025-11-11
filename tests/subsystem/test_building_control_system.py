@@ -1,3 +1,14 @@
+"""
+Copyright (c) 2023-2025 Peter Yefi.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU General Public License v3.0
+which accompanies this distribution, and is available at:
+https://www.gnu.org/licenses/gpl-3.0.html
+
+Contributors:
+    Peter Yefi - API design and implementation
+"""
+
 from metamenth.datatypes.measure import Measure
 from metamenth.enumerations import SensorMeasure, SensorMeasureType
 from metamenth.misc import MeasureFactory
@@ -67,6 +78,11 @@ from metamenth.enumerations.recording_types import RecordingType
 from tests.subsystem.controls.on_off_control import OnOffControl
 from unittest.mock import patch
 from io import StringIO
+from tests.subsystem.controls.ziegler_nichols_tuner import ZieglerNicholsTuner
+from metamenth.subsystem.appliance import Appliance
+from metamenth.enumerations import ApplianceType
+from metamenth.enumerations import ApplianceCategory
+
 
 class TestBuildingControlSystem(BaseTest):
 
@@ -175,6 +191,15 @@ class TestBuildingControlSystem(BaseTest):
             self.room.add_hvac_component(fan)
         except ValueError as err:
             self.assertEqual(err.__str__(), "PR.VNT.FN.01 cannot be added to a space entity")
+
+    def test_add_act_to_room(self):
+        try:
+            boiler = Boiler('CTRL.BL', BoilerCategory.NATURAL_GAS, PowerState.ON)
+            actuator = Actuator("Boiler.ACT", boiler)
+            self.room.add_transducer(actuator)
+        except ValueError as err:
+            print(err)
+            self.assertEqual(err.__str__(), "Actuators cannot be added to spaces directly")
 
     def test_add_fan_to_open_space(self):
         try:
@@ -611,7 +636,7 @@ class TestBuildingControlSystem(BaseTest):
         controller.add_set_point(temperature_set_point, (temp_sensor.name, actuator.name))
 
         # instantiate control class
-        boiler_on_off_control = OnOffControl(temp_sensor, actuator, temperature_set_point, 10/3600)
+        boiler_on_off_control = OnOffControl([temp_sensor], actuator, [temperature_set_point], 10/3600)
         controller.control(boiler_on_off_control)
 
         output = mock_stdout.getvalue().strip().split('\n')
@@ -621,6 +646,43 @@ class TestBuildingControlSystem(BaseTest):
                 self.assertIn(f'Triggering process actuator to turn off boiler.', output)
             elif 'less than minimum threshold' in line:
                 self.assertIn(f'Triggering process actuator to turn on boiler.', output)
+
+
+    def test_ziegler_nichols_tuner(self):
+        # create boiler
+        temp_op_condition = MeasureFactory.create_measure("Continuous",
+                                                          Measure(MeasurementUnit.DEGREE_CELSIUS, 4.4, 37.8))
+        thermostat = Appliance("Thermostat", [ApplianceCategory.OFFICE, ApplianceCategory.SMART],
+                               ApplianceType.THERMOSTAT,
+                               operating_conditions=[temp_op_condition])
+
+        # create controller
+        controller = Controller('CTR')
+        temperature_set_point = MeasureFactory.create_measure(RecordingType.CONTINUOUS.value,
+                                                              Measure(MeasurementUnit.DEGREE_CELSIUS, 13, 23))
+        temp_sensor = Sensor("TEMP.SENSOR", SensorMeasure.TEMPERATURE, MeasurementUnit.DEGREE_CELSIUS,
+                             SensorMeasureType.THERMO_COUPLE_TYPE_B, 1)
+        actuator = Actuator("THERMO.ACT", thermostat)
+        # indicate the actuator and sensor (process value source) for the controller
+        controller.add_transducer(temp_sensor)
+        controller.add_transducer(actuator)
+
+        # add set point for this controller
+        controller.add_set_point(temperature_set_point, (temp_sensor.name, actuator.name))
+
+        # instantiate control class
+        thermostat_ziegler_control = ZieglerNicholsTuner([temp_sensor], actuator, [temperature_set_point], 300/3600)
+
+        # assert PID values are None
+        self.assertIsNone(thermostat_ziegler_control.proportional)
+        self.assertIsNone(thermostat_ziegler_control.integral)
+        self.assertIsNone(thermostat_ziegler_control.derivative)
+
+        controller.control(thermostat_ziegler_control)
+        self.assertIsNotNone(thermostat_ziegler_control.proportional)
+        self.assertIsInstance(thermostat_ziegler_control.integral, float)
+        self.assertIsInstance(thermostat_ziegler_control.derivative, float)
+
 
 
 

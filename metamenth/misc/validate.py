@@ -1,12 +1,24 @@
+"""
+Copyright (c) 2023-2025 Peter Yefi.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU General Public License v3.0
+which accompanies this distribution, and is available at:
+https://www.gnu.org/licenses/gpl-3.0.html
+
+Contributors:
+    Peter Yefi - API design and implementation
+"""
+
 from typing import Dict
 from metamenth.enumerations import SensorMeasure
 from metamenth.enumerations import MeasurementUnit
-from datetime import datetime
+from datetime import datetime, timedelta
 from metamenth.enumerations import EngineType
 from metamenth.enumerations import EngineSubType
 from typing import List
 from typing import Any
 from metamenth.enumerations import RoomType
+
 
 
 class Validate:
@@ -76,6 +88,14 @@ class Validate:
             '%Y-%m-%d %H:%M:%S.%f',
             '%Y-%m-%d %H:%M:%S'
         ]
+
+        if ":" in date_string and len(date_string.split(":")) == 2:
+            try:
+                minutes, seconds = map(float, date_string.split(":"))
+                return timedelta(minutes=minutes, seconds=seconds)
+            except ValueError:
+                pass
+
         for fmt in formats:
             try:
                 dt = datetime.strptime(date_string, fmt)
@@ -137,6 +157,9 @@ class Validate:
         elif sensor_measure == SensorMeasure.HUMIDITY.value:
             if unit == MeasurementUnit.RELATIVE_HUMIDITY.value:
                 return True
+        elif sensor_measure == SensorMeasure.PARTICULAR_MATTER_2_5.value:
+            if unit == MeasurementUnit.MICROGRAM_PER_CUBIC_METER.value:
+                return True
         elif sensor_measure == SensorMeasure.OTHER.value:
             return True
         return False
@@ -191,12 +214,14 @@ class Validate:
         from metamenth.subsystem.baseboard_heater import BaseboardHeater
         from metamenth.subsystem.hvac_components.duct import Duct
         from metamenth.subsystem.hvac_components.fan_coil_unit import FanCoilUnit
+        from metamenth.subsystem.hvac_components.boiler import Boiler
+        from metamenth.subsystem.hvac_components.controller import Controller
 
         if any(isinstance(hvac_component, cls) for cls in disallowed_entities):
             raise ValueError(f'{hvac_component.name} cannot be added to a space entity')
         elif isinstance(space_entity, Room):
             if (space_entity.room_type is not RoomType.MECHANICAL and
-                    not any(isinstance(hvac_component, cls) for cls in [AirVolumeBox, BaseboardHeater, RadiantSlab, Duct])
+                    not any(isinstance(hvac_component, cls) for cls in [AirVolumeBox, BaseboardHeater, RadiantSlab, Duct, Controller, Boiler])
                     and not (isinstance(hvac_component, FanCoilUnit) and not hvac_component.is_ducted)):
                 raise ValueError('You can only add HVAC components to mechanical rooms')
         elif (isinstance(space_entity, OpenSpace) and

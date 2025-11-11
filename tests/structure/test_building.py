@@ -1,3 +1,14 @@
+"""
+Copyright (c) 2023-2025 Peter Yefi.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU General Public License v3.0
+which accompanies this distribution, and is available at:
+https://www.gnu.org/licenses/gpl-3.0.html
+
+Contributors:
+    Peter Yefi - API design and implementation
+"""
+
 from metamenth.enumerations import OpenSpaceType
 from metamenth.structure.floor import Floor
 from metamenth.enumerations import FloorType
@@ -510,7 +521,7 @@ class TestBuilding(BaseTest):
         self.assertEqual(self.building.envelope[0].get_cover_by_uid(cover.UID).get_layers(), [self.layer, new_layer])
         self.assertEqual(self.building.envelope[0].get_cover_by_uid(cover.UID).get_layers()[0].thickness.value, 3)
         self.assertEqual(self.building.envelope[0].get_cover_by_uid(cover.UID).get_layers()[1].material.material_type,
-                         MaterialType.ROOF_STEEL)
+                         MaterialType.STEEL)
 
     def test_building_floor_area_change_history(self):
         structure_change_logger = StructureStateChangeLogger()
