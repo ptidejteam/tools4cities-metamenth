@@ -187,6 +187,4 @@ class IFC:
         return {storey: idx for idx, storey in enumerate(sorted_storeys)}
 
 
-if __name__ == '__main__':
-    ifc_imp = IFC("/Users/peteryefi/yefi/NextGen Cities/Data/Concordia_pilot_rvt_2025.ifc")
-    print(ifc_imp.extract_building_structure())
+
