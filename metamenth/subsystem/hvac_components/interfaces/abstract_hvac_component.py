@@ -38,8 +38,7 @@ class AbstractHVACComponent(AbstractDynamicEntity):
         self._status_measure: [StatusMeasure] = []
 
         # status observer
-        self._status_observers: List[Callable[[List[StatusMeasure]], None]] = []
-
+        self._status_observers: List[Callable[[str, Any], None]] = []
         self.name = name
 
     @property
@@ -117,7 +116,7 @@ class AbstractHVACComponent(AbstractDynamicEntity):
         """
         return StructureEntitySearch.search(self._spaces, search_terms)
 
-    def add_update_observer(self, observer: Callable[[str, StatusMeasure], None]):
+    def add_update_observer(self, observer: Callable[[str, Any], None]):
         """
         Register an observer to monitor whenever new hvac component is added
         :param observer: the observer (callback)
@@ -133,7 +132,7 @@ class AbstractHVACComponent(AbstractDynamicEntity):
         :return:
         """
         for observer in self._status_observers:
-            observer(action, Any)
+            observer(action, status)
 
     def add_status_measure(self, status: StatusMeasure):
         """
