@@ -35,8 +35,14 @@ class IFC:
         except Exception as e:
             print(f"An error occurred: {e}")
 
-    def extract_building_structure(self):
-        return self._get_floors_and_rooms()
+    def extract_building(self):
+        return {
+            'floors': self._get_floors_and_rooms(),
+            'type': self._get_building_type(),
+            'address': self._get_address(),
+            'envelope': self._get_envelope()
+        }
+
 
     def _get_address(self):
         """
@@ -147,7 +153,6 @@ class IFC:
             if match:
                 if match.groups():
                     return int(match.group(1))
-                # RDC / Rez-de-chaussée
                 return 0
 
         return None
@@ -186,5 +191,101 @@ class IFC:
 
         return {storey: idx for idx, storey in enumerate(sorted_storeys)}
 
+    def _get_envelope(self):
+        envelope_classes = [
+            "IfcWall",
+            "IfcWallStandardCase",
+            "IfcRoof",
+            "IfcSlab",
+            "IfcCurtainWall",
+            "IfcWindow",
+            "IfcDoor"
+        ]
+
+        envelope_elements = []
+
+        for cls in envelope_classes:
+            elements = self._ifc_bim.by_type(cls)
+
+            for element in elements:
 
 
+                if not self._is_external(element):
+                    continue
+
+                data = {"global_id": element.GlobalId, "type": element.is_a(), "name": element.Name,
+                        "materials": self._extract_envelope_materials(element),
+                        "dimensions": self._extract_envelop_dimensions(element)}
+
+                envelope_elements.append(data)
+            return envelope_elements
+
+
+    def _is_external(self, element):
+        """
+        Checks if an IFC element is marked as external.
+        """
+        psets = util_element.get_psets(element)
+
+        for pset in psets.values():
+            if "IsExternal" in pset:
+                return pset["IsExternal"]
+
+        return False
+
+    def _extract_envelope_materials(self, element):
+        """
+        Extract materials and layer thickness if available.
+        """
+        material = util_element.get_material(element)
+
+        if not material:
+            return None
+
+        materials = []
+
+        # Single material
+        if material.is_a("IfcMaterial"):
+            materials.append({
+                "material": material.Name
+            })
+
+        # Layer set
+        elif material.is_a("IfcMaterialLayerSet"):
+            for layer in material.MaterialLayers:
+                materials.append({
+                    "material": layer.Material.Name if layer.Material else None,
+                    "thickness": layer.LayerThickness
+                })
+            # Layer set usage
+        elif material.is_a("IfcMaterialLayerSetUsage"):
+            layer_set = material.ForLayerSet
+
+            for layer in layer_set.MaterialLayers:
+                materials.append({
+                    "material": layer.Material.Name if layer.Material else None,
+                    "thickness": layer.LayerThickness
+                })
+
+        return materials
+
+    def _extract_envelop_dimensions(self, element):
+        """
+        Extract quantity takeoff information such as
+        height, length, width, area, volume.
+        """
+        psets = util_element.get_psets(element)
+
+        quantities = {}
+
+        for pset_name, props in psets.items():
+            if pset_name.startswith("Qto"):
+                for key, value in props.items():
+                    quantities[key] = value
+
+        return quantities
+
+if __name__ == '__main__':
+    ifc_imp = IFC("/Users/peteryefi/yefi/NextGen Cities/Data/Concordia_pilot_rvt_2025.ifc")
+    building = ifc_imp.extract_building()
+    print(building['envelope'])
